@@ -11,6 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 
 	// Membuat instance Echo
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	// Inisialisasi dependency untuk Auth
 	jwtUser := middlewares.JwtUser{}
