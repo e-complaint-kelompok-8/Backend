@@ -105,7 +105,7 @@ func sendOTPEmail(user entities.User) error {
 
 	dialer := gomail.NewDialer(
 		os.Getenv("SMTP_HOST"),     // Host
-		587,                        // Port
+		2525,                       // Port
 		os.Getenv("SMTP_EMAIL"),    // Email pengirim
 		os.Getenv("SMTP_PASSWORD"), // Password API Key
 	)
