@@ -2,8 +2,9 @@ package entities
 
 import "time"
 
-type UrlPhoto struct {
-	ID        int       `json:"id"`
-	UrlPhoto  string    `json:"url_photo"`
-	CreatedAt time.Time `json:"created_at"`
+type ComplaintPhoto struct {
+	ID          int       `json:"id"`
+	ComplaintID int       `json:"complaint_id"`
+	PhotoURL    string    `json:"photo_url"`
+	CreatedAt   time.Time `json:"create_at"`
 }
