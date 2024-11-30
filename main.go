@@ -19,7 +19,7 @@ func main() {
 
 	// Menjalankan server pada port 8080
 	log.Println("Server starting on port 8080...")
-	if err := e.Start(":8080"); err != nil {
+	if err := e.Start(":8000"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
