@@ -1,23 +1,25 @@
 package routes
 
 import (
-	"capstone/controllers"
-	authRepository "capstone/repositories/auth"
-	authService "capstone/services/auth"
+	auth "capstone/controllers"
+	"capstone/middlewares"
 
 	"github.com/labstack/echo/v4"
 )
 
-// RegisterRoutes mengatur semua rute untuk aplikasi
-func RegisterRoutes(e *echo.Echo) {
-	// Inisialisasi dependency untuk Auth
-	repo := authRepository.NewAuthRepository()
-	service := authService.NewAuthService(repo)
-	authController := controllers.NewAuthController(service)
+type RouteController struct {
+	AuthController auth.AuthController
+	jwtUser        middlewares.JwtUser
+}
 
+// RegisterRoutes mengatur semua rute untuk aplikasi
+func (rc RouteController) RegisterRoutes(e *echo.Echo) {
+	e.POST("/register", rc.AuthController.RegisterController)
+	e.POST("/login", rc.AuthController.LoginController)
+	e.POST("/verify-otp", rc.AuthController.VerifyOTPController)
 	// Grup API
 	api := e.Group("/api/v1")
 
 	// Route Auth
-	api.POST("/login", authController.Login)
+	api.POST("/login", rc.AuthController.Login)
 }
