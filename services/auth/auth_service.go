@@ -4,6 +4,7 @@ import (
 	"capstone/entities"
 	"capstone/middlewares"
 	repositories "capstone/repositories/auth"
+	"capstone/utils"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -50,22 +51,22 @@ func (s *AuthService) Login(email, password string) (*entities.Admin, error) {
 func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 	// Validasi email
 	if user.Email == "" {
-		return entities.User{}, errors.New("email kosong")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email kosong")))
 	}
 
 	// Validasi password
 	if user.Password == "" {
-		return entities.User{}, errors.New("password kosong")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("password kosong")))
 	}
 
 	// Validasi name
 	if user.Name == "" {
-		return entities.User{}, errors.New("nama kosong")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("nama kosong")))
 	}
 
 	// Validasi phone
 	if user.Phone == "" {
-		return entities.User{}, errors.New("nomor telepon kosongS")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("nomor telepon kosong")))
 	}
 
 	// Periksa apakah email sudah ada
@@ -74,7 +75,7 @@ func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 		return entities.User{}, err
 	}
 	if exists {
-		return entities.User{}, errors.New("email sudah ada")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email sudah ada")))
 	}
 
 	// Hash password
@@ -156,9 +157,9 @@ func sendOTPEmail(user entities.User) error {
 
 func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
 	if user.Email == "" {
-		return entities.User{}, errors.New("email kosong")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email kosong")))
 	} else if user.Password == "" {
-		return entities.User{}, errors.New("password kosong")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("password kosong")))
 	}
 
 	oldPassword := user.Password
@@ -171,13 +172,13 @@ func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
 
 	// Cek apakah email sudah diverifikasi
 	if !user.Verified {
-		return entities.User{}, errors.New("email tidak terverifikasi")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email tidak terverifikasi")))
 	}
 
 	// Cek kecocokan password
 	match := CheckPasswordHash(oldPassword, user.Password)
 	if !match {
-		return entities.User{}, errors.New("email atau password salah")
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email atau password salah")))
 	}
 
 	// Generate token JWT
@@ -207,19 +208,19 @@ func GenerateOTP() string {
 func (as AuthService) VerifyOTP(email, otp string) error {
 	user, err := as.AuthRepository.GetUserByEmail(email)
 	if err != nil {
-		return errors.New("pengguna tidak ditemukan")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengguna tidak ditemukan")))
 	}
 
 	fmt.Printf("Verifying OTP %s for email %s. Stored OTP: %s\n", otp, email, user.OTP)
 
 	// Periksa apakah OTP cocok
 	if user.OTP != otp {
-		return errors.New("OTP tidak valid")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("OTP tidak valid")))
 	}
 
 	// Periksa apakah OTP sudah kedaluwarsa
 	if time.Now().After(user.OTPExpiry) {
-		return errors.New("OTP sudah habis masa berlakunya")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("OTP sudah habis masa berlakunya")))
 	}
 
 	if user.OTPExpiry.IsZero() {
@@ -233,7 +234,7 @@ func (as AuthService) VerifyOTP(email, otp string) error {
 
 	err = as.AuthRepository.UpdateUser(user)
 	if err != nil {
-		return errors.New("gagal memverifikasi email")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memverifikasi email")))
 	}
 
 	return nil
