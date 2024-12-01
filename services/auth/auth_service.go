@@ -156,9 +156,9 @@ func sendOTPEmail(user entities.User) error {
 
 func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
 	if user.Email == "" {
-		return entities.User{}, errors.New("email is empty")
+		return entities.User{}, errors.New("email kosong")
 	} else if user.Password == "" {
-		return entities.User{}, errors.New("password is empty")
+		return entities.User{}, errors.New("password kosong")
 	}
 
 	oldPassword := user.Password
@@ -171,13 +171,13 @@ func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
 
 	// Cek apakah email sudah diverifikasi
 	if !user.Verified {
-		return entities.User{}, errors.New("email is not verified")
+		return entities.User{}, errors.New("email tidak terverifikasi")
 	}
 
 	// Cek kecocokan password
 	match := CheckPasswordHash(oldPassword, user.Password)
 	if !match {
-		return entities.User{}, errors.New("password is wrong")
+		return entities.User{}, errors.New("email atau password salah")
 	}
 
 	// Generate token JWT
@@ -207,19 +207,19 @@ func GenerateOTP() string {
 func (as AuthService) VerifyOTP(email, otp string) error {
 	user, err := as.AuthRepository.GetUserByEmail(email)
 	if err != nil {
-		return errors.New("user not found")
+		return errors.New("pengguna tidak ditemukan")
 	}
 
 	fmt.Printf("Verifying OTP %s for email %s. Stored OTP: %s\n", otp, email, user.OTP)
 
 	// Periksa apakah OTP cocok
 	if user.OTP != otp {
-		return errors.New("invalid OTP")
+		return errors.New("OTP tidak valid")
 	}
 
 	// Periksa apakah OTP sudah kedaluwarsa
 	if time.Now().After(user.OTPExpiry) {
-		return errors.New("OTP has expired")
+		return errors.New("OTP sudah habis masa berlakunya")
 	}
 
 	if user.OTPExpiry.IsZero() {
@@ -233,7 +233,7 @@ func (as AuthService) VerifyOTP(email, otp string) error {
 
 	err = as.AuthRepository.UpdateUser(user)
 	if err != nil {
-		return errors.New("failed to verify email")
+		return errors.New("gagal memverifikasi email")
 	}
 
 	return nil
