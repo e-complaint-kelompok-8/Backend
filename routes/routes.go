@@ -20,12 +20,10 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	e.POST("/login", rc.AuthController.LoginController)
 	e.POST("/verify-otp", rc.AuthController.VerifyOTPController)
 
-	// Auth Routes for Admin
-	e.POST("/register", rc.AuthAdminController.RegisterAdminHandler)      
-	e.POST("/login", rc.AuthAdminController.LoginAdminHandler)
-
 	// Grup API
 	api := e.Group("/admin")
+	api.POST("/register", rc.AuthAdminController.RegisterAdminHandler)      
+	api.POST("/login", rc.AuthAdminController.LoginAdminHandler)
 	api.GET("", rc.AuthAdminController.GetAllAdminsHandler)       
 	api.GET("/:id", rc.AuthAdminController.GetAdminByIDHandler) 
 	api.PUT("", rc.AuthAdminController.UpdateAdminHandler)        
