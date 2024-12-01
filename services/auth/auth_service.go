@@ -181,7 +181,7 @@ func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
 	}
 
 	// Generate token JWT
-	token, err := as.jwtInterface.GenerateJWT(user.ID, user.Role)
+	token, err := as.jwtInterface.GenerateJWT(user.ID)
 	if err != nil {
 		return entities.User{}, err
 	}

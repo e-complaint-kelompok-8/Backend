@@ -16,7 +16,6 @@ type LoginUserResponse struct {
 	Name  string `json:"name"`
 	Phone string `json:"no_telp"`
 	Email string `json:"email"`
-	Role  string `json:"role"`
 	Token string `json:"token"`
 }
 
@@ -26,7 +25,6 @@ func LoginFromEntities(user entities.User) LoginUserResponse {
 		Name:  user.Name,
 		Phone: user.Phone,
 		Email: user.Email,
-		Role:  user.Role,
 		Token: user.Token,
 	}
 }
