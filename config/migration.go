@@ -2,6 +2,7 @@ package config
 
 import (
 	"capstone/repositories/models"
+	"capstone/entities"
 	"log"
 
 	"gorm.io/gorm"
@@ -10,7 +11,7 @@ import (
 // RunMigrations is used to perform database migrations
 func RunMigrations(db *gorm.DB) {
 	db.AutoMigrate(
-		// &entities.Admin{},
+		&entities.Admin{},
 		// &entities.AIResponse{},
 		// &models.Category{},
 		// &entities.ChatMessage{},
