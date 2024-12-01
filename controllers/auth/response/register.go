@@ -7,7 +7,6 @@ type RegisterResponse struct {
 	Name  string `json:"name"`
 	Phone string `json:"no_telp"`
 	Email string `json:"email"`
-	Role  string `json:"role"`
 }
 
 func RegisterFromEntities(user entities.User) RegisterResponse {
@@ -16,6 +15,5 @@ func RegisterFromEntities(user entities.User) RegisterResponse {
 		Name:  user.Name,
 		Phone: user.Phone,
 		Email: user.Email,
-		Role:  user.Role,
 	}
 }

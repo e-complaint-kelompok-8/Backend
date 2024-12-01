@@ -87,7 +87,6 @@ func (ar *AuthRepository) UpdateUser(user entities.User) error {
 		"name":       userDB.Name,
 		"email":      userDB.Email,
 		"password":   userDB.Password,
-		"role":       userDB.Role,
 		"verified":   userDB.Verified,
 		"otp":        userDB.OTP,
 		"updated_at": time.Now(),

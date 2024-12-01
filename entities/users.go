@@ -11,7 +11,6 @@ type User struct {
 	Verified  bool      `gorm:"default:false"`
 	OTP       string    `gorm:"type:varchar(6)"` // Menyimpan kode OTP
 	OTPExpiry time.Time // Menyimpan waktu kedaluwarsa OTP
-	Role      string    `json:"role"`
 	Token     string
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

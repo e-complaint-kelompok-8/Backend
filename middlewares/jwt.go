@@ -11,7 +11,7 @@ import (
 )
 
 type JwtInterface interface {
-	GenerateJWT(userID int, userRole string) (string, error)
+	GenerateJWT(userID int) (string, error)
 }
 
 var jwtKey = []byte("your_secret_key")
@@ -46,10 +46,9 @@ type JwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (jwtUser JwtUser) GenerateJWT(userID int, userRole string) (string, error) {
+func (jwtUser JwtUser) GenerateJWT(userID int) (string, error) {
 	claims := &JwtCustomClaims{
-		UserID:   userID,
-		UserRole: userRole,
+		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
 		},
