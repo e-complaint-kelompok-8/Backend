@@ -34,9 +34,16 @@ func main() {
 	service := AuthServices.NewAuthService(repo, jwtUser)
 	authController := auth.NewAuthController(service)
 
+	// Inisialisasi dependency untuk Auth Admin
+	jwtAdmin := middlewares.JwtAdmin{}
+	repoAdmin := AuthRepositories.NewAdminRepository(db)
+	serviceAdmin := AuthServices.NewAdminService(repoAdmin, jwtAdmin)
+	authControllerAdmin := auth.NewAdminController(serviceAdmin)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController: *authController,
+		AuthAdminController: *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)
 
