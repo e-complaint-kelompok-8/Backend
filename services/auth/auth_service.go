@@ -48,7 +48,7 @@ func (s *AuthService) Login(email, password string) (*entities.Admin, error) {
 }
 
 func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
-	// Validasi password
+	// Validasi email
 	if user.Email == "" {
 		return entities.User{}, errors.New("email is empty")
 	}
@@ -58,12 +58,12 @@ func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 		return entities.User{}, errors.New("password is empty")
 	}
 
-	// Validasi password
+	// Validasi name
 	if user.Name == "" {
 		return entities.User{}, errors.New("name is empty")
 	}
 
-	// Validasi password
+	// Validasi phone
 	if user.Phone == "" {
 		return entities.User{}, errors.New("number phone is empty")
 	}
