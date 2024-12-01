@@ -48,6 +48,26 @@ func (s *AuthService) Login(email, password string) (*entities.Admin, error) {
 }
 
 func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
+	// Validasi password
+	if user.Email == "" {
+		return entities.User{}, errors.New("email is empty")
+	}
+
+	// Validasi password
+	if user.Password == "" {
+		return entities.User{}, errors.New("password is empty")
+	}
+
+	// Validasi password
+	if user.Name == "" {
+		return entities.User{}, errors.New("name is empty")
+	}
+
+	// Validasi password
+	if user.Phone == "" {
+		return entities.User{}, errors.New("number phone is empty")
+	}
+
 	// Periksa apakah email sudah ada
 	exists, err := as.AuthRepository.CheckEmailExists(user.Email)
 	if err != nil {
@@ -55,11 +75,6 @@ func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 	}
 	if exists {
 		return entities.User{}, errors.New("email already exists")
-	}
-
-	// Validasi password
-	if user.Password == "" {
-		return entities.User{}, errors.New("password is empty")
 	}
 
 	// Hash password
