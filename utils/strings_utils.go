@@ -10,3 +10,4 @@ func CapitalizeErrorMessage(err error) string {
 	}
 	return strings.Join(words, " ") // Gabungkan kembali menjadi satu pesan
 }
+

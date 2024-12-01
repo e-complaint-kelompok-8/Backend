@@ -14,29 +14,6 @@ type JwtInterface interface {
 	GenerateJWT(userID int) (string, error)
 }
 
-var jwtKey = []byte("your_secret_key")
-
-// JWTClaims defines the structure of JWT claims
-type JWTClaims struct {
-	AdminID int    `json:"admin_id"`
-	Email   string `json:"email"`
-	jwt.RegisteredClaims
-}
-
-// GenerateToken creates a new JWT token for the admin
-func (jwtUser JwtUser) GenerateToken(adminID int, email string) (string, error) {
-	claims := &JWTClaims{
-		AdminID: adminID,
-		Email:   email,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
-}
-
 type JwtUser struct {
 }
 
