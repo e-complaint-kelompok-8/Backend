@@ -50,22 +50,22 @@ func (s *AuthService) Login(email, password string) (*entities.Admin, error) {
 func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 	// Validasi email
 	if user.Email == "" {
-		return entities.User{}, errors.New("email is empty")
+		return entities.User{}, errors.New("email kosong")
 	}
 
 	// Validasi password
 	if user.Password == "" {
-		return entities.User{}, errors.New("password is empty")
+		return entities.User{}, errors.New("password kosong")
 	}
 
 	// Validasi name
 	if user.Name == "" {
-		return entities.User{}, errors.New("name is empty")
+		return entities.User{}, errors.New("nama kosong")
 	}
 
 	// Validasi phone
 	if user.Phone == "" {
-		return entities.User{}, errors.New("number phone is empty")
+		return entities.User{}, errors.New("nomor telepon kosongS")
 	}
 
 	// Periksa apakah email sudah ada
@@ -74,7 +74,7 @@ func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 		return entities.User{}, err
 	}
 	if exists {
-		return entities.User{}, errors.New("email already exists")
+		return entities.User{}, errors.New("email sudah ada")
 	}
 
 	// Hash password
