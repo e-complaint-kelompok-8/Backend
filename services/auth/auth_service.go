@@ -91,34 +91,51 @@ func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
 }
 
 func sendOTPEmail(user entities.User) error {
+	// Informasi pengirim
+	from := os.Getenv("SMTP_EMAIL")
+	password := os.Getenv("SMTP_PASSWORD")
+
+	// Subjek dan isi email
+	subject := "Terima Kasih Telah Mendaftar di Laporin"
 	body := fmt.Sprintf(`
-        <p>Hello %s,</p>
-        <p>Your OTP code is: <strong>%s</strong></p>
-        <p>This code will expire in 10 minutes.</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Selamat Datang di Laporin</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2>Halo, %s</h2>
+            <p>Terima kasih telah mendaftar di aplikasi <strong>Laporin</strong>. Untuk menyelesaikan proses pendaftaran, gunakan kode OTP berikut:</p>
+            <h1 style="text-align: center; color: #4CAF50;">%s</h1>
+            <p>Kode ini hanya berlaku selama <strong>10 menit</strong>. Jika Anda tidak meminta kode ini, silakan abaikan email ini.</p>
+            <p>Terima kasih,</p>
+            <p><strong>Tim Laporin</strong></p>
+        </body>
+        </html>
     `, user.Name, user.OTP)
 
-	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", os.Getenv("SMTP_EMAIL"))
-	mailer.SetHeader("To", user.Email)
-	mailer.SetHeader("Subject", "Your OTP Code")
-	mailer.SetBody("text/html", body)
+	// Konfigurasi SMTP Gmail
+	smtpHost := "smtp.gmail.com"
+	smtpPort := 587
 
-	dialer := gomail.NewDialer(
-		os.Getenv("SMTP_HOST"),     // Host
-		2525,                       // Port
-		os.Getenv("SMTP_EMAIL"),    // Email pengirim
-		os.Getenv("SMTP_PASSWORD"), // Password API Key
-	)
-	// fmt.Println("SMTP_HOST:", os.Getenv("SMTP_HOST"))
-	// fmt.Println("SMTP_EMAIL:", os.Getenv("SMTP_EMAIL"))
-	// fmt.Println("SMTP_PORT:", os.Getenv("EMAIL_PORT"))
+	// Membuat pesan email
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", user.Email)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", body)
 
-	if err := dialer.DialAndSend(mailer); err != nil {
+	// Membuat koneksi ke server SMTP Gmail
+	d := gomail.NewDialer(smtpHost, smtpPort, from, password)
+
+	// Kirim email
+	err := d.DialAndSend(m)
+	if err != nil {
 		fmt.Printf("Failed to send email to %s: %s\n", user.Email, err.Error())
 		return fmt.Errorf("failed to send email: %w", err)
 	}
-	fmt.Printf("Sending OTP %s to email %s\n", user.OTP, user.Email)
 
+	fmt.Printf("OTP %s sent to email %s\n", user.OTP, user.Email)
 	return nil
 }
 
