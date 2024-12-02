@@ -9,6 +9,9 @@ import (
 
 type ComplaintServiceInterface interface {
 	CreateComplaint(c entities.Complaint, photoURLs []string) (entities.Complaint, []entities.ComplaintPhoto, error)
+	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
+	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
+	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
 }
 
 type ComplaintService struct {
@@ -70,4 +73,27 @@ func (cs ComplaintService) CreateComplaint(c entities.Complaint, photoURLs []str
 	}
 
 	return complaint, photos, nil
+}
+
+func (cs ComplaintService) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
+	// Ambil data keluhan berdasarkan ID dan User ID
+	return cs.complaintRepo.GetComplaintByIDAndUser(id, userID)
+}
+
+func (cs ComplaintService) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
+	// Ambil data keluhan berdasarkan user ID
+	complaints, err := cs.complaintRepo.GetComplaintsByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+	return complaints, nil
+}
+
+func (cs ComplaintService) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
+	// Ambil data keluhan berdasarkan status dan user ID
+	complaints, err := cs.complaintRepo.GetComplaintsByStatusAndUser(status, userID)
+	if err != nil {
+		return nil, err
+	}
+	return complaints, nil
 }

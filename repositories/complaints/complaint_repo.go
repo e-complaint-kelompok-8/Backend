@@ -11,6 +11,9 @@ type ComplaintRepoInterface interface {
 	CreateComplaint(c entities.Complaint) (entities.Complaint, error)
 	AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]entities.ComplaintPhoto, error)
 	IsComplaintNumberUnique(complaintNumber string) (bool, error)
+	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
+	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
+	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
 }
 
 type ComplaintRepo struct {
@@ -63,4 +66,51 @@ func (cr ComplaintRepo) IsComplaintNumberUnique(complaintNumber string) (bool, e
 		return false, err
 	}
 	return count == 0, nil
+}
+
+func (cr ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
+	var complaints []models.Complaint
+
+	// Query database untuk mendapatkan keluhan berdasarkan user ID
+	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Where("user_id = ?", userID).Find(&complaints).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Konversi hasil dari models ke entities
+	var result []entities.Complaint
+	for _, complaint := range complaints {
+		result = append(result, complaint.ToEntities())
+	}
+
+	return result, nil
+}
+
+func (ar ComplaintRepo) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
+	var complaint models.Complaint
+	err := ar.db.Preload("User").Preload("Category").
+		Where("id = ? AND user_id = ?", id, userID).First(&complaint).Error
+	if err != nil {
+		return entities.Complaint{}, err
+	}
+	return complaint.ToEntities(), nil
+}
+
+func (cr ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
+	var complaints []models.Complaint
+
+	// Query database untuk mendapatkan keluhan berdasarkan status dan user ID
+	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
+		Where("status = ? AND user_id = ?", status, userID).Find(&complaints).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Konversi hasil dari models ke entities
+	var result []entities.Complaint
+	for _, complaint := range complaints {
+		result = append(result, complaint.ToEntities())
+	}
+
+	return result, nil
 }
