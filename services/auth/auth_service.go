@@ -16,7 +16,6 @@ import (
 )
 
 type AuthServiceInterface interface {
-	Login(email, password string) (*entities.Admin, error)
 	RegisterUser(user entities.User) (entities.User, error)
 	LoginUser(user entities.User) (entities.User, error)
 	VerifyOTP(email, otp string) error
@@ -31,21 +30,6 @@ func NewAuthService(ar repositories.AuthRepositoryInterface, jwtInterface middle
 	return &AuthService{
 		AuthRepository: ar,
 		jwtInterface:   jwtInterface}
-}
-
-func (s *AuthService) Login(email, password string) (*entities.Admin, error) {
-	// Fetch admin data by email
-	admin, err := s.AuthRepository.FindByEmail(email)
-	if err != nil {
-		return nil, errors.New("invalid email or password")
-	}
-
-	// Verify password using bcrypt
-	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password)); err != nil {
-		return nil, errors.New("invalid email or password")
-	}
-
-	return admin, nil
 }
 
 func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {

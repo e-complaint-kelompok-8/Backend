@@ -44,7 +44,7 @@ func (user User) ToEntities() entities.User {
 		Verified:  user.Verified,
 		OTP:       user.OTP,
 		OTPExpiry: user.OTPExpiry,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 }
