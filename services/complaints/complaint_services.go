@@ -12,6 +12,7 @@ type ComplaintServiceInterface interface {
 	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
+	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
 }
 
 type ComplaintService struct {
@@ -92,6 +93,15 @@ func (cs ComplaintService) GetComplaintsByUserID(userID int) ([]entities.Complai
 func (cs ComplaintService) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
 	// Ambil data keluhan berdasarkan status dan user ID
 	complaints, err := cs.complaintRepo.GetComplaintsByStatusAndUser(status, userID)
+	if err != nil {
+		return nil, err
+	}
+	return complaints, nil
+}
+
+func (cs ComplaintService) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
+	// Ambil data complaints dari repository
+	complaints, err := cs.complaintRepo.GetAllComplaintsByUser(userID)
 	if err != nil {
 		return nil, err
 	}

@@ -31,6 +31,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eComplaint := eJwt.Group("/complaint")
 	eComplaint.Use(rc.jwtUser.GetUserID)
 	eComplaint.POST("", rc.ComplaintController.CreateComplaintController)
+	eComplaint.GET("", rc.ComplaintController.GetAllComplaintsByUser)
 	eComplaint.GET("/:id", rc.ComplaintController.GetComplaintById)
 	eComplaint.GET("/user", rc.ComplaintController.GetComplaintByUser)
 	eComplaint.GET("/status/:status", rc.ComplaintController.GetComplaintsByStatus)

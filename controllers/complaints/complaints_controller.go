@@ -146,3 +146,26 @@ func (cc ComplaintController) GetComplaintsByStatus(c echo.Context) error {
 		"complaints": response.ComplaintsFromEntities(complaints),
 	})
 }
+
+func (cc ComplaintController) GetAllComplaintsByUser(c echo.Context) error {
+	// Ambil user_id dari JWT di context
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "User not authorized",
+		})
+	}
+
+	// Ambil semua data complaints milik user
+	complaints, err := cc.complaintService.GetAllComplaintsByUser(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Failed to retrieve complaints",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":    "Complaints retrieved successfully",
+		"complaints": response.ComplaintsFromEntities(complaints),
+	})
+}

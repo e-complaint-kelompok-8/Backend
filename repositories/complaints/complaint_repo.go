@@ -14,6 +14,7 @@ type ComplaintRepoInterface interface {
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
+	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
 }
 
 type ComplaintRepo struct {
@@ -102,6 +103,25 @@ func (cr ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int) 
 	// Query database untuk mendapatkan keluhan berdasarkan status dan user ID
 	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
 		Where("status = ? AND user_id = ?", status, userID).Find(&complaints).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Konversi hasil dari models ke entities
+	var result []entities.Complaint
+	for _, complaint := range complaints {
+		result = append(result, complaint.ToEntities())
+	}
+
+	return result, nil
+}
+
+func (cr ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
+	var complaints []models.Complaint
+
+	// Query database untuk mendapatkan semua complaints milik user
+	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
+		Where("user_id = ?", userID).Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}
