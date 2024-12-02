@@ -3,7 +3,6 @@ package auth
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
-	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -11,16 +10,11 @@ import (
 
 func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	return &AuthRepository{
-		AdminData: []entities.Admin{
-			// Example admin with hashed password for "password"
-			{ID: 1, Email: "admin@example.com", Password: "$2a$10$ZJeNwuVrWfwR2q.cA2eMjuMdRTMxH4Uw0CgEvFj9lR6lQ3lJjAkdG"},
-		},
 		db: db,
 	}
 }
 
 type AuthRepositoryInterface interface {
-	FindByEmail(email string) (*entities.Admin, error)
 	RegisterUser(entities.User) (entities.User, error)
 	CheckEmailExists(email string) (bool, error)
 	LoginUser(user entities.User) (entities.User, error)
@@ -29,18 +23,7 @@ type AuthRepositoryInterface interface {
 }
 
 type AuthRepository struct {
-	// Replace with actual DB connection or data source
-	AdminData []entities.Admin
-	db        *gorm.DB
-}
-
-func (r *AuthRepository) FindByEmail(email string) (*entities.Admin, error) {
-	for i := range r.AdminData { // Iterasi by reference
-		if r.AdminData[i].Email == email {
-			return &r.AdminData[i], nil
-		}
-	}
-	return nil, errors.New("admin not found")
+	db *gorm.DB
 }
 
 func (ar *AuthRepository) RegisterUser(user entities.User) (entities.User, error) {

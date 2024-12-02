@@ -29,7 +29,7 @@ func (c Category) ToEntities() entities.Category {
 		ID:          c.ID,
 		Name:        c.Name,
 		Description: c.Description,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   c.CreatedAt,
+		UpdatedAt:   c.UpdatedAt,
 	}
 }

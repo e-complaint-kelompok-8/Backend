@@ -2,11 +2,14 @@ package main
 
 import (
 	"capstone/config"
-	auth "capstone/controllers"
+	"capstone/controllers/auth"
+	complaintsController "capstone/controllers/complaints"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
+	complaintsRepo "capstone/repositories/complaints"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
+	complaintsService "capstone/services/complaints"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -34,6 +37,11 @@ func main() {
 	service := AuthServices.NewAuthService(repo, jwtUser)
 	authController := auth.NewAuthController(service)
 
+	// Inisialisasi dependency untuk create complaint
+	complaintRepo := complaintsRepo.NewComplaintRepo(db)
+	complaintService := complaintsService.NewComplaintService(complaintRepo)
+	complaintController := complaintsController.NewComplaintController(complaintService)
+
 	// Inisialisasi dependency untuk Auth Admin
 	jwtAdmin := middlewares.JwtAdmin{}
 	repoAdmin := AuthRepositories.NewAdminRepository(db)
@@ -42,7 +50,8 @@ func main() {
 
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
-		AuthController: *authController,
+		AuthController:      *authController,
+		ComplaintController: *complaintController,
 		AuthAdminController: *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)

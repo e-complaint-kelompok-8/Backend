@@ -1,26 +1,38 @@
 package routes
 
 import (
-	auth "capstone/controllers"
+	"capstone/controllers/auth"
+	"capstone/controllers/complaints"
 	"capstone/middlewares"
+	"os"
 
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
 type RouteController struct {
-	AuthController auth.AuthController
-	// jwtUser        middlewares.JwtUser
+	AuthController      auth.AuthController
+	ComplaintController complaints.ComplaintController
+	jwtUser             middlewares.JwtUser
 	AuthAdminController auth.AdminController
 	// jwtAdmin middlewares.JWTAdminClaims
 }
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
 func (rc RouteController) RegisterRoutes(e *echo.Echo) {
+	// end point user
 	e.POST("/register", rc.AuthController.RegisterController)
 	e.POST("/login", rc.AuthController.LoginController)
 	e.POST("/verify-otp", rc.AuthController.VerifyOTPController)
 
-	// Grup API
+	eJwt := e.Group("")
+	eJwt.Use(echojwt.JWT([]byte(os.Getenv("JWT_SECRET_KEY"))))
+
+	eComplaint := eJwt.Group("/complaint")
+	eComplaint.Use(rc.jwtUser.GetUserID)
+	eComplaint.POST("", rc.ComplaintController.CreateComplaintController)
+
+	// Grup Admin
 	api := e.Group("/admin")
 	api.POST("/register", rc.AuthAdminController.RegisterAdminHandler)
 	api.POST("/login", rc.AuthAdminController.LoginAdminHandler)
