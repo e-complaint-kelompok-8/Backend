@@ -15,7 +15,7 @@ type Complaint struct {
 	ComplaintNumber string           `gorm:"type:varchar(255);unique"`
 	Title           string           `gorm:"type:varchar(255);not null"`
 	Location        string           `gorm:"type:varchar(255);not null"`
-	Status          string           `gorm:"type:enum('proses', 'ditindak lanjuti', 'dibatalkan', 'selesai');default:'proses'"`
+	Status          string           `gorm:"type:enum('proses', 'ditanggapi', 'dibatalkan', 'selesai');default:'proses'"`
 	Description     string           `gorm:"type:text;not null"`
 	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID"`
 	CreatedAt       time.Time        `gorm:"autoCreateTime"`
