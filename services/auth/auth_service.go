@@ -32,7 +32,7 @@ func NewAuthService(ar repositories.AuthRepositoryInterface, jwtInterface middle
 		jwtInterface:   jwtInterface}
 }
 
-func (as AuthService) RegisterUser(user entities.User) (entities.User, error) {
+func (as *AuthService) RegisterUser(user entities.User) (entities.User, error) {
 	// Validasi email
 	if user.Email == "" {
 		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email kosong")))
@@ -139,7 +139,7 @@ func sendOTPEmail(user entities.User) error {
 	return nil
 }
 
-func (as AuthService) LoginUser(user entities.User) (entities.User, error) {
+func (as *AuthService) LoginUser(user entities.User) (entities.User, error) {
 	if user.Email == "" {
 		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email kosong")))
 	} else if user.Password == "" {
@@ -189,7 +189,7 @@ func GenerateOTP() string {
 	return fmt.Sprintf("%06d", rand.Intn(1000000)) // OTP 6 digit
 }
 
-func (as AuthService) VerifyOTP(email, otp string) error {
+func (as *AuthService) VerifyOTP(email, otp string) error {
 	user, err := as.AuthRepository.GetUserByEmail(email)
 	if err != nil {
 		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengguna tidak ditemukan")))
