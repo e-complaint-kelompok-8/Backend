@@ -7,7 +7,7 @@ type User struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
-	Phone     string    `json:"no_telp"`
+	Phone     string    `json:"phone_number"`
 	Verified  bool      `gorm:"default:false"`
 	OTP       string    `gorm:"type:varchar(6)"` // Menyimpan kode OTP
 	OTPExpiry time.Time // Menyimpan waktu kedaluwarsa OTP

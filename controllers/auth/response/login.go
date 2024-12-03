@@ -9,7 +9,7 @@ type ErrorResponse struct {
 type LoginUserResponse struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
-	Phone string `json:"no_telp"`
+	Phone string `json:"phone_number"`
 	Email string `json:"email"`
 	Token string `json:"token"`
 }
