@@ -10,6 +10,7 @@ type News struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`
 	Title     string    `gorm:"type:varchar(255);not null"`
 	Content   string    `gorm:"type:text;not null"`
+	PhotoURL  string    `gorm:"type:varchar(255);not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
@@ -19,6 +20,7 @@ func FromEntitiesNews(news entities.News) News {
 		ID:        news.ID,
 		Title:     news.Title,
 		Content:   news.Content,
+		PhotoURL:  news.PhotoURL,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -29,6 +31,7 @@ func (news News) ToEntities() entities.News {
 		ID:        news.ID,
 		Title:     news.Title,
 		Content:   news.Content,
+		PhotoURL:  news.PhotoURL,
 		CreatedAt: news.CreatedAt,
 		UpdatedAt: news.UpdatedAt,
 	}

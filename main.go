@@ -4,12 +4,15 @@ import (
 	"capstone/config"
 	"capstone/controllers/auth"
 	complaintsController "capstone/controllers/complaints"
+	"capstone/controllers/news"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
 	complaintsRepo "capstone/repositories/complaints"
+	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
 	complaintsService "capstone/services/complaints"
+	newsService "capstone/services/news"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -48,16 +51,21 @@ func main() {
 	serviceAdmin := AuthServices.NewAdminService(repoAdmin, jwtAdmin)
 	authControllerAdmin := auth.NewAdminController(serviceAdmin)
 
+	newsRepo := newsRepositories.NewNewsRepository(db)
+	newsService := newsService.NewNewsService(newsRepo)
+	newsController := news.NewNewsController(newsService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:      *authController,
 		ComplaintController: *complaintController,
+		NewsController:      *newsController,
 		AuthAdminController: *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)
 
 	// Menjalankan server pada port 8080
-	log.Println("Server starting on port 8080...")
+	log.Println("Server starting on port 8000...")
 	if err := e.Start(":8000"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
