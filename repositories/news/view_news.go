@@ -22,8 +22,8 @@ func NewNewsRepository(db *gorm.DB) *NewsRepository {
 func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 	var news []models.News
 
-	// Query semua berita
-	err := nr.db.Find(&news).Error
+	// Query semua berita dengan Preload admin dan category
+	err := nr.db.Preload("Admin").Preload("Category").Find(&news).Error
 	if err != nil {
 		return nil, err
 	}
