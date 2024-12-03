@@ -3,14 +3,17 @@ package main
 import (
 	"capstone/config"
 	"capstone/controllers/auth"
+	"capstone/controllers/comment"
 	complaintsController "capstone/controllers/complaints"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
+	commentRepositories "capstone/repositories/comment"
 	complaintsRepo "capstone/repositories/complaints"
 	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
+	commentService "capstone/services/comment"
 	complaintsService "capstone/services/complaints"
 	newsService "capstone/services/news"
 	"log"
@@ -55,11 +58,16 @@ func main() {
 	newsService := newsService.NewNewsService(newsRepo)
 	newsController := news.NewNewsController(newsService)
 
+	commentRepo := commentRepositories.NewCommentRepository(db)
+	commentService := commentService.NewCommentService(commentRepo)
+	commentController := comment.NewCommentController(commentService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:      *authController,
 		ComplaintController: *complaintController,
 		NewsController:      *newsController,
+		CommentController:   *commentController,
 		AuthAdminController: *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)

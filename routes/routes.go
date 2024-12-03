@@ -2,6 +2,7 @@ package routes
 
 import (
 	"capstone/controllers/auth"
+	"capstone/controllers/comment"
 	"capstone/controllers/complaints"
 	"capstone/controllers/news"
 	"capstone/middlewares"
@@ -15,6 +16,7 @@ type RouteController struct {
 	AuthController      auth.AuthController
 	ComplaintController complaints.ComplaintController
 	NewsController      news.NewsController
+	CommentController   comment.CommentController
 	jwtUser             middlewares.JwtUser
 	AuthAdminController auth.AdminController
 	// jwtAdmin middlewares.JWTAdminClaims
@@ -42,6 +44,12 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	// end point news
 	eNews := eJwt.Group("/news")
 	eNews.GET("", rc.NewsController.GetAllNews)
+
+	// end point comment
+	eComment := eJwt.Group("/comment")
+	eComment.Use(rc.jwtUser.GetUserID)
+	eComment.POST("", rc.CommentController.AddComment)
+	eComment.GET("/user", rc.CommentController.GetCommentsByUser)
 
 	// Grup Admin
 	api := e.Group("/admin")

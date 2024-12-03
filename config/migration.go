@@ -16,6 +16,7 @@ func RunMigrations(db *gorm.DB) {
 		&models.ComplaintPhoto{},
 		&entities.Admin{},
 		&models.News{},
+		&models.Comment{},
 		// &entities.AIResponse{},
 		// &models.Category{},
 		// &entities.ChatMessage{},
