@@ -38,6 +38,13 @@ func (cc ComplaintController) CreateComplaintController(c echo.Context) error {
 	// Ekstrak foto dari request
 	photoURLs := req.PhotoURLs // Tambahkan di request JSON
 
+	err := cc.complaintService.ValidateCategoryID(req.CategoryID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Kategori Tidak Valid",
+		})
+	}
+
 	complaint, photos, err := cc.complaintService.CreateComplaint(req.ToEntity(), photoURLs)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{

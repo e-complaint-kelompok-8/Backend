@@ -15,6 +15,7 @@ type ComplaintRepoInterface interface {
 	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
 	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
+	CheckCategoryExists(categoryID int) (bool, error)
 }
 
 type ComplaintRepo struct {
@@ -133,4 +134,13 @@ func (cr ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complaint
 	}
 
 	return result, nil
+}
+
+func (cr ComplaintRepo) CheckCategoryExists(categoryID int) (bool, error) {
+	var count int64
+	err := cr.db.Model(&models.Category{}).Where("id = ?", categoryID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

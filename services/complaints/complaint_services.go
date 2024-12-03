@@ -13,6 +13,7 @@ type ComplaintServiceInterface interface {
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
 	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
+	ValidateCategoryID(categoryID int) error
 }
 
 type ComplaintService struct {
@@ -106,4 +107,15 @@ func (cs ComplaintService) GetAllComplaintsByUser(userID int) ([]entities.Compla
 		return nil, err
 	}
 	return complaints, nil
+}
+
+func (cs ComplaintService) ValidateCategoryID(categoryID int) error {
+	exists, err := cs.complaintRepo.CheckCategoryExists(categoryID)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("kategori tidak valid")))
+	}
+	return nil
 }
