@@ -26,7 +26,7 @@ func NewComplaintRepo(db *gorm.DB) *ComplaintRepo {
 	return &ComplaintRepo{db: db}
 }
 
-func (cr ComplaintRepo) CreateComplaint(c entities.Complaint) (entities.Complaint, error) {
+func (cr *ComplaintRepo) CreateComplaint(c entities.Complaint) (entities.Complaint, error) {
 	complaint := models.FromEntitiesComplaint(c)
 	if err := cr.db.Create(&complaint).Error; err != nil {
 		return entities.Complaint{}, err
@@ -41,7 +41,7 @@ func (cr ComplaintRepo) CreateComplaint(c entities.Complaint) (entities.Complain
 	return complaint.ToEntities(), nil
 }
 
-func (cr ComplaintRepo) AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]entities.ComplaintPhoto, error) {
+func (cr *ComplaintRepo) AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]entities.ComplaintPhoto, error) {
 	var photoModels []models.ComplaintPhoto
 	for _, photo := range photos {
 		photoModels = append(photoModels, models.FromEntitiesComplaintPhoto(photo))
@@ -61,7 +61,7 @@ func (cr ComplaintRepo) AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]
 	return savedPhotos, nil
 }
 
-func (cr ComplaintRepo) IsComplaintNumberUnique(complaintNumber string) (bool, error) {
+func (cr *ComplaintRepo) IsComplaintNumberUnique(complaintNumber string) (bool, error) {
 	var count int64
 	err := cr.db.Model(&models.Complaint{}).Where("complaint_number = ?", complaintNumber).Count(&count).Error
 	if err != nil {
@@ -70,7 +70,7 @@ func (cr ComplaintRepo) IsComplaintNumberUnique(complaintNumber string) (bool, e
 	return count == 0, nil
 }
 
-func (cr ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
+func (cr *ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan user ID
@@ -88,7 +88,7 @@ func (cr ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint,
 	return result, nil
 }
 
-func (ar ComplaintRepo) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
+func (ar *ComplaintRepo) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
 	var complaint models.Complaint
 	err := ar.db.Preload("User").Preload("Category").
 		Where("id = ? AND user_id = ?", id, userID).First(&complaint).Error
@@ -98,7 +98,7 @@ func (ar ComplaintRepo) GetComplaintByIDAndUser(id int, userID int) (entities.Co
 	return complaint.ToEntities(), nil
 }
 
-func (cr ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
+func (cr *ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan status dan user ID
@@ -117,7 +117,7 @@ func (cr ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int) 
 	return result, nil
 }
 
-func (cr ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
+func (cr *ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan semua complaints milik user
@@ -136,7 +136,7 @@ func (cr ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complaint
 	return result, nil
 }
 
-func (cr ComplaintRepo) CheckCategoryExists(categoryID int) (bool, error) {
+func (cr *ComplaintRepo) CheckCategoryExists(categoryID int) (bool, error) {
 	var count int64
 	err := cr.db.Model(&models.Category{}).Where("id = ?", categoryID).Count(&count).Error
 	if err != nil {
