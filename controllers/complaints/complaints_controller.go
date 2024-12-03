@@ -18,7 +18,7 @@ func NewComplaintController(cs complaints.ComplaintServiceInterface) *ComplaintC
 	return &ComplaintController{complaintService: cs}
 }
 
-func (cc ComplaintController) CreateComplaintController(c echo.Context) error {
+func (cc *ComplaintController) CreateComplaintController(c echo.Context) error {
 	req := request.CreateComplaintRequest{}
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -58,7 +58,7 @@ func (cc ComplaintController) CreateComplaintController(c echo.Context) error {
 	})
 }
 
-func (cc ComplaintController) GetComplaintById(c echo.Context) error {
+func (cc *ComplaintController) GetComplaintById(c echo.Context) error {
 	// Ambil ID dari parameter URL
 	complaintID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -89,7 +89,7 @@ func (cc ComplaintController) GetComplaintById(c echo.Context) error {
 	})
 }
 
-func (cc ComplaintController) GetComplaintByUser(c echo.Context) error {
+func (cc *ComplaintController) GetComplaintByUser(c echo.Context) error {
 	// Ambil user_id dari JWT di context
 	userID, ok := c.Get("user_id").(int)
 	if !ok {
@@ -112,7 +112,7 @@ func (cc ComplaintController) GetComplaintByUser(c echo.Context) error {
 	})
 }
 
-func (cc ComplaintController) GetComplaintsByStatus(c echo.Context) error {
+func (cc *ComplaintController) GetComplaintsByStatus(c echo.Context) error {
 	// Ambil status dari parameter URL
 	status := c.Param("status")
 
@@ -154,7 +154,7 @@ func (cc ComplaintController) GetComplaintsByStatus(c echo.Context) error {
 	})
 }
 
-func (cc ComplaintController) GetAllComplaintsByUser(c echo.Context) error {
+func (cc *ComplaintController) GetAllComplaintsByUser(c echo.Context) error {
 	// Ambil user_id dari JWT di context
 	userID, ok := c.Get("user_id").(int)
 	if !ok {
