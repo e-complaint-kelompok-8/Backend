@@ -117,7 +117,7 @@ func (cc *ComplaintController) GetComplaintsByStatus(c echo.Context) error {
 	status := c.Param("status")
 
 	// Validasi status
-	validStatuses := []string{"proses", "ditanggapi", "dibatalkan", "selesai"}
+	validStatuses := []string{"proses", "tanggapi", "batalkan", "selesai"}
 	isValid := false
 	for _, validStatus := range validStatuses {
 		if status == validStatus {
