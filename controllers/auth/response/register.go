@@ -5,7 +5,7 @@ import "capstone/entities"
 type RegisterResponse struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
-	Phone string `json:"no_telp"`
+	Phone string `json:"phone_number"`
 	Email string `json:"email"`
 }
 

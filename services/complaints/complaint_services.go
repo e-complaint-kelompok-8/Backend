@@ -13,6 +13,7 @@ type ComplaintServiceInterface interface {
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
 	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
+	ValidateCategoryID(categoryID int) error
 }
 
 type ComplaintService struct {
@@ -23,7 +24,7 @@ func NewComplaintService(cr complaints.ComplaintRepoInterface) *ComplaintService
 	return &ComplaintService{complaintRepo: cr}
 }
 
-func (cs ComplaintService) CreateComplaint(c entities.Complaint, photoURLs []string) (entities.Complaint, []entities.ComplaintPhoto, error) {
+func (cs *ComplaintService) CreateComplaint(c entities.Complaint, photoURLs []string) (entities.Complaint, []entities.ComplaintPhoto, error) {
 	// Validasi data
 	if c.Description == "" {
 		return entities.Complaint{}, []entities.ComplaintPhoto{}, errors.New(utils.CapitalizeErrorMessage(errors.New("deskripsi diperlukan")))
@@ -76,12 +77,12 @@ func (cs ComplaintService) CreateComplaint(c entities.Complaint, photoURLs []str
 	return complaint, photos, nil
 }
 
-func (cs ComplaintService) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
+func (cs *ComplaintService) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
 	// Ambil data keluhan berdasarkan ID dan User ID
 	return cs.complaintRepo.GetComplaintByIDAndUser(id, userID)
 }
 
-func (cs ComplaintService) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
+func (cs *ComplaintService) GetComplaintsByUserID(userID int) ([]entities.Complaint, error) {
 	// Ambil data keluhan berdasarkan user ID
 	complaints, err := cs.complaintRepo.GetComplaintsByUserID(userID)
 	if err != nil {
@@ -90,7 +91,7 @@ func (cs ComplaintService) GetComplaintsByUserID(userID int) ([]entities.Complai
 	return complaints, nil
 }
 
-func (cs ComplaintService) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
+func (cs *ComplaintService) GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error) {
 	// Ambil data keluhan berdasarkan status dan user ID
 	complaints, err := cs.complaintRepo.GetComplaintsByStatusAndUser(status, userID)
 	if err != nil {
@@ -99,11 +100,22 @@ func (cs ComplaintService) GetComplaintsByStatusAndUser(status string, userID in
 	return complaints, nil
 }
 
-func (cs ComplaintService) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
+func (cs *ComplaintService) GetAllComplaintsByUser(userID int) ([]entities.Complaint, error) {
 	// Ambil data complaints dari repository
 	complaints, err := cs.complaintRepo.GetAllComplaintsByUser(userID)
 	if err != nil {
 		return nil, err
 	}
 	return complaints, nil
+}
+
+func (cs *ComplaintService) ValidateCategoryID(categoryID int) error {
+	exists, err := cs.complaintRepo.CheckCategoryExists(categoryID)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("kategori tidak valid")))
+	}
+	return nil
 }
