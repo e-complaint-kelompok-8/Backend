@@ -39,8 +39,9 @@ func (cc *CommentController) AddComment(c echo.Context) error {
 	// Tambahkan komentar melalui service
 	comment, err := cc.commentService.AddComment(commentEntity)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Failed to add comment",
+		// Menangkap error yang lebih spesifik dari service
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": err.Error(),
 		})
 	}
 

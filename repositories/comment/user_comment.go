@@ -12,6 +12,8 @@ import (
 type CommentRepositoryInterface interface {
 	AddComment(comment entities.Comment) (entities.Comment, error)
 	GetCommentsByUserID(userID int) ([]entities.Comment, error)
+	CheckCategoryExists(id int) (bool, error)
+	GetNewsByID(newsID int) (models.News, error)
 }
 
 type CommentRepository struct {
@@ -38,7 +40,7 @@ func (cr *CommentRepository) AddComment(comment entities.Comment) (entities.Comm
 	return commentModel.ToEntities(), nil
 }
 
-func (cr CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
+func (cr *CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
 	var comments []models.Comment
 
 	// Query database untuk mengambil komentar berdasarkan user_id
@@ -54,4 +56,22 @@ func (cr CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment,
 	}
 
 	return result, nil
+}
+
+func (ar *CommentRepository) CheckCategoryExists(categoryID int) (bool, error) {
+	var count int64
+	err := ar.db.Model(&models.Category{}).Where("id = ?", categoryID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil // True jika kategori ditemukan
+}
+
+func (ar *CommentRepository) GetNewsByID(newsID int) (models.News, error) {
+	var news models.News
+	err := ar.db.Preload("Category").First(&news, "id = ?", newsID).Error
+	if err != nil {
+		return models.News{}, err
+	}
+	return news, nil
 }
