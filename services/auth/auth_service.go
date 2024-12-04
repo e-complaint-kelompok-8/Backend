@@ -162,7 +162,7 @@ func (as *AuthService) LoginUser(user entities.User) (entities.User, error) {
 	// Cek kecocokan password
 	match := CheckPasswordHash(oldPassword, user.Password)
 	if !match {
-		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email atau password salah")))
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("password salah")))
 	}
 
 	// Generate token JWT
