@@ -1,6 +1,7 @@
 package news
 
 import (
+	"capstone/controllers/news/response"
 	"capstone/services/news"
 	"net/http"
 
@@ -25,6 +26,6 @@ func (nc *NewsController) GetAllNews(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "News retrieved successfully",
-		"news":    news,
+		"news":    response.NewsFromEntities(news),
 	})
 }
