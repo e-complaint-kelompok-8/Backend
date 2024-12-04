@@ -9,6 +9,7 @@ import (
 
 type NewsRepositoryInterface interface {
 	GetAllNews() ([]entities.News, error)
+	GetNewsByID(id string) (entities.News, error)
 }
 
 type NewsRepository struct {
@@ -35,4 +36,17 @@ func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 	}
 
 	return result, nil
+}
+
+func (nr *NewsRepository) GetNewsByID(id string) (entities.News, error) {
+	var news models.News
+
+	// Query berita berdasarkan ID dengan Preload admin dan category
+	err := nr.db.Preload("Admin").Preload("Category").First(&news, "id = ?", id).Error
+	if err != nil {
+		return entities.News{}, err
+	}
+
+	// Konversi model ke entitas
+	return news.ToEntities(), nil
 }

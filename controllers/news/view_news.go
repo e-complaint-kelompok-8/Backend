@@ -29,3 +29,24 @@ func (nc *NewsController) GetAllNews(c echo.Context) error {
 		"news":    response.NewsFromEntities(news),
 	})
 }
+
+func (nc *NewsController) GetNewsByID(c echo.Context) error {
+	// Ambil ID dari parameter URL
+	id := c.Param("id")
+
+	// Panggil service untuk mendapatkan detail berita berdasarkan ID
+	news, err := nc.newsService.GetNewsByID(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": "News not found",
+		})
+	}
+
+	// Format response
+	response := response.NewFromEntities(news)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "News retrieved successfully",
+		"news":    response,
+	})
+}

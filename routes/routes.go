@@ -44,6 +44,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	// end point news
 	eNews := eJwt.Group("/news")
 	eNews.GET("", rc.NewsController.GetAllNews)
+	eNews.GET("/:id", rc.NewsController.GetNewsByID)
 
 	// end point comment
 	eComment := eJwt.Group("/comment")

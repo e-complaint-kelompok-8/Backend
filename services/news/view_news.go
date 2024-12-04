@@ -7,6 +7,7 @@ import (
 
 type NewsServiceInterface interface {
 	GetAllNews() ([]entities.News, error)
+	GetNewsByID(id string) (entities.News, error)
 }
 
 type NewsService struct {
@@ -19,4 +20,9 @@ func NewNewsService(repo news.NewsRepositoryInterface) *NewsService {
 
 func (ns *NewsService) GetAllNews() ([]entities.News, error) {
 	return ns.newsRepo.GetAllNews()
+}
+
+func (ns *NewsService) GetNewsByID(id string) (entities.News, error) {
+	// Panggil repository untuk mendapatkan detail berita berdasarkan ID
+	return ns.newsRepo.GetNewsByID(id)
 }
