@@ -3,6 +3,8 @@ package comment
 import (
 	"capstone/entities"
 	"capstone/repositories/comment"
+	"capstone/utils"
+	"errors"
 )
 
 type CommentServiceInterface interface {
@@ -19,6 +21,13 @@ func NewCommentService(repo comment.CommentRepositoryInterface) *CommentService 
 }
 
 func (cs *CommentService) AddComment(comment entities.Comment) (entities.Comment, error) {
+	if comment.NewsID == 0 {
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pilih berita")))
+	}
+
+	if comment.Content == "" {
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tambahkan komentar")))
+	}
 	return cs.commentRepo.AddComment(comment)
 }
 

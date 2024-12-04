@@ -3,6 +3,8 @@ package comment
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
+	"capstone/utils"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -25,7 +27,7 @@ func (cr *CommentRepository) AddComment(comment entities.Comment) (entities.Comm
 
 	// Simpan komentar ke database
 	if err := cr.db.Create(&commentModel).Error; err != nil {
-		return entities.Comment{}, err
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal menambahkan komentar")))
 	}
 
 	// Preload relasi user dan news

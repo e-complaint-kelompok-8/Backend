@@ -3,6 +3,8 @@ package news
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
+	"capstone/utils"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -44,7 +46,7 @@ func (nr *NewsRepository) GetNewsByID(id string) (entities.News, error) {
 	// Query berita berdasarkan ID dengan Preload admin dan category
 	err := nr.db.Preload("Admin").Preload("Category").First(&news, "id = ?", id).Error
 	if err != nil {
-		return entities.News{}, err
+		return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
 	}
 
 	// Konversi model ke entitas
