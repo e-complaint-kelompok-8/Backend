@@ -17,7 +17,7 @@ func NewAuthController(authService auth.AuthServiceInterface) *AuthController {
 	return &AuthController{AuthService: authService}
 }
 
-func (uc AuthController) RegisterController(c echo.Context) error {
+func (uc *AuthController) RegisterController(c echo.Context) error {
 	userRegister := request.RegisterRequest{}
 	c.Bind(&userRegister)
 	user, err := uc.AuthService.RegisterUser(userRegister.ToEntities())
@@ -39,7 +39,7 @@ func (uc AuthController) RegisterController(c echo.Context) error {
 	})
 }
 
-func (uc AuthController) VerifyOTPController(c echo.Context) error {
+func (uc *AuthController) VerifyOTPController(c echo.Context) error {
 	type VerifyRequest struct {
 		Email string `json:"email"`
 		OTP   string `json:"otp"`
@@ -64,7 +64,7 @@ func (uc AuthController) VerifyOTPController(c echo.Context) error {
 	})
 }
 
-func (uc AuthController) LoginController(c echo.Context) error {
+func (uc *AuthController) LoginController(c echo.Context) error {
 	userLogin := request.LoginRequest{}
 	c.Bind(&userLogin)
 	user, err := uc.AuthService.LoginUser(userLogin.ToEntities())

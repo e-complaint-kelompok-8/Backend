@@ -3,6 +3,8 @@ package auth
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
+	"capstone/utils"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -39,7 +41,7 @@ func (ar *AuthRepository) LoginUser(user entities.User) (entities.User, error) {
 	userDB := models.FromEntitiesUser(user)
 	err := ar.db.First(&userDB, "email = ?", userDB.Email)
 	if err.Error != nil {
-		return entities.User{}, err.Error
+		return entities.User{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email tidak ditemukan")))
 	}
 	return userDB.ToEntities(), nil
 }
