@@ -76,3 +76,21 @@ func (cc CommentController) GetCommentsByUser(c echo.Context) error {
 		"comments": commentResponses,
 	})
 }
+
+func (cc *CommentController) GetAllComments(c echo.Context) error {
+	// Ambil semua komentar dari service
+	comments, err := cc.commentService.GetAllComments()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Failed to retrieve all comments",
+		})
+	}
+
+	// Konversi komentar ke response
+	commentResponses := response.FromEntityComments(comments)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":  "All comments retrieved successfully",
+		"comments": commentResponses,
+	})
+}

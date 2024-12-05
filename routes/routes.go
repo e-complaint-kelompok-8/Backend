@@ -51,6 +51,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eComment.Use(rc.jwtUser.GetUserID)
 	eComment.POST("", rc.CommentController.AddComment)
 	eComment.GET("/user", rc.CommentController.GetCommentsByUser)
+	eComment.GET("", rc.CommentController.GetAllComments)
 
 	// Grup Admin
 	api := e.Group("/admin")
