@@ -94,3 +94,24 @@ func (cc *CommentController) GetAllComments(c echo.Context) error {
 		"comments": commentResponses,
 	})
 }
+
+func (cc *CommentController) GetCommentByID(c echo.Context) error {
+	// Ambil ID dari parameter URL
+	commentID := c.Param("id")
+
+	// Ambil detail komentar dari service
+	comment, err := cc.commentService.GetCommentByID(commentID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Komentar Tidak Ditemukan",
+		})
+	}
+
+	// Konversi komentar ke response
+	commentResponse := response.FromEntityComment(comment)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Comment retrieved successfully",
+		"comment": commentResponse,
+	})
+}

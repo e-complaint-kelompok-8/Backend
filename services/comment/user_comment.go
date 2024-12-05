@@ -10,6 +10,7 @@ type CommentServiceInterface interface {
 	AddComment(comment entities.Comment) (entities.Comment, error)
 	GetCommentsByUserID(userID int) ([]entities.Comment, error)
 	GetAllComments() ([]entities.Comment, error)
+	GetCommentByID(commentID string) (entities.Comment, error)
 }
 
 type CommentService struct {
@@ -63,4 +64,13 @@ func (cs *CommentService) GetAllComments() ([]entities.Comment, error) {
 		return nil, err
 	}
 	return comments, nil
+}
+
+func (cs *CommentService) GetCommentByID(commentID string) (entities.Comment, error) {
+	// Ambil detail komentar dari repository
+	comment, err := cs.commentRepo.GetCommentByID(commentID)
+	if err != nil {
+		return entities.Comment{}, err
+	}
+	return comment, nil
 }
