@@ -14,6 +14,8 @@ type CommentRepositoryInterface interface {
 	GetCommentsByUserID(userID int) ([]entities.Comment, error)
 	CheckCategoryExists(id int) (bool, error)
 	GetNewsByID(newsID int) (models.News, error)
+	GetAllComments() ([]entities.Comment, error)
+	GetCommentByID(commentID string) (entities.Comment, error)
 }
 
 type CommentRepository struct {
@@ -74,4 +76,35 @@ func (ar *CommentRepository) GetNewsByID(newsID int) (models.News, error) {
 		return models.News{}, err
 	}
 	return news, nil
+}
+
+func (cr *CommentRepository) GetAllComments() ([]entities.Comment, error) {
+	var comments []models.Comment
+
+	// Query database untuk mengambil semua komentar
+	err := cr.db.Preload("User").Preload("News").Find(&comments).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Konversi model ke entitas
+	var result []entities.Comment
+	for _, comment := range comments {
+		result = append(result, comment.ToEntities())
+	}
+
+	return result, nil
+}
+
+func (cr *CommentRepository) GetCommentByID(commentID string) (entities.Comment, error) {
+	var comment models.Comment
+
+	// Query database untuk mengambil komentar berdasarkan ID
+	err := cr.db.Preload("User").Preload("News").Where("id = ?", commentID).First(&comment).Error
+	if err != nil {
+		return entities.Comment{}, err
+	}
+
+	// Konversi model ke entitas
+	return comment.ToEntities(), nil
 }
