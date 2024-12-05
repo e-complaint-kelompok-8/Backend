@@ -9,6 +9,8 @@ import (
 type CommentServiceInterface interface {
 	AddComment(comment entities.Comment) (entities.Comment, error)
 	GetCommentsByUserID(userID int) ([]entities.Comment, error)
+	GetAllComments() ([]entities.Comment, error)
+	GetCommentByID(commentID string) (entities.Comment, error)
 }
 
 type CommentService struct {
@@ -53,4 +55,22 @@ func (cs CommentService) GetCommentsByUserID(userID int) ([]entities.Comment, er
 		return nil, err
 	}
 	return comments, nil
+}
+
+func (cs *CommentService) GetAllComments() ([]entities.Comment, error) {
+	// Ambil semua komentar dari repository
+	comments, err := cs.commentRepo.GetAllComments()
+	if err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (cs *CommentService) GetCommentByID(commentID string) (entities.Comment, error) {
+	// Ambil detail komentar dari repository
+	comment, err := cs.commentRepo.GetCommentByID(commentID)
+	if err != nil {
+		return entities.Comment{}, err
+	}
+	return comment, nil
 }
