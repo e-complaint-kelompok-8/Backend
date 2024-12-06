@@ -5,16 +5,19 @@ import (
 	"capstone/controllers/auth"
 	"capstone/controllers/comment"
 	complaintsController "capstone/controllers/complaints"
+	"capstone/controllers/feedbacks"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
 	commentRepositories "capstone/repositories/comment"
 	complaintsRepo "capstone/repositories/complaints"
+	feedbackRepositories "capstone/repositories/feedbacks"
 	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
 	commentService "capstone/services/comment"
 	complaintsService "capstone/services/complaints"
+	feedbackService "capstone/services/feedbacks"
 	newsService "capstone/services/news"
 	"log"
 
@@ -62,17 +65,22 @@ func main() {
 	commentService := commentService.NewCommentService(commentRepo)
 	commentController := comment.NewCommentController(commentService)
 
+	feedbackRepo := feedbackRepositories.NewFeedbackRepository(db)
+	feedbackService := feedbackService.NewFeedbackService(feedbackRepo)
+	feedbackController := feedbacks.NewFeedbackController(feedbackService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:      *authController,
 		ComplaintController: *complaintController,
 		NewsController:      *newsController,
 		CommentController:   *commentController,
+		FeedbackController:  *feedbackController,
 		AuthAdminController: *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)
 
-	// Menjalankan server pada port 8080
+	// Menjalankan server pada port 8000
 	log.Println("Server starting on port 8000...")
 	if err := e.Start(":8000"); err != nil {
 		log.Fatalf("Error starting server: %v", err)

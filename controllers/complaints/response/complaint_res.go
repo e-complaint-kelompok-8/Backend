@@ -32,6 +32,21 @@ type CreateComplaintResponseWithPhoto struct {
 	UpdatedAt       time.Time        `json:"updated_at"`
 }
 
+type CreateComplaintResponseWithReason struct {
+	ID              int              `json:"id"`
+	User            User             `json:"user"`
+	Category        Category         `json:"category"`
+	ComplaintNumber string           `json:"complaint_number"`
+	Title           string           `json:"title"`
+	Location        string           `json:"location"`
+	Status          string           `json:"status"`
+	Description     string           `json:"description" validate:"required"`
+	Photos          []ComplaintPhoto `json:"photos"`
+	Reason          string           `json:"reason"`
+	CreatedAt       time.Time        `json:"created_at"`
+	UpdatedAt       time.Time        `json:"updated_at"`
+}
+
 type User struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
@@ -153,4 +168,40 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 		})
 	}
 	return responses
+}
+
+func ComplaintFromEntitiesWithReason(complaint entities.Complaint, photos []entities.ComplaintPhoto) CreateComplaintResponseWithReason {
+	var photoResponses []ComplaintPhoto
+	for _, photo := range photos {
+		photoResponses = append(photoResponses, ComplaintPhoto{
+			ID:       photo.ID,
+			PhotoURL: photo.PhotoURL,
+		})
+	}
+
+	return CreateComplaintResponseWithReason{
+		ID: complaint.ID,
+		User: User{
+			ID:    complaint.User.ID,
+			Name:  complaint.User.Name,
+			Phone: complaint.User.Phone,
+			Email: complaint.User.Email,
+		},
+		Category: Category{
+			ID:          complaint.Category.ID,
+			Name:        complaint.Category.Name,
+			Description: complaint.Category.Description,
+			CreatedAt:   complaint.Category.CreatedAt,
+			UpdatedAt:   complaint.Category.UpdatedAt,
+		},
+		ComplaintNumber: complaint.ComplaintNumber,
+		Title:           complaint.Title,
+		Location:        complaint.Location,
+		Status:          complaint.Status,
+		Description:     complaint.Description,
+		Photos:          photoResponses,
+		Reason:          complaint.Reason, // Alasan pembatalan
+		CreatedAt:       complaint.CreatedAt,
+		UpdatedAt:       complaint.UpdatedAt,
+	}
 }

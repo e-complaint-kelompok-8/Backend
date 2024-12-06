@@ -15,6 +15,7 @@ type ComplaintServiceInterface interface {
 	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
 	ValidateCategoryID(categoryID int) error
 	GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error)
+	CancelComplaint(complaintID int, userID int, reason string) (entities.Complaint, error)
 }
 
 type ComplaintService struct {
@@ -128,4 +129,41 @@ func (cs ComplaintService) GetComplaintsByCategoryAndUser(categoryID int, userID
 		return nil, err
 	}
 	return complaints, nil
+}
+
+func (cs *ComplaintService) CancelComplaint(complaintID int, userID int, reason string) (entities.Complaint, error) {
+	// Ambil complaint untuk validasi
+	complaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
+	if err != nil {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan tidak ditemukan")))
+	}
+
+	// Pastikan complaint milik user
+	if complaint.UserID != userID {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("anda tidak memiliki akses untuk membatalkan pengaduan ini")))
+	}
+
+	// Pastikan complaint memiliki status "proses"
+	if complaint.Status != "proses" {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("hanya pengaduan dengan status 'proses' yang dapat dibatalkan")))
+	}
+
+	// Pastikan alasan belum ada
+	if complaint.Reason != "" {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan ini sudah memiliki alasan pembatalan")))
+	}
+
+	// Perbarui status complaint menjadi "batal" dan simpan alasan
+	err = cs.complaintRepo.UpdateComplaintStatus(complaintID, "batal", reason)
+	if err != nil {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal membatalkan pengaduan")))
+	}
+
+	// Ambil pengaduan yang telah diperbarui
+	updatedComplaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
+	if err != nil {
+		return entities.Complaint{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal mengambil pengaduan yang diperbarui")))
+	}
+
+	return updatedComplaint.ToEntitiesReason(), nil
 }

@@ -14,6 +14,7 @@ type Complaint struct {
 	Status          string           `json:"status"`
 	Description     string           `json:"description"`
 	Photos          []ComplaintPhoto `json:"photos"`
+	Reason          string           `json:"reason"`
 	CreatedAt       time.Time        `json:"create_at"`
 	UpdatedAt       time.Time        `json:"update_at"`
 }
