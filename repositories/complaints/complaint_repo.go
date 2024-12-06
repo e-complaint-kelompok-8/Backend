@@ -17,6 +17,8 @@ type ComplaintRepoInterface interface {
 	GetAllComplaintsByUser(userID int) ([]entities.Complaint, error)
 	CheckCategoryExists(categoryID int) (bool, error)
 	GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error)
+	GetComplaintByID(complaintID int) (models.Complaint, error)
+	UpdateComplaintStatus(complaintID int, status string, reason string) error
 }
 
 type ComplaintRepo struct {
@@ -146,7 +148,7 @@ func (cr *ComplaintRepo) CheckCategoryExists(categoryID int) (bool, error) {
 	return count > 0, nil
 }
 
-func (cr ComplaintRepo) GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error) {
+func (cr *ComplaintRepo) GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error) {
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan kategori dan user ID
@@ -163,4 +165,25 @@ func (cr ComplaintRepo) GetComplaintsByCategoryAndUser(categoryID int, userID in
 	}
 
 	return result, nil
+}
+
+func (cr *ComplaintRepo) GetComplaintByID(complaintID int) (models.Complaint, error) {
+	var complaint models.Complaint
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		First(&complaint, "id = ?", complaintID).Error
+	if err != nil {
+		return models.Complaint{}, err
+	}
+	return complaint, nil
+}
+
+func (cr *ComplaintRepo) UpdateComplaintStatus(complaintID int, status string, reason string) error {
+	// Perbarui status dan simpan alasan pembatalan
+	return cr.db.Model(&models.Complaint{}).Where("id = ?", complaintID).Updates(map[string]interface{}{
+		"status":     status,
+		"reason":     reason,
+		"updated_at": gorm.Expr("NOW()"),
+	}).Error
 }

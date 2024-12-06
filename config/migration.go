@@ -11,20 +11,16 @@ import (
 func RunMigrations(db *gorm.DB) {
 	db.AutoMigrate(
 		&models.User{},
+		&entities.Admin{},
 		&models.Category{},
 		&models.Complaint{},
 		&models.ComplaintPhoto{},
-		&entities.Admin{},
 		&models.News{},
 		&models.Comment{},
+		&models.Feedback{},
 		// &entities.AIResponse{},
-		// &models.Category{},
 		// &entities.ChatMessage{},
-		// &entities.Commentar{},
-		// &models.Complaint{},
-		// &entities.Feedback{},
 		// &entities.ImportLog{},
-		// &entities.News{},
 		// &entities.Notification{},
 	)
 	log.Println("Migration completed successfully!")

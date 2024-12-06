@@ -18,6 +18,7 @@ type Complaint struct {
 	Status          string           `gorm:"type:enum('proses', 'tanggapi', 'batal', 'selesai');default:'proses'"`
 	Description     string           `gorm:"type:text;not null"`
 	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID"`
+	Reason          string           `gorm:"type:text"`
 	CreatedAt       time.Time        `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time        `gorm:"autoUpdateTime"`
 }
@@ -55,6 +56,30 @@ func (c Complaint) ToEntities() entities.Complaint {
 		Description:     c.Description,
 		Status:          c.Status,
 		Photos:          photos,
+		CreatedAt:       c.CreatedAt,
+		UpdatedAt:       c.UpdatedAt,
+	}
+}
+
+func (c Complaint) ToEntitiesReason() entities.Complaint {
+	var photos []entities.ComplaintPhoto
+	for _, photo := range c.Photos {
+		photos = append(photos, photo.ToEntities())
+	}
+
+	return entities.Complaint{
+		ID:              c.ID,
+		UserID:          c.UserID,
+		User:            c.User.ToEntities(),
+		CategoryID:      c.CategoryID,
+		Category:        c.Category.ToEntities(),
+		ComplaintNumber: c.ComplaintNumber,
+		Title:           c.Title,
+		Location:        c.Location,
+		Description:     c.Description,
+		Status:          c.Status,
+		Photos:          photos,
+		Reason:          c.Reason,
 		CreatedAt:       c.CreatedAt,
 		UpdatedAt:       c.UpdatedAt,
 	}
