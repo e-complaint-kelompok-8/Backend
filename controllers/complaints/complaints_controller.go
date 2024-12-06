@@ -79,7 +79,7 @@ func (cc *ComplaintController) GetComplaintById(c echo.Context) error {
 	complaint, err := cc.complaintService.GetComplaintByIDAndUser(complaintID, userID)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
-			"message": "Complaint not found or access denied",
+			"message": "Pengaduan Tidak Ditemukan",
 		})
 	}
 
@@ -165,6 +165,44 @@ func (cc *ComplaintController) GetAllComplaintsByUser(c echo.Context) error {
 
 	// Ambil semua data complaints milik user
 	complaints, err := cc.complaintService.GetAllComplaintsByUser(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Failed to retrieve complaints",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":    "Complaints retrieved successfully",
+		"complaints": response.ComplaintsFromEntities(complaints),
+	})
+}
+
+func (cc ComplaintController) GetComplaintsByCategory(c echo.Context) error {
+	// Ambil ID kategori dari parameter URL
+	categoryID, err := strconv.Atoi(c.Param("category_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid Category ID",
+		})
+	}
+
+	// Ambil user_id dari JWT di context
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "User not authorized",
+		})
+	}
+
+	err = cc.complaintService.ValidateCategoryID(categoryID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Kategori Tidak Valid",
+		})
+	}
+
+	// Ambil keluhan berdasarkan kategori dan user_id
+	complaints, err := cc.complaintService.GetComplaintsByCategoryAndUser(categoryID, userID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Failed to retrieve complaints",
