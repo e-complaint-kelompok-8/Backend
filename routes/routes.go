@@ -43,6 +43,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eComplaint.GET("/user", rc.ComplaintController.GetComplaintByUser)
 	eComplaint.GET("/status/:status", rc.ComplaintController.GetComplaintsByStatus)
 	eComplaint.GET("/category/:category_id", rc.ComplaintController.GetComplaintsByCategory)
+	eComplaint.PUT("/:id/cancel", rc.ComplaintController.CancelComplaint)
 
 	// endpoint news
 	eNews := eJwt.Group("/news")

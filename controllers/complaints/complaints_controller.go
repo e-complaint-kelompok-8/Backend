@@ -214,3 +214,45 @@ func (cc ComplaintController) GetComplaintsByCategory(c echo.Context) error {
 		"complaints": response.ComplaintsFromEntities(complaints),
 	})
 }
+
+func (cc *ComplaintController) CancelComplaint(c echo.Context) error {
+	// Ambil User ID dari middleware
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "User tidak memiliki otorisasi",
+		})
+	}
+
+	// Ambil complaint ID dari parameter
+	complaintID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "ID pengaduan tidak valid",
+		})
+	}
+
+	// Ambil data alasan pembatalan dari body
+	var request struct {
+		Reason string `json:"reason" validate:"required"`
+	}
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Data pembatalan tidak valid",
+		})
+	}
+
+	// Proses pembatalan melalui service
+	updatedComplaint, err := cc.complaintService.CancelComplaint(complaintID, userID, request.Reason)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
+
+	// Kembalikan respons dengan data pengaduan yang telah diperbarui
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":   "Pengaduan berhasil dibatalkan",
+		"complaint": response.ComplaintFromEntitiesWithReason(updatedComplaint, updatedComplaint.Photos),
+	})
+}
