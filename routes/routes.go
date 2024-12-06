@@ -4,6 +4,7 @@ import (
 	"capstone/controllers/auth"
 	"capstone/controllers/comment"
 	"capstone/controllers/complaints"
+	feedback "capstone/controllers/feedbacks"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	"os"
@@ -17,6 +18,7 @@ type RouteController struct {
 	ComplaintController complaints.ComplaintController
 	NewsController      news.NewsController
 	CommentController   comment.CommentController
+	FeedbackController  feedback.FeedbackController
 	jwtUser             middlewares.JwtUser
 	AuthAdminController auth.AdminController
 	// jwtAdmin middlewares.JWTAdminClaims
@@ -24,7 +26,7 @@ type RouteController struct {
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
 func (rc RouteController) RegisterRoutes(e *echo.Echo) {
-	// end point user
+	// endpoint user
 	e.POST("/register", rc.AuthController.RegisterController)
 	e.POST("/login", rc.AuthController.LoginController)
 	e.POST("/verify-otp", rc.AuthController.VerifyOTPController)
@@ -32,7 +34,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eJwt := e.Group("")
 	eJwt.Use(echojwt.JWT([]byte(os.Getenv("JWT_SECRET_KEY"))))
 
-	// end point complaints
+	// endpoint complaints
 	eComplaint := eJwt.Group("/complaint")
 	eComplaint.Use(rc.jwtUser.GetUserID)
 	eComplaint.POST("", rc.ComplaintController.CreateComplaintController)
@@ -42,18 +44,23 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eComplaint.GET("/status/:status", rc.ComplaintController.GetComplaintsByStatus)
 	eComplaint.GET("/category/:category_id", rc.ComplaintController.GetComplaintsByCategory)
 
-	// end point news
+	// endpoint news
 	eNews := eJwt.Group("/news")
 	eNews.GET("", rc.NewsController.GetAllNews)
 	eNews.GET("/:id", rc.NewsController.GetNewsByID)
 
-	// end point comment
+	// endpoint comment
 	eComment := eJwt.Group("/comment")
 	eComment.Use(rc.jwtUser.GetUserID)
 	eComment.POST("", rc.CommentController.AddComment)
 	eComment.GET("/user", rc.CommentController.GetCommentsByUser)
 	eComment.GET("", rc.CommentController.GetAllComments)
 	eComment.GET("/:id", rc.CommentController.GetCommentByID)
+
+	eFeedback := eJwt.Group("/feedback")
+	eFeedback.Use(rc.jwtUser.GetUserID)
+	eFeedback.GET("/complaint/:complaint_id", rc.FeedbackController.GetFeedbackByComplaint)
+	eFeedback.GET("", rc.FeedbackController.GetFeedbacksByUser)
 
 	// Grup Admin
 	api := e.Group("/admin")
