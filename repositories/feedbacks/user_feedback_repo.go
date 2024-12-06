@@ -11,6 +11,9 @@ type FeedbackRepositoryInterface interface {
 	GetComplaintByID(complaintID int) (models.Complaint, error)
 	GetFeedbackByComplaintID(complaintID int) (entities.Feedback, error)
 	GetFeedbacksByUserID(userID int) ([]entities.Feedback, error)
+	UpdateFeedbackResponse(feedbackID int, response string) error
+	UpdateComplaintStatus(complaintID int, status string) error
+	GetFeedbackByID(feedbackID int) (entities.Feedback, error)
 }
 
 type FeedbackRepository struct {
@@ -63,4 +66,27 @@ func (fr *FeedbackRepository) GetFeedbacksByUserID(userID int) ([]entities.Feedb
 		result = append(result, feedback.ToEntities())
 	}
 	return result, nil
+}
+
+func (fr *FeedbackRepository) UpdateFeedbackResponse(feedbackID int, response string) error {
+	// Perbarui kolom response di tabel feedback
+	return fr.db.Model(&models.Feedback{}).Where("id = ?", feedbackID).Update("response", response).Error
+}
+
+func (fr *FeedbackRepository) UpdateComplaintStatus(complaintID int, status string) error {
+	// Perbarui status di tabel complaints
+	return fr.db.Model(&models.Complaint{}).Where("id = ?", complaintID).Update("status", status).Error
+}
+
+func (fr *FeedbackRepository) GetFeedbackByID(feedbackID int) (entities.Feedback, error) {
+	var feedback models.Feedback
+	err := fr.db.Preload("Admin").
+		Preload("User").
+		Preload("Complaint.Category").
+		Preload("Complaint.Photos").
+		First(&feedback, "id = ?", feedbackID).Error
+	if err != nil {
+		return entities.Feedback{}, err
+	}
+	return feedback.ToEntities(), nil
 }

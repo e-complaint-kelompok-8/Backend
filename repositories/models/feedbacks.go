@@ -15,6 +15,7 @@ type Feedback struct {
 	ComplaintID int       `gorm:"not null"`
 	Complaint   Complaint `gorm:"foreignKey:ComplaintID"`
 	Content     string    `gorm:"type:text;not null"`
+	Response    string    `gorm:"type:text"` // Tambahkan kolom ini
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 }
 
@@ -72,6 +73,7 @@ func (feedback Feedback) ToEntities() entities.Feedback {
 			UpdatedAt:       feedback.Complaint.UpdatedAt,
 		},
 		Content:   feedback.Content,
+		Response:  feedback.Response,
 		CreatedAt: feedback.CreatedAt,
 	}
 }

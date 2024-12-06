@@ -11,5 +11,6 @@ type Feedback struct {
 	ComplaintID int       `json:"complaint_id"`
 	Complaint   Complaint `json:"complaint"`
 	Content     string    `json:"content"`
+	Response    string    `json:"response"`
 	CreatedAt   time.Time `json:"created_at"`
 }

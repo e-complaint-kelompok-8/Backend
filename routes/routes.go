@@ -61,6 +61,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eFeedback.Use(rc.jwtUser.GetUserID)
 	eFeedback.GET("/complaint/:complaint_id", rc.FeedbackController.GetFeedbackByComplaint)
 	eFeedback.GET("", rc.FeedbackController.GetFeedbacksByUser)
+	eFeedback.POST("/:id/response", rc.FeedbackController.AddResponseToFeedback)
 
 	// Grup Admin
 	api := e.Group("/admin")
