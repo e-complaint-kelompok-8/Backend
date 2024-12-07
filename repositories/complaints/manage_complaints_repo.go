@@ -103,6 +103,15 @@ func (cr *ComplaintRepo) AdminUpdateComplaint(complaintID int, updateData entiti
 }
 
 func (cr *ComplaintRepo) DeleteComplaint(complaintID int) error {
-	// Hapus complaint berdasarkan ID
-	return cr.db.Where("id = ?", complaintID).Delete(&models.Complaint{}).Error
+	// Hapus data foto terkait di tabel complaint_photos
+	if err := cr.db.Where("complaint_id = ?", complaintID).Delete(&models.ComplaintPhoto{}).Error; err != nil {
+		return err
+	}
+
+	// Hapus data complaint
+	if err := cr.db.Where("id = ?", complaintID).Delete(&models.Complaint{}).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
