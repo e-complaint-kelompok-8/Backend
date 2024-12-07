@@ -20,29 +20,38 @@ func (cc *ComplaintController) GetComplaintsByStatusAndCategory(c echo.Context) 
 	// Ambil parameter query
 	status := c.QueryParam("status")
 	categoryIDParam := c.QueryParam("category_id")
+	pageParam := c.QueryParam("page")
+	limitParam := c.QueryParam("limit")
 
-	// Konversi categoryID jika ada, atau gunakan default 0
-	var categoryID int
+	// Konversi categoryID, page, dan limit jika ada
+	var categoryID, page, limit int
 	if categoryIDParam != "" {
 		categoryID, err = strconv.Atoi(categoryIDParam)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid category ID"})
 		}
 	}
+	page, _ = strconv.Atoi(pageParam)   // Default 0 jika kosong
+	limit, _ = strconv.Atoi(limitParam) // Default 0 jika kosong
 
 	// Ambil data dari service
-	complaints, err := cc.complaintService.GetComplaintsByStatusAndCategory(status, categoryID)
+	complaints, total, err := cc.complaintService.GetComplaintsByStatusAndCategory(status, categoryID, page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
 	// Konversi entities ke response
-	response := response.ComplaintsFromEntities(complaints)
+	responseData := response.ComplaintsFromEntities(complaints)
 
-	// Kirim respons
+	// Kirim respons dengan data dan metadata pagination
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message":    "Success",
-		"complaints": response,
+		"message": "Success",
+		"data": map[string]interface{}{
+			"complaints": responseData,
+			"total":      total,
+			"page":       page,
+			"limit":      limit,
+		},
 	})
 }
 
@@ -159,6 +168,11 @@ func (cc *ComplaintController) UpdateComplaintByAdmin(c echo.Context) error {
 
 	// Masukkan AdminID ke dalam data pembaruan
 	updateData := request.ToEntity()
+
+	// Pastikan AdminID diinisialisasi jika nil
+	if updateData.AdminID == nil {
+		updateData.AdminID = new(int) // Alokasikan memori untuk pointer AdminID
+	}
 	*updateData.AdminID = adminID
 
 	// Update data pengaduan melalui service

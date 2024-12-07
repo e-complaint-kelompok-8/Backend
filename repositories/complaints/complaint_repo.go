@@ -19,7 +19,7 @@ type ComplaintRepoInterface interface {
 	GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error)
 	GetComplaintByID(complaintID int) (models.Complaint, error)
 	UpdateComplaintStatus(complaintID int, status string, reason string) error
-	AdminGetComplaintsByStatusAndCategory(status string, categoryID int) ([]entities.Complaint, error)
+	AdminGetComplaintsByStatusAndCategory(status string, categoryID, page, limit int) ([]entities.Complaint, int64, error)
 	AdminGetComplaintDetailByID(complaintID int) (entities.Complaint, error)
 	AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error
 	AdminGetComplaintByID(complaintID int) (entities.Complaint, error)

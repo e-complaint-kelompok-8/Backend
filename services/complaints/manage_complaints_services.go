@@ -6,22 +6,22 @@ import (
 	"errors"
 )
 
-func (cs *ComplaintService) GetComplaintsByStatusAndCategory(status string, categoryID int) ([]entities.Complaint, error) {
+func (cs *ComplaintService) GetComplaintsByStatusAndCategory(status string, categoryID, page, limit int) ([]entities.Complaint, int64, error) {
 	// Validasi input status hanya jika tidak kosong
 	if status != "" {
 		validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
 		if !utils.StringInSlice(status, validStatuses) {
-			return nil, errors.New("status tidak valid")
+			return nil, 0, errors.New("invalid status")
 		}
 	}
 
 	// Ambil data dari repository
-	complaints, err := cs.complaintRepo.AdminGetComplaintsByStatusAndCategory(status, categoryID)
+	complaints, total, err := cs.complaintRepo.AdminGetComplaintsByStatusAndCategory(status, categoryID, page, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return complaints, nil
+	return complaints, total, nil
 }
 
 func (cs *ComplaintService) GetComplaintDetailByID(complaintID int) (entities.Complaint, error) {

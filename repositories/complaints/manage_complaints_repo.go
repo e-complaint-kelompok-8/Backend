@@ -7,8 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, categoryID int) ([]entities.Complaint, error) {
+func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, categoryID, page, limit int) ([]entities.Complaint, int64, error) {
 	var complaints []models.Complaint
+	var total int64
 
 	// Preload User, Category, dan Photos
 	query := cr.db.Preload("User").Preload("Category").Preload("Photos")
@@ -23,10 +24,21 @@ func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, ca
 		query = query.Where("category_id = ?", categoryID)
 	}
 
+	// Hitung total data sebelum pagination
+	if err := query.Model(&models.Complaint{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Terapkan pagination jika limit > 0
+	if limit > 0 {
+		offset := (page - 1) * limit
+		query = query.Offset(offset).Limit(limit)
+	}
+
 	// Eksekusi query
 	err := query.Find(&complaints).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	// Konversi ke entities
@@ -35,7 +47,7 @@ func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, ca
 		result = append(result, complaint.ToEntities())
 	}
 
-	return result, nil
+	return result, total, nil
 }
 
 func (cr *ComplaintRepo) AdminGetComplaintDetailByID(complaintID int) (entities.Complaint, error) {
