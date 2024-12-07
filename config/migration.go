@@ -1,7 +1,6 @@
 package config
 
 import (
-	"capstone/entities"
 	"capstone/repositories/models"
 	"log"
 
@@ -9,19 +8,16 @@ import (
 )
 
 func RunMigrations(db *gorm.DB) {
+	// AutoMigrate tabel
 	db.AutoMigrate(
-		&models.User{},
-		&entities.Admin{},
-		&models.Category{},
 		&models.Complaint{},
 		&models.ComplaintPhoto{},
+		&models.User{},
+		&models.Admin{},
+		&models.Category{},
 		&models.News{},
 		&models.Comment{},
 		&models.Feedback{},
-		// &entities.AIResponse{},
-		// &entities.ChatMessage{},
-		// &entities.ImportLog{},
-		// &entities.Notification{},
 	)
 	log.Println("Migration completed successfully!")
 }

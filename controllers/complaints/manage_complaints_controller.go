@@ -159,7 +159,7 @@ func (cc *ComplaintController) UpdateComplaintByAdmin(c echo.Context) error {
 
 	// Masukkan AdminID ke dalam data pembaruan
 	updateData := request.ToEntity()
-	updateData.AdminID = adminID
+	*updateData.AdminID = adminID
 
 	// Update data pengaduan melalui service
 	err = cc.complaintService.UpdateComplaintByAdmin(complaintID, updateData)
@@ -178,4 +178,27 @@ func (cc *ComplaintController) UpdateComplaintByAdmin(c echo.Context) error {
 		"message":   "Complaint updated successfully",
 		"complaint": response.ComplaintFromEntitiesWithAdmin(complaint),
 	})
+}
+
+func (cc *ComplaintController) DeleteComplaintByAdmin(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	// Ambil ID pengaduan dari parameter
+	complaintID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid complaint ID"})
+	}
+
+	// Hapus complaint melalui service
+	err = cc.complaintService.DeleteComplaintByAdmin(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	// Kirim respons
+	return c.JSON(http.StatusOK, map[string]string{"message": "Complaint deleted successfully"})
 }

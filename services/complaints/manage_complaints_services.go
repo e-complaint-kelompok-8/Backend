@@ -48,7 +48,7 @@ func (cs *ComplaintService) UpdateComplaintStatus(complaintID int, adminID int, 
 	}
 
 	// Pastikan admin berhak mengubah status
-	if complaint.AdminID != 0 && complaint.AdminID != adminID {
+	if complaint.AdminID != nil && *complaint.AdminID != adminID {
 		return errors.New("anda tidak memiliki akses untuk mengubah status pengaduan ini")
 	}
 
@@ -89,6 +89,27 @@ func (cs *ComplaintService) UpdateComplaintByAdmin(complaintID int, updateData e
 	err := cs.complaintRepo.AdminUpdateComplaint(complaintID, updateData)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (cs *ComplaintService) DeleteComplaintByAdmin(complaintID int) error {
+	// Periksa apakah complaint ada di database
+	complaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
+	if err != nil {
+		return errors.New("complaint not found")
+	}
+
+	// Validasi jika diperlukan (opsional)
+	if complaint.Status == "selesai" {
+		return errors.New("completed complaints cannot be deleted")
+	}
+
+	// Hapus complaint di repository
+	err = cs.complaintRepo.DeleteComplaint(complaintID)
+	if err != nil {
+		return errors.New("failed to delete complaint")
 	}
 
 	return nil

@@ -21,6 +21,7 @@ type ComplaintServiceInterface interface {
 	UpdateComplaintStatus(complaintID int, adminID int, newStatus string) error
 	GetComplaintByID(complaintID int) (entities.Complaint, error)
 	UpdateComplaintByAdmin(complaintID int, updateData entities.Complaint) error
+	DeleteComplaintByAdmin(complaintID int) error
 }
 
 type ComplaintService struct {

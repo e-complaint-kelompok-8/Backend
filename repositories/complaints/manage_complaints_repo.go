@@ -89,3 +89,8 @@ func (cr *ComplaintRepo) AdminUpdateComplaint(complaintID int, updateData entiti
 
 	return nil
 }
+
+func (cr *ComplaintRepo) DeleteComplaint(complaintID int) error {
+	// Hapus complaint berdasarkan ID
+	return cr.db.Where("id = ?", complaintID).Delete(&models.Complaint{}).Error
+}

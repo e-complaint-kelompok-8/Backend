@@ -4,7 +4,7 @@ import "time"
 
 type Complaint struct {
 	ID              int              `json:"id"`
-	AdminID         int              `json:"admin_id"`
+	AdminID         *int             `json:"admin_id"`
 	Admin           Admin            `json:"admin"`
 	UserID          int              `json:"user_id"`
 	User            User             `json:"user"`
