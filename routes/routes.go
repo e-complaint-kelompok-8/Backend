@@ -79,6 +79,8 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminJwt.DELETE("/:id", rc.AuthAdminController.DeleteAdminHandler)
 
 	// Rute Admin untuk Kelola Complaints
-	eAdminJwt.GET("/complaint/filter", rc.ComplaintController.GetComplaintsByStatusAndCategory)
+	eAdminComplaints := eAdminJwt.Group("/complaint")
+	eAdminComplaints.GET("/filter", rc.ComplaintController.GetComplaintsByStatusAndCategory)
+	eAdminComplaints.GET("/:id", rc.ComplaintController.GetComplaintDetailByAdmin)
 
 }

@@ -20,6 +20,7 @@ type ComplaintRepoInterface interface {
 	GetComplaintByID(complaintID int) (models.Complaint, error)
 	UpdateComplaintStatus(complaintID int, status string, reason string) error
 	GetComplaintsByStatusAndCategory(status string, categoryID int) ([]entities.Complaint, error)
+	GetComplaintDetailByID(complaintID int) (entities.Complaint, error)
 }
 
 type ComplaintRepo struct {

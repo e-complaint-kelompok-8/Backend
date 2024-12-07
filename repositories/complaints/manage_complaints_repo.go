@@ -35,3 +35,15 @@ func (cr *ComplaintRepo) GetComplaintsByStatusAndCategory(status string, categor
 
 	return result, nil
 }
+
+func (cr *ComplaintRepo) GetComplaintDetailByID(complaintID int) (entities.Complaint, error) {
+	var complaint models.Complaint
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		First(&complaint, "id = ?", complaintID).Error
+	if err != nil {
+		return entities.Complaint{}, err
+	}
+	return complaint.ToEntitiesReason(), nil
+}

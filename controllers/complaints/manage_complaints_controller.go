@@ -44,3 +44,31 @@ func (cc *ComplaintController) GetComplaintsByStatusAndCategory(c echo.Context) 
 		"complaints": response,
 	})
 }
+
+func (cc *ComplaintController) GetComplaintDetailByAdmin(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	// Ambil complaint ID dari parameter
+	complaintID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid complaint ID"})
+	}
+
+	// Ambil detail complaint dari service
+	complaint, err := cc.complaintService.GetComplaintDetailByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	// Konversi ke response
+	response := response.ComplaintFromEntitiesWithReason(complaint, complaint.Photos)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":   "Complaint detail retrieved successfully",
+		"complaint": response,
+	})
+}

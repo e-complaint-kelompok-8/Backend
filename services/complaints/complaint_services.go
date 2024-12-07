@@ -17,6 +17,7 @@ type ComplaintServiceInterface interface {
 	GetComplaintsByCategoryAndUser(categoryID int, userID int) ([]entities.Complaint, error)
 	CancelComplaint(complaintID int, userID int, reason string) (entities.Complaint, error)
 	GetComplaintsByStatusAndCategory(status string, categoryID int) ([]entities.Complaint, error)
+	GetComplaintDetailByID(complaintID int) (entities.Complaint, error)
 }
 
 type ComplaintService struct {

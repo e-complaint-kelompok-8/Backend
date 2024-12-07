@@ -8,6 +8,8 @@ import (
 // Complaint struct
 type Complaint struct {
 	ID              int              `gorm:"primaryKey;autoIncrement"`
+	AdminID         int              `gorm:"admin_id"`
+	Admin           Admin            `gorm:"foreignKey:AdminID"`
 	UserID          int              `gorm:"not null"`
 	User            User             `gorm:"foreignKey:UserID"`
 	CategoryID      int              `gorm:"not null"`

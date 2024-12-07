@@ -23,3 +23,13 @@ func (cs *ComplaintService) GetComplaintsByStatusAndCategory(status string, cate
 
 	return complaints, nil
 }
+
+func (cs *ComplaintService) GetComplaintDetailByID(complaintID int) (entities.Complaint, error) {
+	// Ambil detail complaint dari repository
+	complaint, err := cs.complaintRepo.GetComplaintDetailByID(complaintID)
+	if err != nil {
+		return entities.Complaint{}, err
+	}
+
+	return complaint, nil
+}
