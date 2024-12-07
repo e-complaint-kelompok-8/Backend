@@ -8,6 +8,8 @@ import (
 // Complaint struct
 type Complaint struct {
 	ID              int              `gorm:"primaryKey;autoIncrement"`
+	AdminID         *int             `gorm:"admin_id"` // Gunakan pointer untuk mendukung nilai NULL
+	Admin           Admin            `gorm:"foreignKey:AdminID"`
 	UserID          int              `gorm:"not null"`
 	User            User             `gorm:"foreignKey:UserID"`
 	CategoryID      int              `gorm:"not null"`
@@ -17,7 +19,7 @@ type Complaint struct {
 	Location        string           `gorm:"type:varchar(255);not null"`
 	Status          string           `gorm:"type:enum('proses', 'tanggapi', 'batal', 'selesai');default:'proses'"`
 	Description     string           `gorm:"type:text;not null"`
-	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID"`
+	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID;constraint:OnDelete:CASCADE"` // Tambahkan OnDelete:CASCADE
 	Reason          string           `gorm:"type:text"`
 	CreatedAt       time.Time        `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time        `gorm:"autoUpdateTime"`
@@ -46,6 +48,8 @@ func (c Complaint) ToEntities() entities.Complaint {
 
 	return entities.Complaint{
 		ID:              c.ID,
+		AdminID:         c.AdminID,
+		Admin:           c.Admin.ToEntities(),
 		UserID:          c.UserID,
 		User:            c.User.ToEntities(),
 		CategoryID:      c.CategoryID,
@@ -69,6 +73,8 @@ func (c Complaint) ToEntitiesReason() entities.Complaint {
 
 	return entities.Complaint{
 		ID:              c.ID,
+		AdminID:         c.AdminID,
+		Admin:           c.Admin.ToEntities(),
 		UserID:          c.UserID,
 		User:            c.User.ToEntities(),
 		CategoryID:      c.CategoryID,

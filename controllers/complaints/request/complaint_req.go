@@ -22,3 +22,24 @@ func (req CreateComplaintRequest) ToEntity() entities.Complaint {
 		Description:     req.Description,
 	}
 }
+
+// Bind data dari request body
+type RequestUpdateComplaint struct {
+	CategoryID      int    `json:"category_id"`
+	Title           string `json:"title"`
+	Location        string `json:"location"`
+	Status          string `json:"status"`
+	Description     string `json:"description"`
+	ComplaintNumber string `json:"complaint_number"`
+}
+
+func (req RequestUpdateComplaint) ToEntity() entities.Complaint {
+	return entities.Complaint{
+		CategoryID:      req.CategoryID,
+		Title:           req.Title,
+		Location:        req.Location,
+		Status:          req.Status,
+		Description:     req.Description,
+		ComplaintNumber: req.ComplaintNumber,
+	}
+}
