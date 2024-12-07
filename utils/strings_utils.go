@@ -11,3 +11,12 @@ func CapitalizeErrorMessage(err error) string {
 	return strings.Join(words, " ") // Gabungkan kembali menjadi satu pesan
 }
 
+// StringInSlice memeriksa apakah sebuah string ada di dalam slice
+func StringInSlice(str string, list []string) bool {
+	for _, v := range list {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}

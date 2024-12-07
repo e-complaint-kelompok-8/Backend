@@ -10,7 +10,7 @@ type Admin struct {
 	ID        int       `gorm:"primaryKey;autoIncrement"`
 	Email     string    `gorm:"type:varchar(255);unique;not null"`
 	Password  string    `gorm:"type:varchar(255);not null"`
-	Role      string    `gorm:"type:enum('admin', 'superadmin');not null;default:'admin'"`
+	Role      string    `gorm:"type:enum('admin');not null;default:'admin'"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }

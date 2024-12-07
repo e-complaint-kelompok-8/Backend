@@ -142,6 +142,19 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 			})
 		}
 
+		// Periksa apakah kategori tersedia
+		var categoryResponse Category
+		if complaint.Category.ID > 0 {
+			categoryResponse = Category{
+				ID:          complaint.Category.ID,
+				Name:        complaint.Category.Name,
+				Description: complaint.Category.Description,
+				CreatedAt:   complaint.Category.CreatedAt,
+				UpdatedAt:   complaint.Category.UpdatedAt,
+			}
+		}
+
+		// Tambahkan respons
 		responses = append(responses, CreateComplaintResponseWithPhoto{
 			ID: complaint.ID,
 			User: User{
@@ -150,13 +163,7 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 				Phone: complaint.User.Phone,
 				Email: complaint.User.Email,
 			},
-			Category: Category{
-				ID:          complaint.Category.ID,
-				Name:        complaint.Category.Name,
-				Description: complaint.Category.Description,
-				CreatedAt:   complaint.Category.CreatedAt,
-				UpdatedAt:   complaint.Category.UpdatedAt,
-			},
+			Category:        categoryResponse,
 			ComplaintNumber: complaint.ComplaintNumber,
 			Title:           complaint.Title,
 			Location:        complaint.Location,

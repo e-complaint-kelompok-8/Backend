@@ -2,6 +2,7 @@ package auth
 
 import (
 	"capstone/entities"
+	"capstone/middlewares"
 	"capstone/services/auth"
 	"net/http"
 	"strconv"
@@ -36,7 +37,6 @@ func (controller *AdminController) RegisterAdminHandler(c echo.Context) error {
 	return c.JSON(http.StatusCreated, createdAdmin)
 }
 
-// LoginAdminHandler handles admin login
 func (controller *AdminController) LoginAdminHandler(c echo.Context) error {
 	var credentials struct {
 		Email    string `json:"email"`
@@ -45,7 +45,7 @@ func (controller *AdminController) LoginAdminHandler(c echo.Context) error {
 
 	// Bind JSON request body to credentials struct
 	if err := c.Bind(&credentials); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "invalid request body"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
 	}
 
 	// Authenticate admin
@@ -57,7 +57,11 @@ func (controller *AdminController) LoginAdminHandler(c echo.Context) error {
 	// Return token and admin info
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
-		"admin": admin,
+		"admin": map[string]interface{}{
+			"id":    admin.ID,
+			"email": admin.Email,
+			"role":  admin.Role,
+		},
 	})
 }
 
@@ -128,4 +132,14 @@ func (controller *AdminController) DeleteAdminHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "admin deleted successfully"})
+}
+
+func (ac *AdminController) SomeAdminEndpoint(c echo.Context) error {
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	// Lanjutkan dengan logika endpoint
+	return c.JSON(http.StatusOK, map[string]string{"message": "Welcome, Admin!"})
 }

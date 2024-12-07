@@ -21,7 +21,7 @@ type RouteController struct {
 	FeedbackController  feedback.FeedbackController
 	jwtUser             middlewares.JwtUser
 	AuthAdminController auth.AdminController
-	// jwtAdmin middlewares.JWTAdminClaims
+	jwtAdmin            middlewares.JwtAdmin
 }
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
@@ -65,14 +65,20 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eFeedback.POST("/:id/response", rc.FeedbackController.AddResponseToFeedback)
 
 	// Grup Admin
-	api := e.Group("/admin")
-	api.POST("/register", rc.AuthAdminController.RegisterAdminHandler)
-	api.POST("/login", rc.AuthAdminController.LoginAdminHandler)
-	api.GET("", rc.AuthAdminController.GetAllAdminsHandler)
-	api.GET("/:id", rc.AuthAdminController.GetAdminByIDHandler)
-	api.PUT("/:id", rc.AuthAdminController.UpdateAdminHandler)
-	api.DELETE("/:id", rc.AuthAdminController.DeleteAdminHandler)
+	eAdmin := e.Group("/admin")
+	eAdmin.POST("/register", rc.AuthAdminController.RegisterAdminHandler)
+	eAdmin.POST("/login", rc.AuthAdminController.LoginAdminHandler)
 
-	// JWT Authentication Middleware for protected routes
-	api.Use(middlewares.JWTMiddleware())
+	// Rute Admin yang dilindungi JWTAdminMiddleware
+	eAdminJwt := eAdmin.Group("")
+	eAdminJwt.Use(echojwt.JWT([]byte(os.Getenv("JWT_SECRET_KEY"))))
+	eAdminJwt.Use(rc.jwtAdmin.JWTAdminMiddleware)
+	eAdminJwt.GET("", rc.AuthAdminController.GetAllAdminsHandler)
+	eAdminJwt.GET("/:id", rc.AuthAdminController.GetAdminByIDHandler)
+	eAdminJwt.PUT("/:id", rc.AuthAdminController.UpdateAdminHandler)
+	eAdminJwt.DELETE("/:id", rc.AuthAdminController.DeleteAdminHandler)
+
+	// Rute Admin untuk Kelola Complaints
+	eAdminJwt.GET("/complaint/filter", rc.ComplaintController.GetComplaintsByStatusAndCategory)
+
 }
