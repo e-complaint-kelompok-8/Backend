@@ -48,6 +48,8 @@ func (c Complaint) ToEntities() entities.Complaint {
 
 	return entities.Complaint{
 		ID:              c.ID,
+		AdminID:         c.AdminID,
+		Admin:           c.Admin.ToEntities(),
 		UserID:          c.UserID,
 		User:            c.User.ToEntities(),
 		CategoryID:      c.CategoryID,
@@ -71,6 +73,8 @@ func (c Complaint) ToEntitiesReason() entities.Complaint {
 
 	return entities.Complaint{
 		ID:              c.ID,
+		AdminID:         c.AdminID,
+		Admin:           c.Admin.ToEntities(),
 		UserID:          c.UserID,
 		User:            c.User.ToEntities(),
 		CategoryID:      c.CategoryID,
