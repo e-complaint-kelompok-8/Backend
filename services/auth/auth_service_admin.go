@@ -12,11 +12,11 @@ import (
 
 type AdminService struct {
 	adminRepo    *repositories.AdminRepository
-	jwtInterface middlewares.JwtInterfaceAdmin
+	jwtInterface middlewares.JwtAdminInterface
 }
 
 // NewAdminService creates a new instance of AdminService
-func NewAdminService(adminRepo *repositories.AdminRepository, jwtInterface middlewares.JwtInterfaceAdmin) *AdminService {
+func NewAdminService(adminRepo *repositories.AdminRepository, jwtInterface middlewares.JwtAdminInterface) *AdminService {
 	return &AdminService{adminRepo: adminRepo, jwtInterface: jwtInterface}
 }
 
