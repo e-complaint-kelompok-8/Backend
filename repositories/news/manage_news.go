@@ -69,3 +69,34 @@ func (nr *NewsRepository) CreateNews(news entities.News) (entities.News, error) 
 	// Kembalikan data dalam bentuk entitas
 	return newsModel.ToEntities(), nil
 }
+
+func (nr *NewsRepository) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) {
+	var existingNews models.News
+
+	// Cari berita berdasarkan ID
+	err := nr.db.First(&existingNews, "id = ?", id).Error
+	if err != nil {
+		return entities.News{}, errors.New("news not found")
+	}
+
+	// Update data berita
+	existingNews.Title = updatedNews.Title
+	existingNews.Content = updatedNews.Content
+	existingNews.PhotoURL = updatedNews.PhotoURL
+	existingNews.CategoryID = updatedNews.CategoryID
+	existingNews.Date = updatedNews.Date
+
+	// Simpan perubahan
+	err = nr.db.Save(&existingNews).Error
+	if err != nil {
+		return entities.News{}, err
+	}
+
+	// Preload Admin dan Category untuk response
+	err = nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").First(&existingNews, "id = ?", existingNews.ID).Error
+	if err != nil {
+		return entities.News{}, err
+	}
+
+	return existingNews.ToEntitiesWithComment(), nil
+}

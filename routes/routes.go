@@ -91,5 +91,6 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminNews.GET("", rc.NewsController.GetAllNewsWithComments)
 	eAdminNews.GET("/:id", rc.NewsController.GetNewsDetailByAdmin)
 	eAdminNews.POST("", rc.NewsController.AddNews)
+	eAdminNews.PUT("/:id", rc.NewsController.UpdateNewsByAdmin)
 
 }

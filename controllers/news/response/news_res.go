@@ -12,6 +12,7 @@ type NewsResponse struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	PhotoURL  string    `json:"photo_url"`
+	Date      time.Time `json:"date"`
 	Comments  []Comment `json:"comments"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -65,6 +66,7 @@ func NewFromEntities(news entities.News) NewsResponse {
 		Title:     news.Title,
 		Content:   news.Content,
 		PhotoURL:  news.PhotoURL,
+		Date:      news.Date,
 		Comments:  comments,
 		CreatedAt: news.CreatedAt,
 		UpdatedAt: news.UpdatedAt,

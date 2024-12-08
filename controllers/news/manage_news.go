@@ -59,3 +59,26 @@ func (nc *NewsController) AddNews(c echo.Context) error {
 		"data":    response.NewFromEntities(news),
 	})
 }
+
+func (nc *NewsController) UpdateNewsByAdmin(c echo.Context) error {
+	id := c.Param("id")
+
+	req := request.AddNewsRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request payload"})
+	}
+
+	// Konversi request ke entitas
+	newsEntity := req.ToEntity()
+
+	// Panggil service untuk update berita
+	updatedNews, err := nc.newsService.UpdateNewsByID(id, newsEntity)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "News updated successfully",
+		"data":    response.NewFromEntities(updatedNews),
+	})
+}

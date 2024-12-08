@@ -36,3 +36,22 @@ func (ns *NewsService) AddNews(news entities.News) (entities.News, error) {
 
 	return newsEntity, nil
 }
+
+func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) {
+	// Validasi kategori
+	isValid, err := ns.newsRepo.IsCategoryValid(updatedNews.CategoryID)
+	if err != nil {
+		return entities.News{}, err
+	}
+	if !isValid {
+		return entities.News{}, errors.New("invalid category ID")
+	}
+
+	// Panggil repository untuk update berita
+	news, err := ns.newsRepo.UpdateNewsByID(id, updatedNews)
+	if err != nil {
+		return entities.News{}, err
+	}
+
+	return news, nil
+}
