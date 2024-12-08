@@ -28,7 +28,7 @@ func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 	var news []models.News
 
 	// Query semua berita dengan Preload admin dan category
-	err := nr.db.Preload("Admin").Preload("Category").Find(&news).Error
+	err := nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").Find(&news).Error
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 	// Konversi model ke entitas
 	var result []entities.News
 	for _, n := range news {
-		result = append(result, n.ToEntities())
+		result = append(result, n.ToEntitiesWithComment())
 	}
 
 	return result, nil
@@ -46,11 +46,11 @@ func (nr *NewsRepository) GetNewsByID(id string) (entities.News, error) {
 	var news models.News
 
 	// Query berita berdasarkan ID dengan Preload admin dan category
-	err := nr.db.Preload("Admin").Preload("Category").First(&news, "id = ?", id).Error
+	err := nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").First(&news, "id = ?", id).Error
 	if err != nil {
 		return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
 	}
 
 	// Konversi model ke entitas
-	return news.ToEntities(), nil
+	return news.ToEntitiesWithComment(), nil
 }

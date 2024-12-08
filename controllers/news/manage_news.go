@@ -17,7 +17,7 @@ func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Success",
-		"data":    response.NewsFromEntities(newsList),
+		"news":    response.NewsFromEntities(newsList),
 	})
 }
 
@@ -33,6 +33,6 @@ func (nc *NewsController) GetNewsDetailByAdmin(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Success",
-		"data":    response.NewFromEntities(news),
+		"news":    response.NewFromEntities(news),
 	})
 }
