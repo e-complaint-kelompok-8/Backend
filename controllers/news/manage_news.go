@@ -3,12 +3,19 @@ package news
 import (
 	"capstone/controllers/news/request"
 	"capstone/controllers/news/response"
+	"capstone/middlewares"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	newsList, err := nc.newsService.GetAllNewsWithComments()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
@@ -23,6 +30,12 @@ func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
 }
 
 func (nc *NewsController) GetNewsDetailByAdmin(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	id := c.Param("id")
 
 	news, err := nc.newsService.GetNewsByIDWithComments(id)
@@ -39,6 +52,12 @@ func (nc *NewsController) GetNewsDetailByAdmin(c echo.Context) error {
 }
 
 func (nc *NewsController) AddNews(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	req := request.AddNewsRequest{}
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request payload"})
@@ -61,6 +80,12 @@ func (nc *NewsController) AddNews(c echo.Context) error {
 }
 
 func (nc *NewsController) UpdateNewsByAdmin(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	id := c.Param("id")
 
 	req := request.AddNewsRequest{}
@@ -80,5 +105,32 @@ func (nc *NewsController) UpdateNewsByAdmin(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "News updated successfully",
 		"data":    response.NewFromEntities(updatedNews),
+	})
+}
+
+func (nc *NewsController) DeleteMultipleNewsByAdmin(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	var ids []int
+	if err := c.Bind(&ids); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Invalid request payload",
+		})
+	}
+
+	// Panggil service untuk menghapus berita
+	err = nc.newsService.DeleteMultipleNews(ids)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Selected news deleted successfully",
 	})
 }

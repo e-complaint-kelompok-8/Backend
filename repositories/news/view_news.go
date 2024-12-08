@@ -17,6 +17,8 @@ type NewsRepositoryInterface interface {
 	IsCategoryValid(categoryID int) (bool, error)
 	CreateNews(news entities.News) (entities.News, error)
 	UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error)
+	DeleteMultipleNews(ids []int) error
+	ValidateNewsIDs(ids []int) ([]int, error)
 }
 
 type NewsRepository struct {

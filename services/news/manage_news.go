@@ -55,3 +55,32 @@ func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (ent
 
 	return news, nil
 }
+
+func (ns *NewsService) DeleteMultipleNews(ids []int) error {
+	// Validasi input
+	if len(ids) == 0 {
+		return errors.New("tidak ada berita yang dipilih untuk dihapus")
+	}
+
+	// Validasi apakah ID berita ada di database
+	existingIDs, err := ns.newsRepo.ValidateNewsIDs(ids)
+	if err != nil {
+		return err
+	}
+
+	// Cek jika ada ID yang tidak ditemukan
+	if len(existingIDs) == 0 {
+		return errors.New("berita tidak ditemukan")
+	}
+	if len(existingIDs) != len(ids) {
+		return errors.New("beberapa ID berita tidak ditemukan")
+	}
+
+	// Hapus berita yang valid
+	err = ns.newsRepo.DeleteMultipleNews(existingIDs)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

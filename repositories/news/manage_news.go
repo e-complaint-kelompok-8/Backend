@@ -100,3 +100,22 @@ func (nr *NewsRepository) UpdateNewsByID(id string, updatedNews entities.News) (
 
 	return existingNews.ToEntitiesWithComment(), nil
 }
+
+func (nr *NewsRepository) ValidateNewsIDs(ids []int) ([]int, error) {
+	var existingIDs []int
+	err := nr.db.Model(&models.News{}).Where("id IN ?", ids).Pluck("id", &existingIDs).Error
+	if err != nil {
+		return nil, err
+	}
+	return existingIDs, nil
+}
+
+func (nr *NewsRepository) DeleteMultipleNews(ids []int) error {
+	// Hapus berita berdasarkan id yang diterima
+	err := nr.db.Where("id IN ?", ids).Delete(&models.News{}).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

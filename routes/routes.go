@@ -92,5 +92,6 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminNews.GET("/:id", rc.NewsController.GetNewsDetailByAdmin)
 	eAdminNews.POST("", rc.NewsController.AddNews)
 	eAdminNews.PUT("/:id", rc.NewsController.UpdateNewsByAdmin)
+	eAdminNews.DELETE("/bulk-delete", rc.NewsController.DeleteMultipleNewsByAdmin)
 
 }
