@@ -14,6 +14,8 @@ type NewsRepositoryInterface interface {
 	GetNewsByID(id string) (entities.News, error)
 	GetAllNewsWithComments() ([]entities.News, error)
 	GetNewsByIDWithComments(id string) (entities.News, error)
+	IsCategoryValid(categoryID int) (bool, error)
+	CreateNews(news entities.News) (entities.News, error)
 }
 
 type NewsRepository struct {

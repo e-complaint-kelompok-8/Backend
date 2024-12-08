@@ -1,6 +1,7 @@
 package news
 
 import (
+	"capstone/controllers/news/request"
 	"capstone/controllers/news/response"
 	"net/http"
 
@@ -34,5 +35,27 @@ func (nc *NewsController) GetNewsDetailByAdmin(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Success",
 		"news":    response.NewFromEntities(news),
+	})
+}
+
+func (nc *NewsController) AddNews(c echo.Context) error {
+	req := request.AddNewsRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request payload"})
+	}
+
+	// Konversi request ke entitas
+	newsEntity := req.ToEntity()
+
+	// Simpan berita baru dan dapatkan data lengkapnya
+	news, err := nc.newsService.AddNews(newsEntity)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	// Kirimkan data berita lengkap dalam response
+	return c.JSON(http.StatusCreated, map[string]interface{}{
+		"message": "News created successfully",
+		"data":    response.NewFromEntities(news),
 	})
 }

@@ -23,27 +23,31 @@ type News struct {
 
 func (news News) ToEntities() entities.News {
 	return entities.News{
-		ID:        news.ID,
-		Admin:     news.Admin.ToEntities(),
-		Category:  news.Category.ToEntities(),
-		Title:     news.Title,
-		Content:   news.Content,
-		PhotoURL:  news.PhotoURL,
-		Date:      news.Date,
-		CreatedAt: news.CreatedAt,
-		UpdatedAt: news.UpdatedAt,
+		ID:         news.ID,
+		AdminID:    news.AdminID,
+		Admin:      news.Admin.ToEntities(),
+		CategoryID: news.CategoryID,
+		Category:   news.Category.ToEntities(),
+		Title:      news.Title,
+		Content:    news.Content,
+		PhotoURL:   news.PhotoURL,
+		Date:       news.Date,
+		CreatedAt:  news.CreatedAt,
+		UpdatedAt:  news.UpdatedAt,
 	}
 }
 
 func FromEntitiesNews(news entities.News) News {
 	return News{
-		ID:        news.ID,
-		Title:     news.Title,
-		Content:   news.Content,
-		PhotoURL:  news.PhotoURL,
-		Date:      news.Date,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ID:         news.ID,
+		AdminID:    news.AdminID,
+		CategoryID: news.CategoryID,
+		Title:      news.Title,
+		Content:    news.Content,
+		PhotoURL:   news.PhotoURL,
+		Date:       news.Date,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
 	}
 }
 
