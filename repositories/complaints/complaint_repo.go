@@ -21,7 +21,6 @@ type ComplaintRepoInterface interface {
 	UpdateComplaintStatus(complaintID int, status string, reason string) error
 	AdminGetComplaintsByStatusAndCategory(status string, categoryID, page, limit int) ([]entities.Complaint, int64, error)
 	AdminGetComplaintDetailByID(complaintID int) (entities.Complaint, error)
-	AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error
 	AdminGetComplaintByID(complaintID int) (entities.Complaint, error)
 	AdminUpdateComplaint(complaintID int, updateData entities.Complaint) error
 	DeleteComplaint(complaintID int) error
