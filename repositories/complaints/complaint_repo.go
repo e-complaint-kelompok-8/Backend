@@ -96,13 +96,20 @@ func (cr *ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint
 	return result, nil
 }
 
-func (ar *ComplaintRepo) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {
+func (cr *ComplaintRepo) GetComplaintByIDAndUser(complaintID, userID int) (entities.Complaint, error) {
 	var complaint models.Complaint
-	err := ar.db.Preload("User").Preload("Category").
-		Where("id = ? AND user_id = ?", id, userID).First(&complaint).Error
+
+	// Preload User, Category, Photos, dan Admin jika diperlukan
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		Where("id = ? AND user_id = ?", complaintID, userID).
+		First(&complaint).Error
 	if err != nil {
 		return entities.Complaint{}, err
 	}
+
+	// Konversi dari model ke entitas
 	return complaint.ToEntities(), nil
 }
 
