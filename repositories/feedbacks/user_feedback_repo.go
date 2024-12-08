@@ -3,6 +3,7 @@ package feedbacks
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -14,6 +15,10 @@ type FeedbackRepositoryInterface interface {
 	UpdateFeedbackResponse(feedbackID int, response string) error
 	UpdateComplaintStatus(complaintID int, status string) error
 	GetFeedbackByID(feedbackID int) (entities.Feedback, error)
+	CreateFeedback(feedback *entities.Feedback) error
+	CheckAdminExists(adminID int) (bool, error)
+	CheckUserExists(userID int) (bool, error)
+	AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error
 }
 
 type FeedbackRepository struct {
@@ -78,15 +83,20 @@ func (fr *FeedbackRepository) UpdateComplaintStatus(complaintID int, status stri
 	return fr.db.Model(&models.Complaint{}).Where("id = ?", complaintID).Update("status", status).Error
 }
 
-func (fr *FeedbackRepository) GetFeedbackByID(feedbackID int) (entities.Feedback, error) {
+func (cr *FeedbackRepository) GetFeedbackByID(feedbackID int) (entities.Feedback, error) {
 	var feedback models.Feedback
-	err := fr.db.Preload("Admin").
+	err := cr.db.Preload("Admin").
 		Preload("User").
-		Preload("Complaint.Category").
-		Preload("Complaint.Photos").
+		Preload("Complaint").
+		Preload("Complaint.Category"). // Preload relasi kategori
+		Preload("Complaint.User").     // Preload user pada complaint
+		Preload("Complaint.Photos").   // Preload foto pada complaint
 		First(&feedback, "id = ?", feedbackID).Error
+
 	if err != nil {
+		log.Printf("Error fetching feedback: %v", err)
 		return entities.Feedback{}, err
 	}
+
 	return feedback.ToEntities(), nil
 }

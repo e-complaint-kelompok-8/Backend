@@ -83,6 +83,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminComplaints.GET("/filter", rc.ComplaintController.GetComplaintsByStatusAndCategory)
 	eAdminComplaints.GET("/:id", rc.ComplaintController.GetComplaintDetailByAdmin)
 	eAdminComplaints.PUT("/status/:id", rc.ComplaintController.UpdateComplaintStatus)
+	eAdminComplaints.POST("/feedback", rc.FeedbackController.ProvideFeedback)
 	eAdminComplaints.PUT("/:id", rc.ComplaintController.UpdateComplaintByAdmin)
 	eAdminComplaints.DELETE("/:id", rc.ComplaintController.DeleteComplaintByAdmin)
 

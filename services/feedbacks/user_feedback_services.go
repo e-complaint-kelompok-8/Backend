@@ -12,6 +12,7 @@ type FeedbackServiceInterface interface {
 	GetFeedbacksByUser(userID int) ([]entities.Feedback, error)
 	AddResponseToFeedback(feedbackID int, userID int, response string) error
 	GetFeedbackByID(feedbackID int, userID int) (entities.Feedback, error)
+	ProvideFeedback(adminID, complaintID int, content string) (entities.Feedback, error)
 }
 
 type FeedbackService struct {
@@ -96,12 +97,12 @@ func (fs *FeedbackService) GetFeedbackByID(feedbackID int, userID int) (entities
 	// Ambil feedback dari repository
 	feedback, err := fs.feedbackRepo.GetFeedbackByID(feedbackID)
 	if err != nil {
-		return entities.Feedback{}, errors.New("Feedback tidak ditemukan")
+		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("feedback tidak ditemukan")))
 	}
 
 	// Pastikan feedback milik user
 	if feedback.UserID != userID {
-		return entities.Feedback{}, errors.New("Anda tidak memiliki akses untuk melihat feedback ini")
+		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("anda tidak memiliki akses untuk melihat feedback ini")))
 	}
 
 	return feedback, nil
