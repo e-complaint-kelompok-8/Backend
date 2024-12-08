@@ -1,6 +1,7 @@
 package feedbacks
 
 import (
+	"capstone/controllers/feedbacks/request"
 	"capstone/controllers/feedbacks/response"
 	"capstone/middlewares"
 	"net/http"
@@ -22,10 +23,7 @@ func (cc *FeedbackController) ProvideFeedback(c echo.Context) error {
 	}
 
 	// Bind request
-	var req struct {
-		ComplaintID int    `json:"complaint_id" validate:"required"`
-		Content     string `json:"content" validate:"required"`
-	}
+	req := request.FeedbackRequest{}
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request payload"})
 	}

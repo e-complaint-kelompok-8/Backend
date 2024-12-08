@@ -46,3 +46,9 @@ func (cr *FeedbackRepository) AdminUpdateComplaintStatus(complaintID int, newSta
 		"updated_at": gorm.Expr("NOW()"),
 	}).Error
 }
+
+func (cr *FeedbackRepository) ComplaintHasFeedback(complaintID int) (bool, error) {
+	var count int64
+	err := cr.db.Model(&models.Feedback{}).Where("complaint_id = ?", complaintID).Count(&count).Error
+	return count > 0, err
+}
