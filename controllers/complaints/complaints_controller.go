@@ -85,7 +85,7 @@ func (cc *ComplaintController) GetComplaintById(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message":   "Complaint status retrieved successfully",
-		"complaint": response.ComplaintFromEntities(complaint),
+		"complaint": response.ComplaintFromEntitiesWithPhoto(complaint, complaint.Photos),
 	})
 }
 
