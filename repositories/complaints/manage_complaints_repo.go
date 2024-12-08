@@ -62,15 +62,6 @@ func (cr *ComplaintRepo) AdminGetComplaintDetailByID(complaintID int) (entities.
 	return complaint.ToEntitiesReason(), nil
 }
 
-func (cr *ComplaintRepo) AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error {
-	// Perbarui status dan admin ID di tabel complaints
-	return cr.db.Model(&models.Complaint{}).Where("id = ?", complaintID).Updates(map[string]interface{}{
-		"status":     newStatus,
-		"admin_id":   adminID,
-		"updated_at": gorm.Expr("NOW()"),
-	}).Error
-}
-
 func (cr *ComplaintRepo) AdminGetComplaintByID(complaintID int) (entities.Complaint, error) {
 	var complaint models.Complaint
 	err := cr.db.Preload("User").Preload("Category").Preload("Admin").Preload("Photos").First(&complaint, "id = ?", complaintID).Error

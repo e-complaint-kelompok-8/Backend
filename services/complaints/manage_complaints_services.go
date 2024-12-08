@@ -34,33 +34,6 @@ func (cs *ComplaintService) GetComplaintDetailByID(complaintID int) (entities.Co
 	return complaint, nil
 }
 
-func (cs *ComplaintService) UpdateComplaintStatus(complaintID int, adminID int, newStatus string) error {
-	// Validasi status baru
-	validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
-	if !utils.StringInSlice(newStatus, validStatuses) {
-		return errors.New("status tidak valid")
-	}
-
-	// Ambil data complaint dari repository
-	complaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
-	if err != nil {
-		return errors.New("pengaduan tidak ditemukan")
-	}
-
-	// Pastikan admin berhak mengubah status
-	if complaint.AdminID != nil && *complaint.AdminID != adminID {
-		return errors.New("anda tidak memiliki akses untuk mengubah status pengaduan ini")
-	}
-
-	// Perbarui status pengaduan
-	err = cs.complaintRepo.AdminUpdateComplaintStatus(complaintID, newStatus, adminID)
-	if err != nil {
-		return errors.New("gagal memperbarui status pengaduan")
-	}
-
-	return nil
-}
-
 func (cs *ComplaintService) GetComplaintByID(complaintID int) (entities.Complaint, error) {
 	return cs.complaintRepo.AdminGetComplaintByID(complaintID)
 }
