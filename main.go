@@ -39,6 +39,8 @@ func main() {
 	// Membuat instance Echo
 	e := echo.New()
 	e.Use(middleware.CORS())
+	e.Use(middleware.Logger())
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// Inisialisasi dependency untuk Auth
 	jwtUser := middlewares.JwtUser{}

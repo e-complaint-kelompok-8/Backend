@@ -8,6 +8,7 @@ import (
 type NewsServiceInterface interface {
 	GetAllNews() ([]entities.News, error)
 	GetNewsByID(id string) (entities.News, error)
+	GetAllNewsWithComments() ([]entities.News, error)
 }
 
 type NewsService struct {
