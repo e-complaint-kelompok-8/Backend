@@ -13,6 +13,7 @@ type NewsRepositoryInterface interface {
 	GetAllNews() ([]entities.News, error)
 	GetNewsByID(id string) (entities.News, error)
 	GetAllNewsWithComments() ([]entities.News, error)
+	GetNewsByIDWithComments(id string) (entities.News, error)
 }
 
 type NewsRepository struct {

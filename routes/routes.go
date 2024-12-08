@@ -89,5 +89,6 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	// Rute Admin untuk Kelola news
 	eAdminNews := eAdminJwt.Group("/news")
 	eAdminNews.GET("", rc.NewsController.GetAllNewsWithComments)
+	eAdminNews.GET("/:id", rc.NewsController.GetNewsDetailByAdmin)
 
 }

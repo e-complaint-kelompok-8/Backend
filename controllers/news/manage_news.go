@@ -20,3 +20,19 @@ func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
 		"data":    response.NewsFromEntities(newsList),
 	})
 }
+
+func (nc *NewsController) GetNewsDetailByAdmin(c echo.Context) error {
+	id := c.Param("id")
+
+	news, err := nc.newsService.GetNewsByIDWithComments(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Success",
+		"data":    response.NewFromEntities(news),
+	})
+}
