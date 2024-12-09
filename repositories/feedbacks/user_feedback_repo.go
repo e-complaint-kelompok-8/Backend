@@ -9,7 +9,7 @@ import (
 )
 
 type FeedbackRepositoryInterface interface {
-	GetComplaintByID(complaintID int) (models.Complaint, error)
+	GetComplaintByID(complaintID int) (entities.Complaint, error)
 	GetFeedbackByComplaintID(complaintID int) (entities.Feedback, error)
 	GetFeedbacksByUserID(userID int) ([]entities.Feedback, error)
 	UpdateFeedbackResponse(feedbackID int, response string) error
@@ -20,6 +20,7 @@ type FeedbackRepositoryInterface interface {
 	CheckUserExists(userID int) (bool, error)
 	AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error
 	ComplaintHasFeedback(complaintID int) (bool, error)
+	UpdateFeedback(feedback entities.Feedback) error
 }
 
 type FeedbackRepository struct {
@@ -30,13 +31,18 @@ func NewFeedbackRepository(db *gorm.DB) *FeedbackRepository {
 	return &FeedbackRepository{db: db}
 }
 
-func (fr *FeedbackRepository) GetComplaintByID(complaintID int) (models.Complaint, error) {
+func (cr *FeedbackRepository) GetComplaintByID(complaintID int) (entities.Complaint, error) {
 	var complaint models.Complaint
-	err := fr.db.First(&complaint, "id = ?", complaintID).Error
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		Preload("Admin"). // Pastikan admin dimuat
+		First(&complaint, "id = ?", complaintID).Error
 	if err != nil {
-		return models.Complaint{}, err
+		return entities.Complaint{}, err
 	}
-	return complaint, nil
+
+	return complaint.ToEntities(), nil
 }
 
 func (fr *FeedbackRepository) GetFeedbackByComplaintID(complaintID int) (entities.Feedback, error) {
@@ -60,6 +66,7 @@ func (fr *FeedbackRepository) GetFeedbacksByUserID(userID int) ([]entities.Feedb
 		Preload("User").
 		Preload("Complaint.Category").
 		Preload("Complaint.Photos").
+		Order("created_at DESC").
 		Where("user_id = ?", userID).
 		Find(&feedbacks).Error
 	if err != nil {

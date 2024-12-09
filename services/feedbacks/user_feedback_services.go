@@ -13,6 +13,7 @@ type FeedbackServiceInterface interface {
 	AddResponseToFeedback(feedbackID int, userID int, response string) error
 	GetFeedbackByID(feedbackID int, userID int) (entities.Feedback, error)
 	ProvideFeedback(adminID, complaintID int, content string) (entities.Feedback, error)
+	UpdateFeedback(feedbackID int, content string) (entities.Feedback, error)
 }
 
 type FeedbackService struct {

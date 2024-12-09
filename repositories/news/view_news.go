@@ -33,7 +33,7 @@ func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 	var news []models.News
 
 	// Query semua berita dengan Preload admin dan category
-	err := nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").Find(&news).Error
+	err := nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").Order("created_at DESC").Find(&news).Error
 	if err != nil {
 		return nil, err
 	}

@@ -6,16 +6,17 @@ import (
 )
 
 type CreateComplaintResponse struct {
-	ID              int       `json:"id"`
-	User            User      `json:"user"`
-	Category        Category  `json:"category"`
-	ComplaintNumber string    `json:"complaint_number"`
-	Title           string    `json:"title"`
-	Location        string    `json:"location"`
-	Status          string    `json:"status"`
-	Description     string    `json:"description" validate:"required"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ID              int        `json:"id"`
+	User            User       `json:"user"`
+	Category        Category   `json:"category"`
+	ComplaintNumber string     `json:"complaint_number"`
+	Title           string     `json:"title"`
+	Location        string     `json:"location"`
+	Status          string     `json:"status"`
+	Feedbacks       []Feedback `json:"feedback"`
+	Description     string     `json:"description" validate:"required"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
 }
 
 type CreateComplaintResponseWithPhoto struct {
@@ -28,6 +29,7 @@ type CreateComplaintResponseWithPhoto struct {
 	Status          string           `json:"status"`
 	Description     string           `json:"description" validate:"required"`
 	Photos          []ComplaintPhoto `json:"photos"`
+	Feedbacks       []Feedback       `json:"feedback"`
 	CreatedAt       time.Time        `json:"created_at"`
 	UpdatedAt       time.Time        `json:"updated_at"`
 }
@@ -58,6 +60,7 @@ type CreateComplaintResponseWithAdmin struct {
 	Status          string           `json:"status"`
 	Description     string           `json:"description" validate:"required"`
 	Photos          []ComplaintPhoto `json:"photos"`
+	Feedbacks       []Feedback       `json:"feedback"`
 	Reason          string           `json:"reason"`
 	CreatedAt       time.Time        `json:"created_at"`
 	UpdatedAt       time.Time        `json:"updated_at"`
@@ -88,6 +91,13 @@ type Admin struct {
 	Role  string `json:"role"`
 }
 
+type Feedback struct {
+	ID        int       `json:"id"`
+	Admin     Admin     `json:"admin"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 // Fungsi untuk membuat respons dari entities.Complaint
 func ComplaintFromEntitiesWithPhoto(complaint entities.Complaint, photos []entities.ComplaintPhoto) CreateComplaintResponseWithPhoto {
 	// Konversi photos dari entities ke response
@@ -96,6 +106,21 @@ func ComplaintFromEntitiesWithPhoto(complaint entities.Complaint, photos []entit
 		photoResponses = append(photoResponses, ComplaintPhoto{
 			ID:       photo.ID,
 			PhotoURL: photo.PhotoURL,
+		})
+	}
+
+	// Konversi feedbacks
+	var feedbackResponses []Feedback
+	for _, feedback := range complaint.Feedbacks {
+		feedbackResponses = append(feedbackResponses, Feedback{
+			ID: feedback.ID,
+			Admin: Admin{
+				ID:    feedback.Admin.ID,
+				Email: feedback.Admin.Email,
+				Role:  feedback.Admin.Role,
+			},
+			Content:   feedback.Content,
+			CreatedAt: feedback.CreatedAt,
 		})
 	}
 
@@ -120,12 +145,29 @@ func ComplaintFromEntitiesWithPhoto(complaint entities.Complaint, photos []entit
 		Status:          complaint.Status,
 		Description:     complaint.Description,
 		Photos:          photoResponses,
+		Feedbacks:       feedbackResponses,
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}
 }
 
 func ComplaintFromEntities(complaint entities.Complaint) CreateComplaintResponse {
+
+	// Konversi feedbacks
+	var feedbackResponses []Feedback
+	for _, feedback := range complaint.Feedbacks {
+		feedbackResponses = append(feedbackResponses, Feedback{
+			ID: feedback.ID,
+			Admin: Admin{
+				ID:    feedback.Admin.ID,
+				Email: feedback.Admin.Email,
+				Role:  feedback.Admin.Role,
+			},
+			Content:   feedback.Content,
+			CreatedAt: feedback.CreatedAt,
+		})
+	}
+
 	return CreateComplaintResponse{
 		ID: complaint.ID,
 		User: User{
@@ -146,6 +188,7 @@ func ComplaintFromEntities(complaint entities.Complaint) CreateComplaintResponse
 		Location:        complaint.Location,
 		Status:          complaint.Status,
 		Description:     complaint.Description,
+		Feedbacks:       feedbackResponses,
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}
@@ -160,6 +203,21 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 			photoResponses = append(photoResponses, ComplaintPhoto{
 				ID:       photo.ID,
 				PhotoURL: photo.PhotoURL,
+			})
+		}
+
+		// Konversi feedbacks
+		var feedbackResponses []Feedback
+		for _, feedback := range complaint.Feedbacks {
+			feedbackResponses = append(feedbackResponses, Feedback{
+				ID: feedback.ID,
+				Admin: Admin{
+					ID:    feedback.Admin.ID,
+					Email: feedback.Admin.Email,
+					Role:  feedback.Admin.Role,
+				},
+				Content:   feedback.Content,
+				CreatedAt: feedback.CreatedAt,
 			})
 		}
 
@@ -191,6 +249,7 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 			Status:          complaint.Status,
 			Description:     complaint.Description,
 			Photos:          photoResponses,
+			Feedbacks:       feedbackResponses,
 			CreatedAt:       complaint.CreatedAt,
 			UpdatedAt:       complaint.UpdatedAt,
 		})
@@ -244,6 +303,21 @@ func ComplaintFromEntitiesWithAdmin(complaint entities.Complaint) CreateComplain
 		})
 	}
 
+	// Konversi feedbacks
+	var feedbackResponses []Feedback
+	for _, feedback := range complaint.Feedbacks {
+		feedbackResponses = append(feedbackResponses, Feedback{
+			ID: feedback.ID,
+			Admin: Admin{
+				ID:    feedback.Admin.ID,
+				Email: feedback.Admin.Email,
+				Role:  feedback.Admin.Role,
+			},
+			Content:   feedback.Content,
+			CreatedAt: feedback.CreatedAt,
+		})
+	}
+
 	return CreateComplaintResponseWithAdmin{
 		ID: complaint.ID,
 		Admin: Admin{
@@ -270,6 +344,65 @@ func ComplaintFromEntitiesWithAdmin(complaint entities.Complaint) CreateComplain
 		Status:          complaint.Status,
 		Description:     complaint.Description,
 		Photos:          photoResponses,
+		Reason:          complaint.Reason,
+		Feedbacks:       feedbackResponses,
+		CreatedAt:       complaint.CreatedAt,
+		UpdatedAt:       complaint.UpdatedAt,
+	}
+}
+
+func ComplaintFromEntitiesWithFeedback(complaint entities.Complaint) CreateComplaintResponseWithAdmin {
+	var photoResponses []ComplaintPhoto
+	for _, photo := range complaint.Photos {
+		photoResponses = append(photoResponses, ComplaintPhoto{
+			ID:       photo.ID,
+			PhotoURL: photo.PhotoURL,
+		})
+	}
+
+	// Konversi feedbacks
+	var feedbackResponses []Feedback
+	for _, feedback := range complaint.Feedbacks {
+		feedbackResponses = append(feedbackResponses, Feedback{
+			ID: feedback.ID,
+			Admin: Admin{
+				ID:    feedback.Admin.ID,
+				Email: feedback.Admin.Email,
+				Role:  feedback.Admin.Role,
+			},
+			Content:   feedback.Content,
+			CreatedAt: feedback.CreatedAt,
+		})
+	}
+
+	return CreateComplaintResponseWithAdmin{
+		ID: complaint.ID,
+		Admin: Admin{
+			ID:    complaint.Admin.ID,
+			Email: complaint.Admin.Email,
+			Role:  complaint.Admin.Role,
+		},
+		User: User{
+			ID:    complaint.User.ID,
+			Name:  complaint.User.Name,
+			Phone: complaint.User.Phone,
+			Email: complaint.User.Email,
+		},
+		Category: Category{
+			ID:          complaint.Category.ID,
+			Name:        complaint.Category.Name,
+			Description: complaint.Category.Description,
+			CreatedAt:   complaint.Category.CreatedAt,
+			UpdatedAt:   complaint.Category.UpdatedAt,
+		},
+		ComplaintNumber: complaint.ComplaintNumber,
+		Title:           complaint.Title,
+		Location:        complaint.Location,
+		Status:          complaint.Status,
+		Description:     complaint.Description,
+		Photos:          photoResponses,
+		Reason:          complaint.Reason,
+		Feedbacks:       feedbackResponses,
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}

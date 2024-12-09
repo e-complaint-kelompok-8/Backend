@@ -94,4 +94,8 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminNews.PUT("/:id", rc.NewsController.UpdateNewsByAdmin)
 	eAdminNews.DELETE("/bulk-delete", rc.NewsController.DeleteMultipleNewsByAdmin)
 
+	// Rute Admin untuk Kelola Feedback
+	eAdminFeedback := eAdminJwt.Group("/feedback")
+	eAdminFeedback.PUT("/:id", rc.FeedbackController.UpdateFeedback)
+
 }

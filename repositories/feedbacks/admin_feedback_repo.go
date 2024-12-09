@@ -52,3 +52,15 @@ func (cr *FeedbackRepository) ComplaintHasFeedback(complaintID int) (bool, error
 	err := cr.db.Model(&models.Feedback{}).Where("complaint_id = ?", complaintID).Count(&count).Error
 	return count > 0, err
 }
+
+func (cr *FeedbackRepository) UpdateFeedback(feedback entities.Feedback) error {
+	feedbackModel := models.FromEntitiesFeedback(feedback)
+
+	// Perbarui feedback di database
+	err := cr.db.Model(&models.Feedback{}).Where("id = ?", feedback.ID).Updates(map[string]interface{}{
+		"content":    feedbackModel.Content, // Ubah kolom content
+		"updated_at": gorm.Expr("NOW()"),
+	}).Error
+
+	return err
+}
