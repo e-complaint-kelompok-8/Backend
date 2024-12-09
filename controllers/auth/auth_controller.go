@@ -17,15 +17,17 @@ func NewAuthController(authService auth.AuthServiceInterface) *AuthController {
 	return &AuthController{AuthService: authService}
 }
 
-func (uc *AuthController) RegisterController(c echo.Context) error {
+func (ac *AuthController) RegisterController(c echo.Context) error {
 	userRegister := request.RegisterRequest{}
 	c.Bind(&userRegister)
-	user, err := uc.AuthService.RegisterUser(userRegister.ToEntities())
+
+	// Panggil service untuk mendaftarkan pengguna
+	user, err := ac.AuthService.RegisterUser(userRegister.ToEntities())
 	if err != nil {
 		// Periksa error untuk memberikan pesan yang lebih spesifik
 		if err.Error() == "email already exists" {
 			return c.JSON(http.StatusConflict, map[string]interface{}{
-				"message": "email already exists",
+				"message": "Email already exists",
 			})
 		}
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -34,7 +36,7 @@ func (uc *AuthController) RegisterController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "registration successful",
+		"message": "Registration successful",
 		"user":    response.RegisterFromEntities(user),
 	})
 }
