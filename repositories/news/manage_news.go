@@ -6,17 +6,27 @@ import (
 	"errors"
 )
 
-func (nr *NewsRepository) GetAllNewsWithComments() ([]entities.News, error) {
+func (nr *NewsRepository) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) {
 	var newsList []models.News
+	var total int64
 
-	err := nr.db.Preload("Admin").
+	// Hitung total data untuk pagination
+	err := nr.db.Model(&models.News{}).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Terapkan pagination dengan Offset dan Limit
+	offset := (page - 1) * limit
+	err = nr.db.Preload("Admin").
 		Preload("Category").
 		Preload("Comments.User").
 		Order("created_at DESC").
+		Offset(offset).Limit(limit).
 		Find(&newsList).Error
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	// Konversi model ke entitas
@@ -25,7 +35,8 @@ func (nr *NewsRepository) GetAllNewsWithComments() ([]entities.News, error) {
 		newsEntity := news.ToEntitiesWithComment()
 		result = append(result, newsEntity)
 	}
-	return result, nil
+
+	return result, total, nil
 }
 
 func (nr *NewsRepository) GetNewsByIDWithComments(id string) (entities.News, error) {

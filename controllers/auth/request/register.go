@@ -8,6 +8,7 @@ type RegisterRequest struct {
 	Phone    string `json:"phone_number"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	PhotoURL string `json:"photo"`
 }
 
 func (rr RegisterRequest) ToEntities() entities.User {
@@ -17,5 +18,6 @@ func (rr RegisterRequest) ToEntities() entities.User {
 		Phone:    rr.Phone,
 		Email:    rr.Email,
 		Password: rr.Password,
+		PhotoURL: rr.PhotoURL,
 	}
 }

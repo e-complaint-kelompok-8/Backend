@@ -8,10 +8,11 @@ type User struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	Phone     string    `json:"phone_number"`
+	PhotoURL  string    `json:"photo"`
 	Verified  bool      `gorm:"default:false"`
 	OTP       string    `gorm:"type:varchar(6)"` // Menyimpan kode OTP
 	OTPExpiry time.Time // Menyimpan waktu kedaluwarsa OTP
-	Token     string
+	Token     string    `json:"token"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

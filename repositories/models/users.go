@@ -12,6 +12,7 @@ type User struct {
 	Phone     string `gorm:"type:varchar(255);not null"`
 	Email     string `gorm:"type:varchar(255);unique;not null"`
 	Password  string `gorm:"type:varchar(255);not null"`
+	PhotoURL  string `gorm:"type:varchar(255)"`
 	Verified  bool   `gorm:"default:false"`
 	OTP       string `gorm:"type:varchar(6)"`
 	OTPExpiry time.Time
@@ -26,6 +27,7 @@ func FromEntitiesUser(user entities.User) User {
 		Phone:     user.Phone,
 		Email:     user.Email,
 		Password:  user.Password,
+		PhotoURL:  user.PhotoURL,
 		Verified:  user.Verified,
 		OTP:       user.OTP,
 		OTPExpiry: user.OTPExpiry,
@@ -41,6 +43,7 @@ func (user User) ToEntities() entities.User {
 		Phone:     user.Phone,
 		Email:     user.Email,
 		Password:  user.Password,
+		PhotoURL:  user.PhotoURL,
 		Verified:  user.Verified,
 		OTP:       user.OTP,
 		OTPExpiry: user.OTPExpiry,
