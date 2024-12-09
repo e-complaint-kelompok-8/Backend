@@ -87,7 +87,9 @@ func (cr *ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint
 		Preload("Photos").
 		Preload("Feedbacks").
 		Preload("Feedbacks.Admin").
-		Where("user_id = ?", userID).Find(&complaints).Error
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +113,7 @@ func (cr *ComplaintRepo) GetComplaintByIDAndUser(complaintID, userID int) (entit
 		Preload("Feedbacks").
 		Preload("Feedbacks.Admin").
 		Where("id = ? AND user_id = ?", complaintID, userID).
+		Order("created_at DESC").
 		First(&complaint).Error
 	if err != nil {
 		return entities.Complaint{}, err
@@ -125,7 +128,7 @@ func (cr *ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int)
 
 	// Query database untuk mendapatkan keluhan berdasarkan status dan user ID
 	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks").Preload("Feedbacks.Admin").
-		Where("status = ? AND user_id = ?", status, userID).Find(&complaints).Error
+		Where("status = ? AND user_id = ?", status, userID).Order("created_at DESC").Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +151,8 @@ func (cr *ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complain
 		Preload("Photos").
 		Preload("Feedbacks").
 		Preload("Feedbacks.Admin").
-		Where("user_id = ?", userID).Find(&complaints).Error
+		Where("user_id = ?", userID).
+		Order("created_at DESC").Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +180,7 @@ func (cr *ComplaintRepo) GetComplaintsByCategoryAndUser(categoryID int, userID i
 
 	// Query database untuk mendapatkan keluhan berdasarkan kategori dan user ID
 	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks").Preload("Feedbacks.Admin").
-		Where("category_id = ? AND user_id = ?", categoryID, userID).Find(&complaints).Error
+		Where("category_id = ? AND user_id = ?", categoryID, userID).Order("created_at DESC").Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}

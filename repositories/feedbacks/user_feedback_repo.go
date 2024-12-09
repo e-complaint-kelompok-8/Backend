@@ -66,6 +66,7 @@ func (fr *FeedbackRepository) GetFeedbacksByUserID(userID int) ([]entities.Feedb
 		Preload("User").
 		Preload("Complaint.Category").
 		Preload("Complaint.Photos").
+		Order("created_at DESC").
 		Where("user_id = ?", userID).
 		Find(&feedbacks).Error
 	if err != nil {

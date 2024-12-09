@@ -46,7 +46,7 @@ func (cr *CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment
 	var comments []models.Comment
 
 	// Query database untuk mengambil komentar berdasarkan user_id
-	err := cr.db.Preload("User").Preload("News").Where("user_id = ?", userID).Find(&comments).Error
+	err := cr.db.Preload("User").Preload("News").Where("user_id = ?", userID).Order("created_at DESC").Find(&comments).Error
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (cr *CommentRepository) GetAllComments() ([]entities.Comment, error) {
 	var comments []models.Comment
 
 	// Query database untuk mengambil semua komentar
-	err := cr.db.Preload("User").Preload("News").Find(&comments).Error
+	err := cr.db.Preload("User").Preload("News").Order("created_at DESC").Find(&comments).Error
 	if err != nil {
 		return nil, err
 	}

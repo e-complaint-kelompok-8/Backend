@@ -35,6 +35,9 @@ func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, ca
 		query = query.Offset(offset).Limit(limit)
 	}
 
+	// Terapkan urutan descending berdasarkan waktu
+	query = query.Order("created_at DESC") // Tambahkan ini
+
 	// Eksekusi query
 	err := query.Find(&complaints).Error
 	if err != nil {
