@@ -72,7 +72,7 @@ func (cs *FeedbackService) UpdateFeedback(feedbackID int, content string) (entit
 	// Periksa apakah feedback ID valid
 	feedback, err := cs.feedbackRepo.GetFeedbackByID(feedbackID)
 	if err != nil {
-		return entities.Feedback{}, errors.New("feedback not found")
+		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak ditemukan")))
 	}
 
 	// Perbarui konten
@@ -81,13 +81,13 @@ func (cs *FeedbackService) UpdateFeedback(feedbackID int, content string) (entit
 	// Simpan perubahan ke database
 	err = cs.feedbackRepo.UpdateFeedback(feedback)
 	if err != nil {
-		return entities.Feedback{}, errors.New("failed to update feedback")
+		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memperbarui tanggapan")))
 	}
 
 	// Ambil feedback yang diperbarui
 	updatedFeedback, err := cs.feedbackRepo.GetFeedbackByID(feedbackID)
 	if err != nil {
-		return entities.Feedback{}, errors.New("failed to retrieve updated feedback")
+		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal mengambil tanggapan yang diperbarui")))
 	}
 
 	return updatedFeedback, nil

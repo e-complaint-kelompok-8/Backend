@@ -11,7 +11,7 @@ func (cs *ComplaintService) GetComplaintsByStatusAndCategory(status string, cate
 	if status != "" {
 		validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
 		if !utils.StringInSlice(status, validStatuses) {
-			return nil, 0, errors.New("invalid status")
+			return nil, 0, errors.New(utils.CapitalizeErrorMessage(errors.New("statusnya tidak valid")))
 		}
 	}
 
@@ -43,7 +43,7 @@ func (cs *ComplaintService) UpdateComplaintByAdmin(complaintID int, updateData e
 	if updateData.Status != "" {
 		validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
 		if !utils.StringInSlice(updateData.Status, validStatuses) {
-			return errors.New("invalid status")
+			return errors.New(utils.CapitalizeErrorMessage(errors.New("statusnya tidak valid")))
 		}
 	}
 
@@ -54,7 +54,7 @@ func (cs *ComplaintService) UpdateComplaintByAdmin(complaintID int, updateData e
 			return err
 		}
 		if !exists {
-			return errors.New("invalid category ID")
+			return errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak valid")))
 		}
 	}
 
@@ -71,18 +71,18 @@ func (cs *ComplaintService) DeleteComplaintByAdmin(complaintID int) error {
 	// Periksa apakah complaint ada di database
 	complaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
 	if err != nil {
-		return errors.New("complaint not found")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan tidak ditemukan")))
 	}
 
 	// Validasi jika diperlukan (opsional)
 	if complaint.Status == "selesai" {
-		return errors.New("completed complaints cannot be deleted")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan yang sudah selesai tidak dapat dihapus")))
 	}
 
 	// Hapus complaint di repository
 	err = cs.complaintRepo.DeleteComplaint(complaintID)
 	if err != nil {
-		return errors.New("failed to delete complaint")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal menghapus keluhan")))
 	}
 
 	return nil
