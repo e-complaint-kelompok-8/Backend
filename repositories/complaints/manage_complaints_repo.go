@@ -55,6 +55,8 @@ func (cr *ComplaintRepo) AdminGetComplaintDetailByID(complaintID int) (entities.
 	err := cr.db.Preload("User").
 		Preload("Category").
 		Preload("Photos").
+		Preload("Feedbacks.Admin"). // Tambahkan preload untuk feedback dan admin
+		Preload("Feedbacks").
 		First(&complaint, "id = ?", complaintID).Error
 	if err != nil {
 		return entities.Complaint{}, err
@@ -64,7 +66,7 @@ func (cr *ComplaintRepo) AdminGetComplaintDetailByID(complaintID int) (entities.
 
 func (cr *ComplaintRepo) AdminGetComplaintByID(complaintID int) (entities.Complaint, error) {
 	var complaint models.Complaint
-	err := cr.db.Preload("User").Preload("Category").Preload("Admin").Preload("Photos").First(&complaint, "id = ?", complaintID).Error
+	err := cr.db.Preload("User").Preload("Category").Preload("Admin").Preload("Photos").Preload("Feedbacks").Preload("Feedbacks.Admin").First(&complaint, "id = ?", complaintID).Error
 	if err != nil {
 		return entities.Complaint{}, err
 	}

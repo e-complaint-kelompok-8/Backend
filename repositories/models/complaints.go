@@ -8,7 +8,7 @@ import (
 // Complaint struct
 type Complaint struct {
 	ID              int              `gorm:"primaryKey;autoIncrement"`
-	AdminID         *int             `gorm:"admin_id"` // Gunakan pointer untuk mendukung nilai NULL
+	AdminID         *int             `gorm:"admin_id"`
 	Admin           Admin            `gorm:"foreignKey:AdminID"`
 	UserID          int              `gorm:"not null"`
 	User            User             `gorm:"foreignKey:UserID"`
@@ -19,8 +19,9 @@ type Complaint struct {
 	Location        string           `gorm:"type:varchar(255);not null"`
 	Status          string           `gorm:"type:enum('proses', 'tanggapi', 'batal', 'selesai');default:'proses'"`
 	Description     string           `gorm:"type:text;not null"`
-	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID;constraint:OnDelete:CASCADE"` // Tambahkan OnDelete:CASCADE
+	Photos          []ComplaintPhoto `gorm:"foreignKey:ComplaintID;constraint:OnDelete:CASCADE"`
 	Reason          string           `gorm:"type:text"`
+	Feedbacks       []Feedback       `gorm:"foreignKey:ComplaintID;constraint:OnDelete:CASCADE"`
 	CreatedAt       time.Time        `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time        `gorm:"autoUpdateTime"`
 }
@@ -46,6 +47,11 @@ func (c Complaint) ToEntities() entities.Complaint {
 		photos = append(photos, photo.ToEntities())
 	}
 
+	var feedbacks []entities.Feedback
+	for _, feedback := range c.Feedbacks {
+		feedbacks = append(feedbacks, feedback.ToEntities())
+	}
+
 	return entities.Complaint{
 		ID:              c.ID,
 		AdminID:         c.AdminID,
@@ -60,6 +66,7 @@ func (c Complaint) ToEntities() entities.Complaint {
 		Description:     c.Description,
 		Status:          c.Status,
 		Photos:          photos,
+		Feedbacks:       feedbacks,
 		CreatedAt:       c.CreatedAt,
 		UpdatedAt:       c.UpdatedAt,
 	}
@@ -71,6 +78,11 @@ func (c Complaint) ToEntitiesReason() entities.Complaint {
 		photos = append(photos, photo.ToEntities())
 	}
 
+	var feedbacks []entities.Feedback
+	for _, feedback := range c.Feedbacks {
+		feedbacks = append(feedbacks, feedback.ToEntities())
+	}
+
 	return entities.Complaint{
 		ID:              c.ID,
 		AdminID:         c.AdminID,
@@ -85,6 +97,7 @@ func (c Complaint) ToEntitiesReason() entities.Complaint {
 		Description:     c.Description,
 		Status:          c.Status,
 		Photos:          photos,
+		Feedbacks:       feedbacks,
 		Reason:          c.Reason,
 		CreatedAt:       c.CreatedAt,
 		UpdatedAt:       c.UpdatedAt,

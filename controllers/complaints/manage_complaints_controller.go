@@ -74,72 +74,14 @@ func (cc *ComplaintController) GetComplaintDetailByAdmin(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
-	// Konversi ke response
-	response := response.ComplaintFromEntitiesWithReason(complaint, complaint.Photos)
+	// Konversi ke response dengan feedback
+	response := response.ComplaintFromEntitiesWithFeedback(complaint)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message":   "Complaint detail retrieved successfully",
 		"complaint": response,
 	})
 }
-
-// func (cc *ComplaintController) UpdateComplaintStatus(c echo.Context) error {
-// 	// Validasi role admin
-// 	role, err := middlewares.ExtractAdminRole(c)
-// 	if err != nil || role != "admin" {
-// 		return c.JSON(http.StatusForbidden, map[string]interface{}{
-// 			"message": "Access denied",
-// 		})
-// 	}
-
-// 	// Ambil admin ID dari middleware
-// 	adminID, ok := c.Get("admin_id").(int)
-// 	if !ok {
-// 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-// 			"message": "Admin tidak memiliki otorisasi",
-// 		})
-// 	}
-
-// 	// Ambil complaint ID dari parameter
-// 	complaintID, err := strconv.Atoi(c.Param("id"))
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-// 			"message": "ID pengaduan tidak valid",
-// 		})
-// 	}
-
-// 	// Ambil data status baru dari body
-// 	var request struct {
-// 		Status string `json:"status" validate:"required"`
-// 	}
-// 	if err := c.Bind(&request); err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-// 			"message": "Data status tidak valid",
-// 		})
-// 	}
-
-// 	// Proses pembaruan status melalui service
-// 	err = cc.complaintService.UpdateComplaintStatus(complaintID, adminID, request.Status)
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-// 			"message": err.Error(),
-// 		})
-// 	}
-
-// 	// Ambil data complaint terkini
-// 	complaint, err := cc.complaintService.GetComplaintByID(complaintID)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-// 			"message": "Gagal mengambil data pengaduan",
-// 		})
-// 	}
-
-// 	// Kirim respons dengan data terkini
-// 	return c.JSON(http.StatusOK, map[string]interface{}{
-// 		"message":   "Status pengaduan berhasil diperbarui",
-// 		"complaint": response.ComplaintFromEntitiesWithAdmin(complaint),
-// 	})
-// }
 
 func (cc *ComplaintController) UpdateComplaintByAdmin(c echo.Context) error {
 	// Validasi role admin

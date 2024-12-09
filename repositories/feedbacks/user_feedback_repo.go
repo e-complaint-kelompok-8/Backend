@@ -9,7 +9,7 @@ import (
 )
 
 type FeedbackRepositoryInterface interface {
-	GetComplaintByID(complaintID int) (models.Complaint, error)
+	GetComplaintByID(complaintID int) (entities.Complaint, error)
 	GetFeedbackByComplaintID(complaintID int) (entities.Feedback, error)
 	GetFeedbacksByUserID(userID int) ([]entities.Feedback, error)
 	UpdateFeedbackResponse(feedbackID int, response string) error
@@ -30,13 +30,18 @@ func NewFeedbackRepository(db *gorm.DB) *FeedbackRepository {
 	return &FeedbackRepository{db: db}
 }
 
-func (fr *FeedbackRepository) GetComplaintByID(complaintID int) (models.Complaint, error) {
+func (cr *FeedbackRepository) GetComplaintByID(complaintID int) (entities.Complaint, error) {
 	var complaint models.Complaint
-	err := fr.db.First(&complaint, "id = ?", complaintID).Error
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		Preload("Admin"). // Pastikan admin dimuat
+		First(&complaint, "id = ?", complaintID).Error
 	if err != nil {
-		return models.Complaint{}, err
+		return entities.Complaint{}, err
 	}
-	return complaint, nil
+
+	return complaint.ToEntities(), nil
 }
 
 func (fr *FeedbackRepository) GetFeedbackByComplaintID(complaintID int) (entities.Feedback, error) {

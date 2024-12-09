@@ -82,7 +82,12 @@ func (cr *ComplaintRepo) GetComplaintsByUserID(userID int) ([]entities.Complaint
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan user ID
-	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Where("user_id = ?", userID).Find(&complaints).Error
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		Preload("Feedbacks").
+		Preload("Feedbacks.Admin").
+		Where("user_id = ?", userID).Find(&complaints).Error
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +108,8 @@ func (cr *ComplaintRepo) GetComplaintByIDAndUser(complaintID, userID int) (entit
 	err := cr.db.Preload("User").
 		Preload("Category").
 		Preload("Photos").
+		Preload("Feedbacks").
+		Preload("Feedbacks.Admin").
 		Where("id = ? AND user_id = ?", complaintID, userID).
 		First(&complaint).Error
 	if err != nil {
@@ -117,7 +124,7 @@ func (cr *ComplaintRepo) GetComplaintsByStatusAndUser(status string, userID int)
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan status dan user ID
-	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
+	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks").Preload("Feedbacks.Admin").
 		Where("status = ? AND user_id = ?", status, userID).Find(&complaints).Error
 	if err != nil {
 		return nil, err
@@ -136,7 +143,11 @@ func (cr *ComplaintRepo) GetAllComplaintsByUser(userID int) ([]entities.Complain
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan semua complaints milik user
-	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
+	err := cr.db.Preload("User").
+		Preload("Category").
+		Preload("Photos").
+		Preload("Feedbacks").
+		Preload("Feedbacks.Admin").
 		Where("user_id = ?", userID).Find(&complaints).Error
 	if err != nil {
 		return nil, err
@@ -164,7 +175,7 @@ func (cr *ComplaintRepo) GetComplaintsByCategoryAndUser(categoryID int, userID i
 	var complaints []models.Complaint
 
 	// Query database untuk mendapatkan keluhan berdasarkan kategori dan user ID
-	err := cr.db.Preload("User").Preload("Category").Preload("Photos").
+	err := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks").Preload("Feedbacks.Admin").
 		Where("category_id = ? AND user_id = ?", categoryID, userID).Find(&complaints).Error
 	if err != nil {
 		return nil, err
@@ -184,6 +195,7 @@ func (cr *ComplaintRepo) GetComplaintByID(complaintID int) (models.Complaint, er
 	err := cr.db.Preload("User").
 		Preload("Category").
 		Preload("Photos").
+		Preload("Feedbacks").
 		First(&complaint, "id = ?", complaintID).Error
 	if err != nil {
 		return models.Complaint{}, err
