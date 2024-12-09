@@ -90,7 +90,7 @@ func (fc *FeedbackController) AddResponseToFeedback(c echo.Context) error {
 	}
 
 	// Ambil data balasan dari body
-	request := request.Feedbackrequest{}
+	request := request.FeedbackRequesResponse{}
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Data Balasan Tidak Valid",

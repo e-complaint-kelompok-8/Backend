@@ -12,6 +12,7 @@ func (nr *NewsRepository) GetAllNewsWithComments() ([]entities.News, error) {
 	err := nr.db.Preload("Admin").
 		Preload("Category").
 		Preload("Comments.User").
+		Order("created_at DESC").
 		Find(&newsList).Error
 
 	if err != nil {

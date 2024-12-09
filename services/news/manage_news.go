@@ -21,7 +21,7 @@ func (ns *NewsService) AddNews(news entities.News) (entities.News, error) {
 		return entities.News{}, err
 	}
 	if !isValid {
-		return entities.News{}, errors.New("invalid category ID")
+		return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak valid")))
 	}
 
 	if news.AdminID == 0 {
@@ -44,7 +44,7 @@ func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (ent
 		return entities.News{}, err
 	}
 	if !isValid {
-		return entities.News{}, errors.New("invalid category ID")
+		return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak benar")))
 	}
 
 	// Panggil repository untuk update berita
@@ -59,7 +59,7 @@ func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (ent
 func (ns *NewsService) DeleteMultipleNews(ids []int) error {
 	// Validasi input
 	if len(ids) == 0 {
-		return errors.New("tidak ada berita yang dipilih untuk dihapus")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("tidak ada berita yang dipilih untuk dihapus")))
 	}
 
 	// Validasi apakah ID berita ada di database
@@ -70,10 +70,10 @@ func (ns *NewsService) DeleteMultipleNews(ids []int) error {
 
 	// Cek jika ada ID yang tidak ditemukan
 	if len(existingIDs) == 0 {
-		return errors.New("berita tidak ditemukan")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
 	}
 	if len(existingIDs) != len(ids) {
-		return errors.New("beberapa ID berita tidak ditemukan")
+		return errors.New(utils.CapitalizeErrorMessage(errors.New("beberapa ID berita tidak ditemukan")))
 	}
 
 	// Hapus berita yang valid

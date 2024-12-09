@@ -1,7 +1,11 @@
 package request
 
-type Feedbackrequest struct {
+type FeedbackRequesResponse struct {
 	Response string `json:"response" validate:"required"`
+}
+
+type FeedbackRequesContent struct {
+	Content string `json:"content" validate:"required"`
 }
 
 type FeedbackRequest struct {
