@@ -5,6 +5,7 @@ import (
 	"capstone/controllers/news/response"
 	"capstone/middlewares"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,7 +17,20 @@ func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
 	}
 
-	newsList, err := nc.newsService.GetAllNewsWithComments()
+	// Ambil parameter pagination
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+
+	// Tetapkan nilai default jika page dan limit tidak diberikan
+	if page <= 0 {
+		page = 1
+	}
+	if limit <= 0 {
+		limit = 10
+	}
+
+	// Panggil service dengan pagination
+	newsList, total, err := nc.newsService.GetAllNewsWithComments(page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"message": "Failed to fetch news",
@@ -26,6 +40,9 @@ func (nc *NewsController) GetAllNewsWithComments(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Success",
 		"news":    response.NewsFromEntities(newsList),
+		"page":    page,
+		"limit":   limit,
+		"total":   total,
 	})
 }
 

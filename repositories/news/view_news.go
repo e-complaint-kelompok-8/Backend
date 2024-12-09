@@ -12,7 +12,7 @@ import (
 type NewsRepositoryInterface interface {
 	GetAllNews() ([]entities.News, error)
 	GetNewsByID(id string) (entities.News, error)
-	GetAllNewsWithComments() ([]entities.News, error)
+	GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error)
 	GetNewsByIDWithComments(id string) (entities.News, error)
 	IsCategoryValid(categoryID int) (bool, error)
 	CreateNews(news entities.News) (entities.News, error)

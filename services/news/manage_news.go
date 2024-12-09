@@ -6,8 +6,8 @@ import (
 	"errors"
 )
 
-func (ns *NewsService) GetAllNewsWithComments() ([]entities.News, error) {
-	return ns.newsRepo.GetAllNewsWithComments()
+func (ns *NewsService) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) {
+	return ns.newsRepo.GetAllNewsWithComments(page, limit)
 }
 
 func (ns *NewsService) GetNewsByIDWithComments(id string) (entities.News, error) {

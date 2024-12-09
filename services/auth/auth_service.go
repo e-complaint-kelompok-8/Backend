@@ -19,6 +19,10 @@ type AuthServiceInterface interface {
 	RegisterUser(user entities.User) (entities.User, error)
 	LoginUser(user entities.User) (entities.User, error)
 	VerifyOTP(email, otp string) error
+	GetUserByID(userID int) (entities.User, error)
+	UpdateName(userID int, name string) (entities.User, error)
+	UpdatePhoto(userID int, photoURL string) (entities.User, error)
+	UpdatePassword(userID int, oldPassword, newPassword string) error
 }
 
 type AuthService struct {
@@ -219,6 +223,70 @@ func (as *AuthService) VerifyOTP(email, otp string) error {
 	err = as.AuthRepository.UpdateUser(user)
 	if err != nil {
 		return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memverifikasi email")))
+	}
+
+	return nil
+}
+
+func (as *AuthService) GetUserByID(userID int) (entities.User, error) {
+	user, err := as.AuthRepository.GetUserByID(userID)
+	if err != nil {
+		return entities.User{}, errors.New("user not found")
+	}
+	return user, nil
+}
+
+func (as *AuthService) UpdateName(userID int, name string) (entities.User, error) {
+	user, err := as.AuthRepository.GetUserByID(userID)
+	if err != nil {
+		return entities.User{}, errors.New("user not found")
+	}
+
+	user.Name = name
+	err = as.AuthRepository.UpdateUser(user)
+	if err != nil {
+		return entities.User{}, errors.New("failed to update name")
+	}
+
+	return user, nil
+}
+
+func (as *AuthService) UpdatePhoto(userID int, photoURL string) (entities.User, error) {
+	user, err := as.AuthRepository.GetUserByID(userID)
+	if err != nil {
+		return entities.User{}, errors.New("user not found")
+	}
+
+	// Periksa apakah photoURL valid
+	if photoURL == "" {
+		return entities.User{}, errors.New("photo URL cannot be empty")
+	}
+
+	user.PhotoURL = photoURL
+	err = as.AuthRepository.UpdateUserProfile(user)
+	if err != nil {
+		return entities.User{}, errors.New("failed to update photo")
+	}
+
+	return user, nil
+}
+
+func (as *AuthService) UpdatePassword(userID int, oldPassword, newPassword string) error {
+	user, err := as.AuthRepository.GetUserByID(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	if !CheckPasswordHash(oldPassword, user.Password) {
+		return errors.New("old password is incorrect")
+	}
+
+	hashedPassword, _ := HashPassword(newPassword)
+	user.Password = hashedPassword
+
+	err = as.AuthRepository.UpdateUser(user)
+	if err != nil {
+		return errors.New("failed to update password")
 	}
 
 	return nil

@@ -34,6 +34,14 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eJwt := e.Group("")
 	eJwt.Use(echojwt.JWT([]byte(os.Getenv("JWT_SECRET_KEY"))))
 
+	// endpoint user profile
+	eUserProfile := eJwt.Group("/user")
+	eUserProfile.Use(rc.jwtUser.GetUserID)
+	eUserProfile.GET("/profile", rc.AuthController.GetProfile)
+	eUserProfile.PUT("/profile/name", rc.AuthController.UpdateName)         // Endpoint untuk memperbarui nama
+	eUserProfile.PUT("/profile/photo", rc.AuthController.UpdatePhoto)       // Endpoint untuk memperbarui foto
+	eUserProfile.PUT("/profile/password", rc.AuthController.UpdatePassword) // Endpoint untuk memperbarui password
+
 	// endpoint complaints
 	eComplaint := eJwt.Group("/complaint")
 	eComplaint.Use(rc.jwtUser.GetUserID)

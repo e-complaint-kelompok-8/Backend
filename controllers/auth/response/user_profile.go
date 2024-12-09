@@ -2,7 +2,7 @@ package response
 
 import "capstone/entities"
 
-type RegisterResponse struct {
+type UserProfileResponse struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Phone    string `json:"phone_number"`
@@ -10,8 +10,8 @@ type RegisterResponse struct {
 	PhotoURL string `json:"photo"`
 }
 
-func RegisterFromEntities(user entities.User) RegisterResponse {
-	return RegisterResponse{
+func UserProfileFromEntities(user entities.User) UserProfileResponse {
+	return UserProfileResponse{
 		ID:       user.ID,
 		Name:     user.Name,
 		Phone:    user.Phone,

@@ -22,6 +22,8 @@ type AuthRepositoryInterface interface {
 	LoginUser(user entities.User) (entities.User, error)
 	GetUserByEmail(email string) (entities.User, error)
 	UpdateUser(user entities.User) error
+	GetUserByID(userID int) (entities.User, error)
+	UpdateUserProfile(user entities.User) error
 }
 
 type AuthRepository struct {
@@ -86,4 +88,28 @@ func (ar *AuthRepository) UpdateUser(user entities.User) error {
 
 	// Lakukan pembaruan
 	return ar.db.Model(&models.User{}).Where("id = ?", userDB.ID).Updates(updateData).Error
+}
+
+func (ar *AuthRepository) GetUserByID(userID int) (entities.User, error) {
+	var user models.User
+	err := ar.db.First(&user, "id = ?", userID).Error
+	if err != nil {
+		return entities.User{}, err
+	}
+	return user.ToEntities(), nil
+}
+
+func (ar *AuthRepository) UpdateUserProfile(user entities.User) error {
+	updateData := map[string]interface{}{}
+	if user.Name != "" {
+		updateData["name"] = user.Name
+	}
+	if user.PhotoURL != "" {
+		updateData["photo_url"] = user.PhotoURL
+	}
+	if user.Password != "" {
+		updateData["password"] = user.Password
+	}
+
+	return ar.db.Model(&models.User{}).Where("id = ?", user.ID).Updates(updateData).Error
 }
