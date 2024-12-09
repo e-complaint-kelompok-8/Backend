@@ -17,6 +17,7 @@ type Feedback struct {
 	Content     string    `gorm:"type:text;not null"`
 	Response    string    `gorm:"type:text"` // Tambahkan kolom ini
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 }
 
 // FromEntitiesFeedback converts an entity feedback to a model feedback

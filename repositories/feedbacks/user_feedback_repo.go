@@ -20,6 +20,7 @@ type FeedbackRepositoryInterface interface {
 	CheckUserExists(userID int) (bool, error)
 	AdminUpdateComplaintStatus(complaintID int, newStatus string, adminID int) error
 	ComplaintHasFeedback(complaintID int) (bool, error)
+	UpdateFeedback(feedback entities.Feedback) error
 }
 
 type FeedbackRepository struct {

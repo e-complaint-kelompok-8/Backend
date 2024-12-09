@@ -67,3 +67,28 @@ func (cs *FeedbackService) ProvideFeedback(adminID, complaintID int, content str
 
 	return feedback, nil
 }
+
+func (cs *FeedbackService) UpdateFeedback(feedbackID int, content string) (entities.Feedback, error) {
+	// Periksa apakah feedback ID valid
+	feedback, err := cs.feedbackRepo.GetFeedbackByID(feedbackID)
+	if err != nil {
+		return entities.Feedback{}, errors.New("feedback not found")
+	}
+
+	// Perbarui konten
+	feedback.Content = content
+
+	// Simpan perubahan ke database
+	err = cs.feedbackRepo.UpdateFeedback(feedback)
+	if err != nil {
+		return entities.Feedback{}, errors.New("failed to update feedback")
+	}
+
+	// Ambil feedback yang diperbarui
+	updatedFeedback, err := cs.feedbackRepo.GetFeedbackByID(feedbackID)
+	if err != nil {
+		return entities.Feedback{}, errors.New("failed to retrieve updated feedback")
+	}
+
+	return updatedFeedback, nil
+}
