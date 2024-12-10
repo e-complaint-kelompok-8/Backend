@@ -7,6 +7,7 @@ type RegisterAdminRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Role     string `json:"role"`
+	Photo    string `json:"photo"`
 }
 
 func (rar RegisterAdminRequest) ToEntities() entities.Admin {

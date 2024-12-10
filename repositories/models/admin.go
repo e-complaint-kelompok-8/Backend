@@ -11,6 +11,7 @@ type Admin struct {
 	Email     string    `gorm:"type:varchar(255);unique;not null"`
 	Password  string    `gorm:"type:varchar(255);not null"`
 	Role      string    `gorm:"type:enum('admin');not null;default:'admin'"`
+	Photo     string    `gorm:"type:varchar(255)"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
@@ -22,6 +23,7 @@ func FromEntitiesAdmin(admin entities.Admin) Admin {
 		Email:     admin.Email,
 		Password:  admin.Password,
 		Role:      admin.Role,
+		Photo:     admin.Photo,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -34,6 +36,7 @@ func (admin Admin) ToEntities() entities.Admin {
 		Email:     admin.Email,
 		Password:  admin.Password,
 		Role:      admin.Role,
+		Photo:     admin.Photo,
 		CreatedAt: admin.CreatedAt,
 		UpdatedAt: admin.UpdatedAt,
 	}
