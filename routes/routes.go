@@ -85,6 +85,8 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminJwt.GET("/:id", rc.AuthAdminController.GetAdminByIDHandler)
 	eAdminJwt.PUT("/:id", rc.AuthAdminController.UpdateAdminHandler)
 	eAdminJwt.DELETE("/:id", rc.AuthAdminController.DeleteAdminHandler)
+	eAdminJwt.GET("/profile", rc.AuthAdminController.GetAdminProfile)
+	eAdminJwt.PUT("/profile", rc.AuthAdminController.UpdateAdminProfile)
 
 	// Rute Admin untuk Kelola Complaints
 	eAdminComplaints := eAdminJwt.Group("/complaint")

@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"capstone/controllers/auth/request"
+	"capstone/controllers/auth/response"
 	"capstone/entities"
 	"capstone/middlewares"
 	"capstone/services/auth"
@@ -31,10 +33,18 @@ func (controller *AdminController) RegisterAdminHandler(c echo.Context) error {
 	// Register admin using the service
 	createdAdmin, err := controller.adminService.RegisterAdmin(admin)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+		// Periksa error untuk memberikan pesan yang lebih spesifik
+		if err.Error() == "email already exists" {
+			return c.JSON(http.StatusConflict, map[string]interface{}{
+				"message": "Email Already Exists",
+			})
+		}
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": err.Error(),
+		})
 	}
 
-	return c.JSON(http.StatusCreated, createdAdmin)
+	return c.JSON(http.StatusCreated, response.RegisterAdminFromEntities(createdAdmin))
 }
 
 func (controller *AdminController) LoginAdminHandler(c echo.Context) error {
@@ -142,4 +152,44 @@ func (ac *AdminController) SomeAdminEndpoint(c echo.Context) error {
 
 	// Lanjutkan dengan logika endpoint
 	return c.JSON(http.StatusOK, map[string]string{"message": "Welcome, Admin!"})
+}
+
+func (controller *AdminController) GetAdminProfile(c echo.Context) error {
+	adminID, err := middlewares.ExtractAdminID(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Unauthorized"})
+	}
+
+	admin, err := controller.adminService.GetAdminByID(adminID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Admin profile fetched successfully",
+		"admin":   response.RegisterAdminFromEntities(admin),
+	})
+}
+
+func (controller *AdminController) UpdateAdminProfile(c echo.Context) error {
+	adminID, err := middlewares.ExtractAdminID(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Unauthorized"})
+	}
+
+	updateRequest := request.UpdateAdminRequest{}
+
+	if err := c.Bind(&updateRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request payload"})
+	}
+
+	admin, err := controller.adminService.UpdateAdminProfile(adminID, updateRequest.Email, updateRequest.Password, updateRequest.Photo)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Admin profile updated successfully",
+		"admin":   response.RegisterAdminFromEntities(admin),
+	})
 }

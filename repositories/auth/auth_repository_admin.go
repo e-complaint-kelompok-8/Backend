@@ -74,3 +74,23 @@ func (repo *AdminRepository) DeleteAdmin(id int) error {
 	}
 	return nil
 }
+
+func (repo *AdminRepository) UpdateAdminProfile(admin entities.Admin) error {
+	modelAdmin := models.FromEntitiesAdmin(admin)
+
+	return repo.db.Model(&models.Admin{}).Where("id = ?", admin.ID).Updates(map[string]interface{}{
+		"email":      modelAdmin.Email,
+		"password":   modelAdmin.Password,
+		"photo":      modelAdmin.Photo,
+		"updated_at": time.Now(),
+	}).Error
+}
+
+func (ar *AdminRepository) CheckEmailAdminExists(email string) (bool, error) {
+	var count int64
+	err := ar.db.Model(&models.Admin{}).Where("email = ?", email).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
