@@ -4,6 +4,7 @@ import (
 	"capstone/entities"
 	"capstone/middlewares"
 	repositories "capstone/repositories/auth"
+	"capstone/utils"
 	"errors"
 	"fmt"
 
@@ -22,6 +23,15 @@ func NewAdminService(adminRepo *repositories.AdminRepository, jwtInterface middl
 
 // RegisterAdmin handles the registration of a new admin
 func (service *AdminService) RegisterAdmin(admin entities.Admin) (entities.Admin, error) {
+	// Periksa apakah email sudah ada
+	exists, err := service.adminRepo.CheckEmailAdminExists(admin.Email)
+	if err != nil {
+		return entities.Admin{}, err
+	}
+	if exists {
+		return entities.Admin{}, errors.New(utils.CapitalizeErrorMessage(errors.New("email sudah ada")))
+	}
+
 	// Hash the password before saving it to the database
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -129,4 +139,35 @@ func (service *AdminService) ValidateAdminRole(adminID int, requiredRole string)
 	}
 
 	return nil
+}
+
+func (service *AdminService) UpdateAdminProfile(adminID int, email, password, photo string) (entities.Admin, error) {
+	admin, err := service.adminRepo.GetAdminByID(adminID)
+	if err != nil {
+		return entities.Admin{}, err
+	}
+
+	// Perbarui data jika ada perubahan
+	if email != "" {
+		admin.Email = email
+	}
+
+	if password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			return entities.Admin{}, errors.New("failed to hash password")
+		}
+		admin.Password = string(hashedPassword)
+	}
+
+	if photo != "" {
+		admin.Photo = photo
+	}
+
+	// Simpan perubahan ke database
+	if err := service.adminRepo.UpdateAdminProfile(admin); err != nil {
+		return entities.Admin{}, err
+	}
+
+	return admin, nil
 }

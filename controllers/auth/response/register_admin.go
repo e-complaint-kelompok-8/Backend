@@ -6,6 +6,7 @@ type RegisterAdminResponse struct {
 	ID    int    `json:"id"`
 	Email string `json:"email"`
 	Role  string `json:"role"`
+	Photo string `json:"photo"`
 }
 
 func RegisterAdminFromEntities(admin entities.Admin) RegisterAdminResponse {
@@ -13,5 +14,6 @@ func RegisterAdminFromEntities(admin entities.Admin) RegisterAdminResponse {
 		ID:    admin.ID,
 		Email: admin.Email,
 		Role:  admin.Role,
+		Photo: admin.Photo,
 	}
 }
