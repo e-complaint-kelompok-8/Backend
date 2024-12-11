@@ -2,6 +2,7 @@ package routes
 
 import (
 	"capstone/controllers/auth"
+	"capstone/controllers/category"
 	"capstone/controllers/comment"
 	"capstone/controllers/complaints"
 	customerservice "capstone/controllers/customer_service"
@@ -24,6 +25,7 @@ type RouteController struct {
 	CustomerServiceController customerservice.CustomerServiceController
 	AuthAdminController       auth.AdminController
 	jwtAdmin                  middlewares.JwtAdmin
+	CategoryController        category.CategoryController
 }
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
@@ -117,4 +119,11 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminFeedback := eAdminJwt.Group("/feedback")
 	eAdminFeedback.PUT("/:id", rc.FeedbackController.UpdateFeedback)
 
+	// Rute Admin untuk Kelola Category
+	eAdminCategory := eAdminJwt.Group("/category")
+	eAdminCategory.GET("", rc.CategoryController.GetAllCategories)
+	eAdminCategory.GET("/:id", rc.CategoryController.GetCategoryByID)
+	eAdminCategory.POST("", rc.CategoryController.CreateCategory)
+	eAdminCategory.PUT("/:id", rc.CategoryController.UpdateCategory)
+	eAdminCategory.DELETE("/:id", rc.CategoryController.DeleteCategory)
 }

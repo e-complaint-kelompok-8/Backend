@@ -3,6 +3,7 @@ package main
 import (
 	"capstone/config"
 	"capstone/controllers/auth"
+	"capstone/controllers/category"
 	"capstone/controllers/comment"
 	complaintsController "capstone/controllers/complaints"
 	customerservice "capstone/controllers/customer_service"
@@ -10,6 +11,7 @@ import (
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
+	categoryRepositories "capstone/repositories/category"
 	commentRepositories "capstone/repositories/comment"
 	complaintsRepo "capstone/repositories/complaints"
 	csRepositories "capstone/repositories/customer_service"
@@ -17,6 +19,7 @@ import (
 	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
+	categoryService "capstone/services/category"
 	commentService "capstone/services/comment"
 	complaintsService "capstone/services/complaints"
 	csService "capstone/services/customer_service"
@@ -78,6 +81,10 @@ func main() {
 	customerService := csService.NewCustomerService(customerServiceRepo)
 	customerServiceController := customerservice.NewCustomerServiceController(customerService)
 
+	categoryRepo := categoryRepositories.NewCategoryRepository(db)
+	categoryService := categoryService.NewCategoryService(categoryRepo)
+	categoryController := category.NewCategoryController(categoryService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:            *authController,
@@ -87,6 +94,7 @@ func main() {
 		FeedbackController:        *feedbackController,
 		CustomerServiceController: *customerServiceController,
 		AuthAdminController:       *authControllerAdmin,
+		CategoryController:        *categoryController,
 	}
 	routeController.RegisterRoutes(e)
 
