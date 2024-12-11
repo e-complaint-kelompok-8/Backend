@@ -9,7 +9,6 @@ import (
 
 type AIResponse struct {
 	ID        int    `json:"id"`
-	UserID    int    `json:"user_id"`
 	User      User   `json:"user"`
 	Request   string `json:"request"`
 	Response  string `json:"response"`
@@ -37,12 +36,37 @@ type SuccessResponseCS struct {
 
 func FormatAIResponse(ai entities.AIResponse) AIResponse {
 	return AIResponse{
-		ID:        ai.ID,
-		UserID:    ai.UserID,
+		ID: ai.ID,
+		User: User{
+			ID:    ai.UserID,
+			Name:  ai.User.Name,
+			Email: ai.User.Email,
+			Phone: ai.User.Phone,
+			Photo: ai.User.PhotoURL,
+		},
 		Request:   ai.Request,
 		Response:  ai.Response,
 		CreatedAt: ai.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
+}
+
+func FormatsAIResponse(customers []entities.AIResponse) []AIResponse {
+	var responses []AIResponse
+	for _, customer := range customers {
+		responses = append(responses, AIResponse{
+			ID: customer.ID,
+			User: User{
+				ID:    customer.UserID,
+				Name:  customer.User.Name,
+				Email: customer.User.Email,
+				Phone: customer.User.Phone,
+				Photo: customer.User.PhotoURL,
+			},
+			Request:  customer.Request,
+			Response: customer.Response,
+		})
+	}
+	return responses
 }
 
 func SuccessResponse(c echo.Context, user entities.User, req string, res string) error {

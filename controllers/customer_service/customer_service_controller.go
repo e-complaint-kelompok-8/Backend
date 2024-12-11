@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/google/generative-ai-go/genai"
@@ -101,6 +102,48 @@ func (controller *CustomerServiceController) ChatbotQueryController(c echo.Conte
 
 	// Kirimkan respons ke user
 	return response.SuccessResponse(c, user, request.Query, string(aiResponseString))
+}
+
+func (controller *CustomerServiceController) GetUserResponses(c echo.Context) error {
+	// Ambil user_id dari JWT di context
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "User not authorized",
+		})
+	}
+
+	// Ambil parameter pagination
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
+	// Ambil data customer service untuk user tertentu
+	responses, total, err := controller.customerService.GetUserResponses(userID, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to retrieve data",
+		})
+	}
+
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
+	// Kirimkan respons ke user
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":     "success",
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"data":       response.FormatsAIResponse(responses),
+	})
 }
 
 // func cleanAIResponse(response string) string {

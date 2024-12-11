@@ -13,6 +13,7 @@ func NewCustomerService(ai customerservice.AIResponseRepositoryInterface) *Custo
 type CustomerServiceInterface interface {
 	SaveAIResponse(userID int, request string, response string) error
 	GetUserByID(userID int) (entities.User, error)
+	GetUserResponses(userID int, page int, limit int) ([]entities.AIResponse, int, error)
 }
 
 type CustomerService struct {
@@ -33,4 +34,9 @@ func (service *CustomerService) SaveAIResponse(userID int, request string, respo
 
 func (service *CustomerService) GetUserByID(userID int) (entities.User, error) {
 	return service.aiResponseRepo.GetUserByID(userID)
+}
+
+func (service *CustomerService) GetUserResponses(userID int, page int, limit int) ([]entities.AIResponse, int, error) {
+	offset := (page - 1) * limit
+	return service.aiResponseRepo.GetUserResponses(userID, offset, limit)
 }

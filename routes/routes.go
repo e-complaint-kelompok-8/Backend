@@ -79,6 +79,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eCustomerService := eJwt.Group("/chatbot")
 	eCustomerService.Use(rc.jwtUser.GetUserID)
 	eCustomerService.POST("", rc.CustomerServiceController.ChatbotQueryController)
+	eCustomerService.GET("/user-responses", rc.CustomerServiceController.GetUserResponses)
 
 	// Grup Admin
 	eAdmin := e.Group("/admin")
