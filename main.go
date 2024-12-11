@@ -7,18 +7,21 @@ import (
 	complaintsController "capstone/controllers/complaints"
 	"capstone/controllers/feedbacks"
 	"capstone/controllers/news"
+	"capstone/controllers/category"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
 	commentRepositories "capstone/repositories/comment"
 	complaintsRepo "capstone/repositories/complaints"
 	feedbackRepositories "capstone/repositories/feedbacks"
 	newsRepositories "capstone/repositories/news"
+	categoryRepositories "capstone/repositories/category"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
 	commentService "capstone/services/comment"
 	complaintsService "capstone/services/complaints"
 	feedbackService "capstone/services/feedbacks"
 	newsService "capstone/services/news"
+	categoryService "capstone/services/category"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -71,6 +74,10 @@ func main() {
 	feedbackService := feedbackService.NewFeedbackService(feedbackRepo)
 	feedbackController := feedbacks.NewFeedbackController(feedbackService)
 
+	categoryRepo := categoryRepositories.NewCategoryRepository(db)
+	categoryService := categoryService.NewCategoryService(categoryRepo)
+	categoryController := category.NewCategoryController(categoryService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:      *authController,
@@ -79,6 +86,7 @@ func main() {
 		CommentController:   *commentController,
 		FeedbackController:  *feedbackController,
 		AuthAdminController: *authControllerAdmin,
+		CategoryController:	 *categoryController,
 	}
 	routeController.RegisterRoutes(e)
 
