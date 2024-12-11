@@ -6,7 +6,7 @@ import (
 )
 
 type NewsServiceInterface interface {
-	GetAllNews() ([]entities.News, error)
+	GetAllNews(page int, limit int) ([]entities.News, int64, error)
 	GetNewsByID(id string) (entities.News, error)
 	GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error)
 	GetNewsByIDWithComments(id string) (entities.News, error)
@@ -23,8 +23,8 @@ func NewNewsService(repo news.NewsRepositoryInterface) *NewsService {
 	return &NewsService{newsRepo: repo}
 }
 
-func (ns *NewsService) GetAllNews() ([]entities.News, error) {
-	return ns.newsRepo.GetAllNews()
+func (ns *NewsService) GetAllNews(page int, limit int) ([]entities.News, int64, error) {
+	return ns.newsRepo.GetAllNews(page, limit)
 }
 
 func (ns *NewsService) GetNewsByID(id string) (entities.News, error) {

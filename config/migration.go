@@ -18,6 +18,7 @@ func RunMigrations(db *gorm.DB) {
 		&models.News{},
 		&models.Comment{},
 		&models.Feedback{},
+		&models.AIResponse{},
 	)
 	log.Println("Migration completed successfully!")
 }

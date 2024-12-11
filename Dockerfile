@@ -5,9 +5,10 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./main.go
 
-FROM alpine:3.17
+FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY .env .env
+RUN apk update && apk add --no-cache ca-certificates
 EXPOSE 8000
 CMD ["./main"]
