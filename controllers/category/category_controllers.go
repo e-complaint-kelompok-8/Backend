@@ -63,16 +63,38 @@ func (c *CategoryController) GetAllCategories(ctx echo.Context) error {
 
 // UpdateCategory handles updating an existing category
 func (c *CategoryController) UpdateCategory(ctx echo.Context) error {
+	// Parse and validate the ID from the URL parameter
+	idParam := ctx.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid category ID"})
+	}
+
+	// Check if the category exists
+	existingCategory, err := c.service.GetCategoryByID(ctx.Request().Context(), id)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, map[string]string{"message": "Category not found"})
+	}
+
+	// Bind the request data
 	var req request.UpdateCategoryRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request data"})
 	}
 
-	updatedCategory, err := c.service.UpdateCategory(ctx.Request().Context(), req.ToEntity())
+	// Ensure the ID in the request matches the ID parameter
+	req.ID = id
+
+	// Convert request to entity using existing category
+	updatedEntity := req.ToEntity(existingCategory)
+
+	// Perform the update
+	updatedCategory, err := c.service.UpdateCategory(ctx.Request().Context(), updatedEntity)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
+	// Return the updated category in the response
 	return ctx.JSON(http.StatusOK, response.FromEntity(updatedCategory))
 }
 

@@ -29,11 +29,13 @@ type UpdateCategoryRequest struct {
 }
 
 // ToEntity converts UpdateCategoryRequest to Category entity
-func (req *UpdateCategoryRequest) ToEntity() entities.Category {
+func (req *UpdateCategoryRequest) ToEntity(existing entities.Category) entities.Category {
+	// Use existing data as the base, only overwrite fields from the request
 	return entities.Category{
-		ID:          req.ID,
-		Name:        req.Name,
+		ID:          existing.ID, // Keep original ID
+		Name:        req.Name,    // Update the Name
 		Description: req.Description,
-		UpdatedAt:   time.Now(),
+		CreatedAt:   existing.CreatedAt, // Preserve original CreatedAt
+		UpdatedAt:   time.Now(),         // Set new UpdatedAt
 	}
 }
