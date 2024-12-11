@@ -4,6 +4,7 @@ import (
 	"capstone/controllers/auth"
 	"capstone/controllers/comment"
 	"capstone/controllers/complaints"
+	customerservice "capstone/controllers/customer_service"
 	feedback "capstone/controllers/feedbacks"
 	"capstone/controllers/news"
 	"capstone/middlewares"
@@ -14,14 +15,15 @@ import (
 )
 
 type RouteController struct {
-	AuthController      auth.AuthController
-	ComplaintController complaints.ComplaintController
-	NewsController      news.NewsController
-	CommentController   comment.CommentController
-	FeedbackController  feedback.FeedbackController
-	jwtUser             middlewares.JwtUser
-	AuthAdminController auth.AdminController
-	jwtAdmin            middlewares.JwtAdmin
+	AuthController            auth.AuthController
+	ComplaintController       complaints.ComplaintController
+	NewsController            news.NewsController
+	CommentController         comment.CommentController
+	FeedbackController        feedback.FeedbackController
+	jwtUser                   middlewares.JwtUser
+	CustomerServiceController customerservice.CustomerServiceController
+	AuthAdminController       auth.AdminController
+	jwtAdmin                  middlewares.JwtAdmin
 }
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
@@ -66,11 +68,17 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eComment.GET("", rc.CommentController.GetAllComments)
 	eComment.GET("/:id", rc.CommentController.GetCommentByID)
 
+	// grup feedback
 	eFeedback := eJwt.Group("/feedback")
 	eFeedback.Use(rc.jwtUser.GetUserID)
 	eFeedback.GET("/complaint/:complaint_id", rc.FeedbackController.GetFeedbackByComplaint)
 	eFeedback.GET("", rc.FeedbackController.GetFeedbacksByUser)
 	eFeedback.POST("/:id/response", rc.FeedbackController.AddResponseToFeedback)
+
+	// grup customer service (ai)
+	eCustomerService := eJwt.Group("/chatbot")
+	eCustomerService.Use(rc.jwtUser.GetUserID)
+	eCustomerService.POST("", rc.CustomerServiceController.ChatbotQueryController)
 
 	// Grup Admin
 	eAdmin := e.Group("/admin")

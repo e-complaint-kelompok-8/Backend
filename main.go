@@ -5,18 +5,21 @@ import (
 	"capstone/controllers/auth"
 	"capstone/controllers/comment"
 	complaintsController "capstone/controllers/complaints"
+	customerservice "capstone/controllers/customer_service"
 	"capstone/controllers/feedbacks"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	AuthRepositories "capstone/repositories/auth"
 	commentRepositories "capstone/repositories/comment"
 	complaintsRepo "capstone/repositories/complaints"
+	csRepositories "capstone/repositories/customer_service"
 	feedbackRepositories "capstone/repositories/feedbacks"
 	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	AuthServices "capstone/services/auth"
 	commentService "capstone/services/comment"
 	complaintsService "capstone/services/complaints"
+	csService "capstone/services/customer_service"
 	feedbackService "capstone/services/feedbacks"
 	newsService "capstone/services/news"
 	"log"
@@ -71,14 +74,19 @@ func main() {
 	feedbackService := feedbackService.NewFeedbackService(feedbackRepo)
 	feedbackController := feedbacks.NewFeedbackController(feedbackService)
 
+	customerServiceRepo := csRepositories.NewCustomerServiceseRepo(db)
+	customerService := csService.NewCustomerService(customerServiceRepo)
+	customerServiceController := customerservice.NewCustomerServiceController(customerService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
-		AuthController:      *authController,
-		ComplaintController: *complaintController,
-		NewsController:      *newsController,
-		CommentController:   *commentController,
-		FeedbackController:  *feedbackController,
-		AuthAdminController: *authControllerAdmin,
+		AuthController:            *authController,
+		ComplaintController:       *complaintController,
+		NewsController:            *newsController,
+		CommentController:         *commentController,
+		FeedbackController:        *feedbackController,
+		CustomerServiceController: *customerServiceController,
+		AuthAdminController:       *authControllerAdmin,
 	}
 	routeController.RegisterRoutes(e)
 
