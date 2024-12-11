@@ -167,7 +167,7 @@ func (controller *AdminController) GetAdminProfile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Admin profile fetched successfully",
-		"admin":   response.RegisterAdminFromEntities(admin),
+		"admin":   response.AdminProfileFromEntities(admin),
 	})
 }
 
@@ -190,6 +190,6 @@ func (controller *AdminController) UpdateAdminProfile(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Admin profile updated successfully",
-		"admin":   response.RegisterAdminFromEntities(admin),
+		"admin":   response.AdminProfileFromEntities(admin),
 	})
 }

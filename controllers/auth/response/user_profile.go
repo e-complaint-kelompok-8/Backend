@@ -7,6 +7,7 @@ type UserProfileResponse struct {
 	Name     string `json:"name"`
 	Phone    string `json:"phone_number"`
 	Email    string `json:"email"`
+	Password string `json:"password"`
 	PhotoURL string `json:"photo"`
 }
 
@@ -16,6 +17,7 @@ func UserProfileFromEntities(user entities.User) UserProfileResponse {
 		Name:     user.Name,
 		Phone:    user.Phone,
 		Email:    user.Email,
+		Password: user.Password,
 		PhotoURL: user.PhotoURL,
 	}
 }
