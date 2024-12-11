@@ -10,7 +10,7 @@ import (
 )
 
 type NewsRepositoryInterface interface {
-	GetAllNews() ([]entities.News, error)
+	GetAllNews(page int, limit int) ([]entities.News, int64, error)
 	GetNewsByID(id string) (entities.News, error)
 	GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error)
 	GetNewsByIDWithComments(id string) (entities.News, error)
@@ -29,13 +29,24 @@ func NewNewsRepository(db *gorm.DB) *NewsRepository {
 	return &NewsRepository{db: db}
 }
 
-func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
+func (nr *NewsRepository) GetAllNews(page int, limit int) ([]entities.News, int64, error) {
 	var news []models.News
+	var total int64
 
-	// Query semua berita dengan Preload admin dan category
-	err := nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").Order("created_at DESC").Find(&news).Error
+	// Hitung total data
+	err := nr.db.Model(&models.News{}).Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// Query berita dengan pagination
+	offset := (page - 1) * limit
+	err = nr.db.Preload("Admin").Preload("Category").Preload("Comments.User").
+		Order("created_at DESC").
+		Limit(limit).Offset(offset).
+		Find(&news).Error
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Konversi model ke entitas
@@ -44,7 +55,7 @@ func (nr *NewsRepository) GetAllNews() ([]entities.News, error) {
 		result = append(result, n.ToEntitiesWithComment())
 	}
 
-	return result, nil
+	return result, total, nil
 }
 
 func (nr *NewsRepository) GetNewsByID(id string) (entities.News, error) {
