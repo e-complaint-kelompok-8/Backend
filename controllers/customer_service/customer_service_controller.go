@@ -69,6 +69,7 @@ func (controller *CustomerServiceController) ChatbotQueryController(c echo.Conte
 	// Tambahkan konteks aplikasi Laporin
 	genAIParts := []genai.Part{
 		genai.Text("Halo, saya adalah Lapi, anggota tim Laporin, sebuah aplikasi untuk membantu pengaduan masyarakat."),
+		genai.Text(Sapaan),
 		genai.Text(DeskripsiLaporin),
 		genai.Text(CaraMengajukanPengaduan),
 		genai.Text(CaraMelihatStatusPengaduan),

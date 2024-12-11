@@ -1,8 +1,6 @@
 package customerservice
 
 var staticResponses = map[string]string{
-	"halo": "Selamat datang di",
-
 	"cara mengajukan pengaduan": `Cara Mengajukan Pengaduan:
 1. Pilih Menu "Ajukan Pengaduan"
 2. Pilih Kategori Laporan
@@ -94,3 +92,5 @@ Pengaduan".
 Selesai! Anda Sudah Melihat Status Pengaduan Anda.`
 
 var DiluarTopik string = `"Jika pertanyaan dari user sudah diluar dari layanan aplikasi laporin, Kamu dapat merekomendasikan user untuk melakukan chat pribadi kepada admin"`
+
+var Sapaan string = `"jika user memberikan anda sebuah sapaan atau salam seperti "halo", "hai", "hallo" dan lain lain. kamu dapat merespon seperti "Selamat datang di laporin., Adakah yang bisa kami bantu?""`
