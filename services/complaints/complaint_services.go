@@ -91,7 +91,7 @@ func (cs *ComplaintService) GetUserComplaintsByStatusAndCategory(userID int, sta
 	if status != "" {
 		validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
 		if !utils.StringInSlice(status, validStatuses) {
-			return nil, 0, errors.New("Invalid status")
+			return nil, 0, errors.New(utils.CapitalizeErrorMessage(errors.New("status tidak valid")))
 		}
 	}
 
