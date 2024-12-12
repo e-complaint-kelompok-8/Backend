@@ -9,6 +9,7 @@ import (
 
 type ComplaintServiceInterface interface {
 	CreateComplaint(c entities.Complaint, photoURLs []string) (entities.Complaint, []entities.ComplaintPhoto, error)
+	GetUserComplaintsByStatusAndCategory(userID int, status string, categoryID, page, limit int) ([]entities.Complaint, int64, error)
 	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintsByStatusAndUser(status string, userID int) ([]entities.Complaint, error)
@@ -83,6 +84,24 @@ func (cs *ComplaintService) CreateComplaint(c entities.Complaint, photoURLs []st
 	}
 
 	return complaint, photos, nil
+}
+
+func (cs *ComplaintService) GetUserComplaintsByStatusAndCategory(userID int, status string, categoryID, page, limit int) ([]entities.Complaint, int64, error) {
+	// Validasi input status jika ada
+	if status != "" {
+		validStatuses := []string{"proses", "tanggapi", "batal", "selesai"}
+		if !utils.StringInSlice(status, validStatuses) {
+			return nil, 0, errors.New("Invalid status")
+		}
+	}
+
+	// Ambil data dari repository
+	complaints, total, err := cs.complaintRepo.UserGetComplaintsByStatusAndCategory(userID, status, categoryID, page, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return complaints, total, nil
 }
 
 func (cs *ComplaintService) GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error) {

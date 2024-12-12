@@ -58,6 +58,52 @@ func (cc *ComplaintController) CreateComplaintController(c echo.Context) error {
 	})
 }
 
+func (cc *ComplaintController) GetUserComplaintsByStatusAndCategory(c echo.Context) error {
+	// Ambil user_id dari JWT
+	userID, ok := c.Get("user_id").(int)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "User not authorized"})
+	}
+
+	// Ambil parameter query
+	status := c.QueryParam("status")
+	categoryIDParam := c.QueryParam("category_id")
+	pageParam := c.QueryParam("page")
+	limitParam := c.QueryParam("limit")
+
+	// Konversi categoryID, page, dan limit jika ada
+	var categoryID, page, limit int
+	var err error
+	if categoryIDParam != "" {
+		categoryID, err = strconv.Atoi(categoryIDParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid category ID"})
+		}
+	}
+	page, _ = strconv.Atoi(pageParam)   // Default 0 jika kosong
+	limit, _ = strconv.Atoi(limitParam) // Default 0 jika kosong
+
+	// Ambil data keluhan dari service
+	complaints, total, err := cc.complaintService.GetUserComplaintsByStatusAndCategory(userID, status, categoryID, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	// Konversi entities ke response
+	responseData := response.ComplaintsFromEntities(complaints)
+
+	// Kirim respons dengan data dan metadata pagination
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Success",
+		"data": map[string]interface{}{
+			"complaints": responseData,
+			"total":      total,
+			"page":       page,
+			"limit":      limit,
+		},
+	})
+}
+
 func (cc *ComplaintController) GetComplaintById(c echo.Context) error {
 	// Ambil ID dari parameter URL
 	complaintID, err := strconv.Atoi(c.Param("id"))
