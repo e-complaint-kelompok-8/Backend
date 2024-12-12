@@ -75,9 +75,9 @@ func (controller *CustomerServiceController) ChatbotQueryController(c echo.Conte
 		genai.Text(CaraMelihatStatusPengaduan),
 		genai.Text(CaraMembatalkanPengaduan),
 		genai.Text(CaraMembacaBeritaDanPengumuman),
-		genai.Text(DiluarTopik),
 		genai.Text("Pertanyaan dari user: " + request.Query),
 		genai.Text("Berikan jawaban yang spesifik, jelas, dan terkait dengan layanan Laporin."),
+		genai.Text(DiluarTopik),
 	}
 
 	// Kirim permintaan ke model AI
