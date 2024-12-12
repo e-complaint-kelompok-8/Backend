@@ -10,6 +10,7 @@ import (
 type ComplaintRepoInterface interface {
 	CreateComplaint(c entities.Complaint) (entities.Complaint, error)
 	AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]entities.ComplaintPhoto, error)
+	UserGetComplaintsByStatusAndCategory(userID int, status string, categoryID, page, limit int) ([]entities.Complaint, int64, error)
 	IsComplaintNumberUnique(complaintNumber string) (bool, error)
 	GetComplaintsByUserID(userID int) ([]entities.Complaint, error)
 	GetComplaintByIDAndUser(id int, userID int) (entities.Complaint, error)
@@ -47,6 +48,53 @@ func (cr *ComplaintRepo) CreateComplaint(c entities.Complaint) (entities.Complai
 	}
 
 	return complaint.ToEntities(), nil
+}
+
+func (cr *ComplaintRepo) UserGetComplaintsByStatusAndCategory(userID int, status string, categoryID, page, limit int) ([]entities.Complaint, int64, error) {
+	var complaints []models.Complaint
+	var total int64
+
+	// Preload User, Category, dan Photos
+	query := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks").
+		Preload("Feedbacks.Admin").Where("user_id = ?", userID)
+
+	// Tambahkan kondisi pencarian status jika ada
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	// Tambahkan kondisi pencarian category_id jika ada
+	if categoryID > 0 {
+		query = query.Where("category_id = ?", categoryID)
+	}
+
+	// Hitung total data sebelum pagination
+	if err := query.Model(&models.Complaint{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Terapkan pagination jika limit > 0
+	if limit > 0 {
+		offset := (page - 1) * limit
+		query = query.Offset(offset).Limit(limit)
+	}
+
+	// Terapkan urutan descending berdasarkan waktu
+	query = query.Order("created_at DESC")
+
+	// Eksekusi query
+	err := query.Find(&complaints).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Konversi ke entities
+	var result []entities.Complaint
+	for _, complaint := range complaints {
+		result = append(result, complaint.ToEntities())
+	}
+
+	return result, total, nil
 }
 
 func (cr *ComplaintRepo) AddComplaintPhotos(photos []entities.ComplaintPhoto) ([]entities.ComplaintPhoto, error) {
