@@ -90,7 +90,7 @@ func main() {
 
 	adminAIRepo := adminaiRepositories.NewCustomerServiceseRepo(db)
 	adminAIService := adminaiService.NewCustomerService(adminAIRepo)
-	adminAIController := adminai.NewCustomerServiceController(adminAIService, complaintService)
+	adminAIController := adminai.NewCustomerServiceController(adminAIService, complaintService, *serviceAdmin)
 
 	// Mendaftarkan routes
 	routeController := routes.RouteController{

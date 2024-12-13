@@ -132,5 +132,5 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 
 	eAdminAI := eAdminJwt.Group("/ai-suggestions")
 	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)
-	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.GetAISuggestion)
+	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.FollowUpAISuggestion)
 }
