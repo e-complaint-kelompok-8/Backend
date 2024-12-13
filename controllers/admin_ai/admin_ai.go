@@ -2,6 +2,7 @@ package adminai
 
 import (
 	"capstone/controllers/admin_ai/response"
+	"capstone/middlewares"
 	adminai "capstone/services/admin_ai"
 	"capstone/services/auth"
 	"capstone/services/complaints"
@@ -21,6 +22,12 @@ func NewCustomerServiceController(ais adminai.AISuggestionServiceInterface, cs c
 }
 
 func (controller *AdminAIController) GetAISuggestion(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	adminID := c.Get("admin_id").(int)
 	var request struct {
 		ComplaintID int    `json:"complaint_id"`
@@ -61,6 +68,12 @@ func (controller *AdminAIController) GetAISuggestion(c echo.Context) error {
 }
 
 func (controller *AdminAIController) FollowUpAISuggestion(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	adminID := c.Get("admin_id").(int)
 	aiSuggestionID := c.Param("id")
 
