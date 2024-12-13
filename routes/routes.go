@@ -1,6 +1,7 @@
 package routes
 
 import (
+	adminai "capstone/controllers/admin_ai"
 	"capstone/controllers/auth"
 	"capstone/controllers/category"
 	"capstone/controllers/comment"
@@ -25,6 +26,7 @@ type RouteController struct {
 	CustomerServiceController customerservice.CustomerServiceController
 	AuthAdminController       auth.AdminController
 	jwtAdmin                  middlewares.JwtAdmin
+	AdminAISuggestion         adminai.AdminAIController
 	CategoryController        category.CategoryController
 }
 
@@ -127,4 +129,9 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminCategory.POST("", rc.CategoryController.CreateCategory)
 	eAdminCategory.PUT("/:id", rc.CategoryController.UpdateCategory)
 	eAdminCategory.DELETE("/:id", rc.CategoryController.DeleteCategory)
+
+	eAdminAI := eAdminJwt.Group("/ai-suggestions")
+	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)
+	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.FollowUpAISuggestion)
+	eAdminAI.GET("", rc.AdminAISuggestion.GetAllAISuggestions)
 }
