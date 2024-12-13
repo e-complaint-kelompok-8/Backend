@@ -15,6 +15,8 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+// var sendOTPEmailFunc = sendOTPEmail
+
 type AuthServiceInterface interface {
 	RegisterUser(user entities.User) (entities.User, error)
 	LoginUser(user entities.User) (entities.User, error)
@@ -75,18 +77,19 @@ func (as *AuthService) RegisterUser(user entities.User) (entities.User, error) {
 	user.OTPExpiry = time.Now().Add(10 * time.Minute) // OTP berlaku 10 menit
 
 	// Debug log untuk memastikan OTP terisi
-	fmt.Printf("Generated OTP: %s\n", user.OTP)
+	// fmt.Printf("Generated OTP: %s\n", user.OTP)
 
 	// Buat user baru di database
-	fmt.Printf("Before saving to DB, OTP: %s\n", user.OTP)
+	// fmt.Printf("Before saving to DB, OTP: %s\n", user.OTP)
 	user, err = as.AuthRepository.RegisterUser(user)
 	if err != nil {
 		return entities.User{}, err
 	}
-	fmt.Printf("After saving to DB, OTP: %s\n", user.OTP)
+	// fmt.Printf("After saving to DB, OTP: %s\n", user.OTP)
 
 	// Kirim OTP ke email
 	err = sendOTPEmail(user)
+	// err = sendOTPEmailFunc(user)
 	if err != nil {
 		return entities.User{}, fmt.Errorf("failed to send OTP email: %w", err)
 	}
@@ -135,11 +138,11 @@ func sendOTPEmail(user entities.User) error {
 	// Kirim email
 	err := d.DialAndSend(m)
 	if err != nil {
-		fmt.Printf("Failed to send email to %s: %s\n", user.Email, err.Error())
+		// fmt.Printf("Failed to send email to %s: %s\n", user.Email, err.Error())
 		return fmt.Errorf("failed to send email: %w", err)
 	}
 
-	fmt.Printf("OTP %s sent to email %s\n", user.OTP, user.Email)
+	// fmt.Printf("OTP %s sent to email %s\n", user.OTP, user.Email)
 	return nil
 }
 
@@ -199,7 +202,7 @@ func (as *AuthService) VerifyOTP(email, otp string) error {
 		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengguna tidak ditemukan")))
 	}
 
-	fmt.Printf("Verifying OTP %s for email %s. Stored OTP: %s\n", otp, email, user.OTP)
+	// fmt.Printf("Verifying OTP %s for email %s. Stored OTP: %s\n", otp, email, user.OTP)
 
 	// Periksa apakah OTP cocok
 	if user.OTP != otp {
