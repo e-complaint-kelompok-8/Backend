@@ -6,6 +6,7 @@ import (
 	customerservice "capstone/services/customer_service"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -68,13 +69,14 @@ func (controller *CustomerServiceController) ChatbotQueryController(c echo.Conte
 
 	// Tambahkan konteks aplikasi Laporin
 	genAIParts := []genai.Part{
-		genai.Text("Halo, saya adalah Lapi, anggota tim Laporin, sebuah aplikasi untuk membantu pengaduan masyarakat."),
+		genai.Text("Kamu adalah Lapi, anggota tim Laporin, sebuah aplikasi untuk membantu pengaduan masyarakat."),
 		genai.Text(Sapaan),
 		genai.Text(DeskripsiLaporin),
 		genai.Text(CaraMengajukanPengaduan),
 		genai.Text(CaraMelihatStatusPengaduan),
 		genai.Text(CaraMembatalkanPengaduan),
 		genai.Text(CaraMembacaBeritaDanPengumuman),
+		genai.Text(fmt.Sprintf("Halo, nama saya adalah %s, saya adalah pengguna aplikasi ini atau biasa disebut dengan user yang ingin bertanya mengenai aplikasi ini ataupun hal lain", user.Name)),
 		genai.Text("Pertanyaan dari user: " + request.Query),
 		genai.Text("Berikan jawaban yang spesifik, jelas, dan terkait dengan layanan Laporin."),
 		genai.Text(DiluarTopik),
