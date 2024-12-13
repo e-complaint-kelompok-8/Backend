@@ -89,3 +89,28 @@ func AISuggestionFromEntities(savedAISuggestion entities.AISuggestion, admin ent
 		CreatedAt: savedAISuggestion.CreatedAt,
 	}
 }
+
+func FormattedSuggestions(aiSuggestions []entities.AISuggestion) []AISuggestion {
+	var formattedSuggestions []AISuggestion
+	for _, suggestion := range aiSuggestions {
+		formattedSuggestions = append(formattedSuggestions, AISuggestion{
+			ID:    suggestion.ID,
+			Admin: Admin{ID: suggestion.Admin.ID, Email: suggestion.Admin.Email, Photo: suggestion.Admin.Photo, Role: suggestion.Admin.Role},
+			Complaint: Complaint{
+				ID:              suggestion.Complaint.ID,
+				User:            User{ID: suggestion.Complaint.User.ID, Name: suggestion.Complaint.User.Name, Phone: suggestion.Complaint.User.Phone, Email: suggestion.Complaint.User.Email},
+				Category:        Category{ID: suggestion.Complaint.Category.ID, Name: suggestion.Complaint.Category.Name, Description: suggestion.Complaint.Category.Description},
+				ComplaintNumber: suggestion.Complaint.ComplaintNumber,
+				Title:           suggestion.Complaint.Title,
+				Location:        suggestion.Complaint.Location,
+				Status:          suggestion.Complaint.Status,
+				Description:     suggestion.Complaint.Description,
+				Photos:          FromEntityPhotos(suggestion.Complaint.Photos),
+			},
+			Request:   suggestion.Request,
+			Response:  suggestion.Response,
+			CreatedAt: suggestion.CreatedAt,
+		})
+	}
+	return formattedSuggestions
+}

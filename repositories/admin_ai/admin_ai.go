@@ -11,6 +11,7 @@ import (
 type AISuggestionRepositoryInterface interface {
 	Create(aiSuggestion models.AISuggestion) (entities.AISuggestion, error)
 	GetByID(id string) (entities.AISuggestion, error)
+	GetAllByAdminID(adminID int) ([]entities.AISuggestion, error)
 }
 
 func NewCustomerServiceseRepo(db *gorm.DB) *AISuggestionRepository {
@@ -44,4 +45,19 @@ func (repo *AISuggestionRepository) GetByID(id string) (entities.AISuggestion, e
 		return entities.AISuggestion{}, fmt.Errorf("AI suggestion not found: %w", err)
 	}
 	return aiSuggestion.ToEntities(), nil
+}
+
+func (repo *AISuggestionRepository) GetAllByAdminID(adminID int) ([]entities.AISuggestion, error) {
+	var aiSuggestions []models.AISuggestion
+	if err := repo.db.Preload("Complaint").Preload("Complaint.User").Preload("Complaint.Category").Preload("Complaint.Photos").Preload("Admin").Where("admin_id = ?", adminID).Order("created_at DESC").Find(&aiSuggestions).Error; err != nil {
+		return nil, fmt.Errorf("failed to retrieve AI suggestions: %w", err)
+	}
+
+	// Map models to entities
+	result := []entities.AISuggestion{}
+	for _, aiSuggestion := range aiSuggestions {
+		result = append(result, aiSuggestion.ToEntities())
+	}
+
+	return result, nil
 }

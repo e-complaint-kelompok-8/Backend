@@ -113,3 +113,27 @@ func (controller *AdminAIController) FollowUpAISuggestion(c echo.Context) error 
 		"data":   response.AISuggestionFromEntities(savedAISuggestion, admin),
 	})
 }
+
+func (controller *AdminAIController) GetAllAISuggestions(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	adminID := c.Get("admin_id").(int)
+
+	// Ambil data semua AI suggestions berdasarkan admin
+	aiSuggestions, err := controller.aiSuggestionService.GetAllAISuggestions(adminID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to retrieve AI suggestions",
+		})
+	}
+
+	// Kirimkan respons
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "success",
+		"data":   response.FormattedSuggestions(aiSuggestions),
+	})
+}

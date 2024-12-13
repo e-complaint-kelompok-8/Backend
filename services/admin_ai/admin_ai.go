@@ -23,6 +23,7 @@ type AISuggestionServiceInterface interface {
 	GetAISuggestion(request string, complaint entities.Complaint) (string, error)
 	GetAISuggestionByID(id string) (entities.AISuggestion, error)
 	GetFollowUpAISuggestion(followUpQuery string, aiSuggestion entities.AISuggestion) (string, error)
+	GetAllAISuggestions(adminID int) ([]entities.AISuggestion, error)
 }
 
 type AISuggestionService struct {
@@ -115,4 +116,8 @@ func (service *AISuggestionService) GetFollowUpAISuggestion(followUpQuery string
 		return "", err
 	}
 	return string(aiResponseString), nil
+}
+
+func (service *AISuggestionService) GetAllAISuggestions(adminID int) ([]entities.AISuggestion, error) {
+	return service.aiResponseRepo.GetAllByAdminID(adminID)
 }
