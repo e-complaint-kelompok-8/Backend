@@ -25,20 +25,38 @@ func (controller *ManageUserController) GetAllUsers(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
 	}
 
-	// Ambil data semua user dari service
-	users, err := controller.userService.GetAllUsers()
+	// Ambil query parameter page dan limit
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10 // Default limit
+	}
+
+	// Ambil data user dari service dengan pagination
+	users, total, err := controller.userService.GetAllUsers(page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Failed to retrieve users",
 		})
 	}
 
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
 	// Konversi ke response
 	userResponses := response.FromEntitiesUsers(users)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Users retrieved successfully",
-		"data":    userResponses,
+		"message":    "Users retrieved successfully",
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"data":       userResponses,
 	})
 }
 

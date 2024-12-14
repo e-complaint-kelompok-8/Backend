@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepositoryInterface interface {
-	GetAllUsers() ([]entities.User, error)
+	GetAllUsers(offset, limit int) ([]entities.User, int, error)
 	GetUserByID(userID int) (entities.User, error)
 }
 
@@ -21,13 +21,20 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (repo *UserRepository) GetAllUsers() ([]entities.User, error) {
+func (repo *UserRepository) GetAllUsers(offset, limit int) ([]entities.User, int, error) {
 	var users []models.User
+	var total int64
 
-	// Ambil semua user tanpa preload complaints
-	err := repo.db.Find(&users).Error
+	// Hitung total data
+	err := repo.db.Model(&models.User{}).Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// Ambil data user dengan pagination
+	err = repo.db.Order("created_at DESC").Offset(offset).Limit(limit).Find(&users).Error
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Konversi dari model ke entity dan tambahkan complaints
@@ -42,7 +49,7 @@ func (repo *UserRepository) GetAllUsers() ([]entities.User, error) {
 			Preload("Feedbacks").
 			Where("user_id = ?", user.ID).Order("created_at DESC").Find(&complaints).Error
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		// Konversi complaints ke entities dan tambahkan ke user
@@ -53,7 +60,7 @@ func (repo *UserRepository) GetAllUsers() ([]entities.User, error) {
 		userEntities = append(userEntities, userEntity)
 	}
 
-	return userEntities, nil
+	return userEntities, int(total), nil
 }
 
 func (repo *UserRepository) GetUserByID(userID int) (entities.User, error) {
