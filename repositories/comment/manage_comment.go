@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"capstone/entities"
 	"capstone/repositories/models"
 	"fmt"
 )
@@ -22,4 +23,36 @@ func (cr *CommentRepository) ValidateCommentIDs(commentIDs []int) ([]int, error)
 	}
 
 	return existingIDs, nil
+}
+
+func (cr *CommentRepository) GetCommentsByNewsID(newsID, offset, limit int) ([]entities.Comment, int, error) {
+	var comments []models.Comment
+
+	// Query untuk mendapatkan komentar berdasarkan news ID dengan pagination
+	err := cr.db.Preload("User").Preload("News").
+		Where("news_id = ?", newsID).
+		Order("created_at DESC").
+		Offset(offset).
+		Limit(limit).
+		Find(&comments).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Hitung total komentar untuk berita tertentu
+	var total int64
+	err = cr.db.Model(&models.Comment{}).
+		Where("news_id = ?", newsID).
+		Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Konversi model ke entitas
+	var result []entities.Comment
+	for _, comment := range comments {
+		result = append(result, comment.ToEntities())
+	}
+
+	return result, int(total), nil
 }

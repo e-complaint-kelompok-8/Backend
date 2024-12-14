@@ -28,6 +28,14 @@ type NewsResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type Comment struct {
+	ID        int    `json:"id"`
+	Content   string `json:"content"`
+	UserName  string `json:"user_name"`
+	NewsTitle string `json:"news_title"`
+	CreatedAt string `json:"created_at"`
+}
+
 func FromEntityComment(comment entities.Comment) CommentResponse {
 	return CommentResponse{
 		ID:      comment.ID,

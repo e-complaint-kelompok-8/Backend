@@ -1,6 +1,9 @@
 package comment
 
-import "fmt"
+import (
+	"capstone/entities"
+	"fmt"
+)
 
 func (cs *CommentService) DeleteComments(commentIDs []int) error {
 	// Validasi comment IDs
@@ -21,4 +24,17 @@ func (cs *CommentService) DeleteComments(commentIDs []int) error {
 	}
 
 	return nil
+}
+
+func (cs *CommentService) GetCommentsByNewsID(newsID, page, limit int) ([]entities.Comment, int, error) {
+	// Hitung offset untuk pagination
+	offset := (page - 1) * limit
+
+	// Panggil repository untuk mendapatkan komentar berdasarkan news ID
+	comments, total, err := cs.commentRepo.GetCommentsByNewsID(newsID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return comments, total, nil
 }
