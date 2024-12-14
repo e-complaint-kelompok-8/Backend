@@ -99,3 +99,55 @@ func (cc *CommentController) GetCommentsByUserID(c echo.Context) error {
 		"comments":   commentResponses,
 	})
 }
+
+func (cc *CommentController) GetCommentsByNewsID(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	// Ambil id_berita dari parameter URL
+	newsIDStr := c.Param("news_id")
+	newsID, err := strconv.Atoi(newsIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid news ID format. It should be an integer.",
+		})
+	}
+
+	// Ambil query parameter page dan limit
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10 // Default limit
+	}
+
+	// Ambil data komentar berdasarkan id_berita dari service dengan pagination
+	comments, total, err := cc.commentService.GetCommentsByNewsID(newsID, page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Failed to retrieve comments by news ID",
+		})
+	}
+
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
+	// Konversi komentar ke response
+	commentResponses := response.FromEntityComments(comments)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":    "Comments retrieved successfully",
+		"news_id":    newsID,
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"comments":   commentResponses,
+	})
+}

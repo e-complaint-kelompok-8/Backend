@@ -13,6 +13,7 @@ type CommentServiceInterface interface {
 	GetAllComments(page, limit int) ([]entities.Comment, int, error)
 	GetCommentByID(commentID string) (entities.Comment, error)
 	DeleteComments(commentIDs []int) error
+	GetCommentsByNewsID(newsID, page, limit int) ([]entities.Comment, int, error)
 }
 
 type CommentService struct {
