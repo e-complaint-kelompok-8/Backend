@@ -8,6 +8,7 @@ import (
 	"capstone/controllers/complaints"
 	customerservice "capstone/controllers/customer_service"
 	feedback "capstone/controllers/feedbacks"
+	manageuser "capstone/controllers/manage_user"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	"os"
@@ -26,6 +27,7 @@ type RouteController struct {
 	CustomerServiceController customerservice.CustomerServiceController
 	AuthAdminController       auth.AdminController
 	jwtAdmin                  middlewares.JwtAdmin
+	ManageUserController      manageuser.ManageUserController
 	AdminAISuggestion         adminai.AdminAIController
 	CategoryController        category.CategoryController
 }
@@ -130,6 +132,19 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminCategory.PUT("/:id", rc.CategoryController.UpdateCategory)
 	eAdminCategory.DELETE("/:id", rc.CategoryController.DeleteCategory)
 
+	// Rute Admin untuk kelola comment
+	eAdminComment := eAdminJwt.Group("/comment")
+	eAdminComment.DELETE("", rc.CommentController.DeleteComments)
+	eAdminComment.GET("", rc.CommentController.GetAllComments)
+	eAdminComment.GET("/:id", rc.CommentController.GetCommentByID)
+	eAdminComment.GET("/user/:user_id", rc.CommentController.GetCommentsByUserID)
+
+	// Rute Admin untuk kelola user
+	eAdminManageUser := eAdminJwt.Group("/users")
+	eAdminManageUser.GET("", rc.ManageUserController.GetAllUsers)
+	eAdminManageUser.GET("/:id", rc.ManageUserController.GetUserDetail)
+
+	// Rute Admin untuk kelola chatbot
 	eAdminAI := eAdminJwt.Group("/ai-suggestions")
 	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)
 	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.FollowUpAISuggestion)

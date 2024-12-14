@@ -9,6 +9,7 @@ import (
 	complaintsController "capstone/controllers/complaints"
 	customerservice "capstone/controllers/customer_service"
 	"capstone/controllers/feedbacks"
+	manageuser "capstone/controllers/manage_user"
 	"capstone/controllers/news"
 	"capstone/middlewares"
 	adminaiRepositories "capstone/repositories/admin_ai"
@@ -18,6 +19,7 @@ import (
 	complaintsRepo "capstone/repositories/complaints"
 	csRepositories "capstone/repositories/customer_service"
 	feedbackRepositories "capstone/repositories/feedbacks"
+	manageuserRepositories "capstone/repositories/manage_user"
 	newsRepositories "capstone/repositories/news"
 	"capstone/routes"
 	adminaiService "capstone/services/admin_ai"
@@ -27,6 +29,7 @@ import (
 	complaintsService "capstone/services/complaints"
 	csService "capstone/services/customer_service"
 	feedbackService "capstone/services/feedbacks"
+	manageUserService "capstone/services/manage_user"
 	newsService "capstone/services/news"
 	"log"
 
@@ -88,6 +91,10 @@ func main() {
 	categoryService := categoryService.NewCategoryService(categoryRepo)
 	categoryController := category.NewCategoryController(categoryService)
 
+	manageUserRepo := manageuserRepositories.NewUserRepository(db)
+	manageUserService := manageUserService.NewUserService(manageUserRepo)
+	manageUserController := manageuser.NewManageUserController(manageUserService)
+
 	adminAIRepo := adminaiRepositories.NewCustomerServiceseRepo(db)
 	adminAIService := adminaiService.NewCustomerService(adminAIRepo)
 	adminAIController := adminai.NewCustomerServiceController(adminAIService, complaintService, *serviceAdmin)
@@ -102,6 +109,7 @@ func main() {
 		CustomerServiceController: *customerServiceController,
 		AuthAdminController:       *authControllerAdmin,
 		AdminAISuggestion:         *adminAIController,
+		ManageUserController:      *manageUserController,
 		CategoryController:        *categoryController,
 	}
 	routeController.RegisterRoutes(e)

@@ -47,7 +47,7 @@ func (repo *AIResponseRepository) GetUserResponses(userID int, offset int, limit
 	}
 
 	// Ambil data dengan batasan offset dan limit
-	if err := repo.db.Preload("User").Where("user_id = ?", userID).Offset(offset).Limit(limit).Order("created_at DESC").Find(&responses).Error; err != nil {
+	if err := repo.db.Preload("User").Where("user_id = ?", userID).Offset(offset).Limit(limit).Find(&responses).Error; err != nil {
 		return nil, 0, fmt.Errorf("failed to retrieve responses: %w", err)
 	}
 
