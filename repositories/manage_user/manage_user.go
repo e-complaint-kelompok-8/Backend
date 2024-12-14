@@ -40,7 +40,7 @@ func (repo *UserRepository) GetAllUsers() ([]entities.User, error) {
 		err = repo.db.Preload("Category").
 			Preload("Photos").
 			Preload("Feedbacks").
-			Where("user_id = ?", user.ID).Find(&complaints).Error
+			Where("user_id = ?", user.ID).Order("created_at DESC").Find(&complaints).Error
 		if err != nil {
 			return nil, err
 		}
@@ -74,6 +74,7 @@ func (repo *UserRepository) GetUserByID(userID int) (entities.User, error) {
 		Preload("Category").
 		Preload("Photos").
 		Preload("Feedbacks").
+		Order("created_at DESC").
 		Find(&complaints).Error
 	if err != nil {
 		return entities.User{}, fmt.Errorf("failed to retrieve user complaints: %w", err)
