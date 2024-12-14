@@ -130,6 +130,12 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminCategory.PUT("/:id", rc.CategoryController.UpdateCategory)
 	eAdminCategory.DELETE("/:id", rc.CategoryController.DeleteCategory)
 
+	// Rute Admin untuk kelola comment
+	eAdminComment := eAdminJwt.Group("/comment")
+	eAdminComment.DELETE("", rc.CommentController.DeleteComments)
+	eAdminComment.GET("", rc.CommentController.GetAllComments)
+	eAdminComment.GET("/:id", rc.CommentController.GetCommentByID)
+
 	eAdminAI := eAdminJwt.Group("/ai-suggestions")
 	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)
 	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.FollowUpAISuggestion)

@@ -11,6 +11,7 @@ type CommentServiceInterface interface {
 	GetCommentsByUserID(userID int) ([]entities.Comment, error)
 	GetAllComments() ([]entities.Comment, error)
 	GetCommentByID(commentID string) (entities.Comment, error)
+	DeleteComments(commentIDs []int) error
 }
 
 type CommentService struct {
