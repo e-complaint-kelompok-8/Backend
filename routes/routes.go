@@ -142,6 +142,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	// Rute Admin untuk kelola user
 	eAdminManageUser := eAdminJwt.Group("/users")
 	eAdminManageUser.GET("", rc.ManageUserController.GetAllUsers)
+	eAdminManageUser.GET("/:id", rc.ManageUserController.GetUserDetail)
 
 	// Rute Admin untuk kelola chatbot
 	eAdminAI := eAdminJwt.Group("/ai-suggestions")

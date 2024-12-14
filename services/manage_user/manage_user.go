@@ -7,6 +7,7 @@ import (
 
 type UserServiceInterface interface {
 	GetAllUsers() ([]entities.User, error)
+	GetUserDetail(userID int) (entities.User, error)
 }
 
 type UserService struct {
@@ -24,4 +25,13 @@ func (service *UserService) GetAllUsers() ([]entities.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (service *UserService) GetUserDetail(userID int) (entities.User, error) {
+	// Ambil detail user dari repository
+	user, err := service.userRepo.GetUserByID(userID)
+	if err != nil {
+		return entities.User{}, err
+	}
+	return user, nil
 }
