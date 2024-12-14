@@ -12,3 +12,14 @@ func (cr *CommentRepository) DeleteComments(commentIDs []int) error {
 	}
 	return nil
 }
+
+func (cr *CommentRepository) ValidateCommentIDs(commentIDs []int) ([]int, error) {
+	var existingIDs []int
+
+	// Query untuk mendapatkan comment IDs yang valid di database
+	if err := cr.db.Model(&models.Comment{}).Where("id IN ?", commentIDs).Pluck("id", &existingIDs).Error; err != nil {
+		return nil, fmt.Errorf("failed to validate comment IDs: %w", err)
+	}
+
+	return existingIDs, nil
+}

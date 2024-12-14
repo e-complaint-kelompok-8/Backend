@@ -17,6 +17,7 @@ type CommentRepositoryInterface interface {
 	GetAllComments() ([]entities.Comment, error)
 	GetCommentByID(commentID string) (entities.Comment, error)
 	DeleteComments(commentIDs []int) error
+	ValidateCommentIDs(commentIDs []int) ([]int, error)
 }
 
 type CommentRepository struct {

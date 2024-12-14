@@ -33,6 +33,11 @@ func (cc *CommentController) DeleteComments(c echo.Context) error {
 	// Hapus komentar melalui service
 	err = cc.commentService.DeleteComments(ids)
 	if err != nil {
+		if err.Error() == "some comment IDs do not exist" {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"message": "Beberapa ID komentar tidak ada",
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"message": "Failed to delete comments",
 		})
