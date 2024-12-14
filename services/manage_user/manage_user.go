@@ -6,7 +6,7 @@ import (
 )
 
 type UserServiceInterface interface {
-	GetAllUsers() ([]entities.User, error)
+	GetAllUsers(page, limit int) ([]entities.User, int, error)
 	GetUserDetail(userID int) (entities.User, error)
 }
 
@@ -18,13 +18,16 @@ func NewUserService(repo manageuser.UserRepositoryInterface) *UserService {
 	return &UserService{userRepo: repo}
 }
 
-func (service *UserService) GetAllUsers() ([]entities.User, error) {
-	// Ambil semua user dari repository
-	users, err := service.userRepo.GetAllUsers()
+func (service *UserService) GetAllUsers(page, limit int) ([]entities.User, int, error) {
+	// Hitung offset
+	offset := (page - 1) * limit
+
+	// Ambil semua user dari repository dengan pagination
+	users, total, err := service.userRepo.GetAllUsers(offset, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return users, nil
+	return users, total, nil
 }
 
 func (service *UserService) GetUserDetail(userID int) (entities.User, error) {

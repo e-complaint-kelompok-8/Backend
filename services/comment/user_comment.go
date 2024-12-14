@@ -9,8 +9,8 @@ import (
 
 type CommentServiceInterface interface {
 	AddComment(comment entities.Comment) (entities.Comment, error)
-	GetCommentsByUserID(userID int) ([]entities.Comment, error)
-	GetAllComments() ([]entities.Comment, error)
+	GetCommentsByUserID(userID, page, limit int) ([]entities.Comment, int, error)
+	GetAllComments(page, limit int) ([]entities.Comment, int, error)
 	GetCommentByID(commentID string) (entities.Comment, error)
 	DeleteComments(commentIDs []int) error
 }
@@ -50,22 +50,28 @@ func (cs *CommentService) AddComment(comment entities.Comment) (entities.Comment
 	return cs.commentRepo.AddComment(comment)
 }
 
-func (cs *CommentService) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
-	// Ambil data komentar berdasarkan user_id dari repository
-	comments, err := cs.commentRepo.GetCommentsByUserID(userID)
+func (cs *CommentService) GetCommentsByUserID(userID, page, limit int) ([]entities.Comment, int, error) {
+	// Hitung offset
+	offset := (page - 1) * limit
+
+	// Ambil komentar dari repository dengan pagination
+	comments, total, err := cs.commentRepo.GetCommentsByUserID(userID, offset, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return comments, nil
+	return comments, total, nil
 }
 
-func (cs *CommentService) GetAllComments() ([]entities.Comment, error) {
-	// Ambil semua komentar dari repository
-	comments, err := cs.commentRepo.GetAllComments()
+func (cs *CommentService) GetAllComments(page, limit int) ([]entities.Comment, int, error) {
+	// Hitung offset
+	offset := (page - 1) * limit
+
+	// Ambil komentar dari repository dengan pagination
+	comments, total, err := cs.commentRepo.GetAllComments(offset, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return comments, nil
+	return comments, total, nil
 }
 
 func (cs *CommentService) GetCommentByID(commentID string) (entities.Comment, error) {

@@ -5,6 +5,7 @@ import (
 	"capstone/controllers/comment/response"
 	"capstone/services/comment"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -60,38 +61,75 @@ func (cc CommentController) GetCommentsByUser(c echo.Context) error {
 		})
 	}
 
+	// Ambil query parameter page dan limit
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10 // Default limit
+	}
+
 	// Ambil data komentar berdasarkan user_id dari service
-	comments, err := cc.commentService.GetCommentsByUserID(userID)
+	comments, total, err := cc.commentService.GetCommentsByUserID(userID, page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Failed to retrieve comments",
 		})
 	}
 
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
 	// Konversi response
 	commentResponses := response.FromEntityComments(comments)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message":  "Comments retrieved successfully",
-		"comments": commentResponses,
+		"message":    "Comments retrieved successfully",
+		"user_id":    userID,
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"comments":   commentResponses,
 	})
 }
 
 func (cc *CommentController) GetAllComments(c echo.Context) error {
-	// Ambil semua komentar dari service
-	comments, err := cc.commentService.GetAllComments()
+	// Ambil query parameter page dan limit
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10 // Default limit
+	}
+
+	// Ambil semua komentar dari service dengan pagination
+	comments, total, err := cc.commentService.GetAllComments(page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Failed to retrieve all comments",
 		})
 	}
 
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
 	// Konversi komentar ke response
 	commentResponses := response.FromEntityComments(comments)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message":  "All comments retrieved successfully",
-		"comments": commentResponses,
+		"message":    "All comments retrieved successfully",
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"comments":   commentResponses,
 	})
 }
 

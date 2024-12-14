@@ -11,10 +11,10 @@ import (
 
 type CommentRepositoryInterface interface {
 	AddComment(comment entities.Comment) (entities.Comment, error)
-	GetCommentsByUserID(userID int) ([]entities.Comment, error)
+	GetCommentsByUserID(userID, offset, limit int) ([]entities.Comment, int, error)
 	CheckCategoryExists(id int) (bool, error)
 	GetNewsByID(newsID int) (models.News, error)
-	GetAllComments() ([]entities.Comment, error)
+	GetAllComments(offset, limit int) ([]entities.Comment, int, error)
 	GetCommentByID(commentID string) (entities.Comment, error)
 	DeleteComments(commentIDs []int) error
 	ValidateCommentIDs(commentIDs []int) ([]int, error)
@@ -44,13 +44,25 @@ func (cr *CommentRepository) AddComment(comment entities.Comment) (entities.Comm
 	return commentModel.ToEntities(), nil
 }
 
-func (cr *CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
+func (cr *CommentRepository) GetCommentsByUserID(userID, offset, limit int) ([]entities.Comment, int, error) {
 	var comments []models.Comment
+	var total int64
 
-	// Query database untuk mengambil komentar berdasarkan user_id
-	err := cr.db.Preload("User").Preload("News").Where("user_id = ?", userID).Order("created_at DESC").Find(&comments).Error
+	// Hitung total data
+	err := cr.db.Model(&models.Comment{}).Where("user_id = ?", userID).Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// Ambil komentar berdasarkan user_id dengan pagination
+	err = cr.db.Preload("User").Preload("News").
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Offset(offset).
+		Limit(limit).
+		Find(&comments).Error
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Konversi model ke entitas
@@ -59,7 +71,7 @@ func (cr *CommentRepository) GetCommentsByUserID(userID int) ([]entities.Comment
 		result = append(result, comment.ToEntities())
 	}
 
-	return result, nil
+	return result, int(total), nil
 }
 
 func (ar *CommentRepository) CheckCategoryExists(categoryID int) (bool, error) {
@@ -80,13 +92,20 @@ func (ar *CommentRepository) GetNewsByID(newsID int) (models.News, error) {
 	return news, nil
 }
 
-func (cr *CommentRepository) GetAllComments() ([]entities.Comment, error) {
+func (cr *CommentRepository) GetAllComments(offset, limit int) ([]entities.Comment, int, error) {
 	var comments []models.Comment
+	var total int64
 
-	// Query database untuk mengambil semua komentar
-	err := cr.db.Preload("User").Preload("News").Order("created_at DESC").Find(&comments).Error
+	// Hitung total data
+	err := cr.db.Model(&models.Comment{}).Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// Ambil komentar dengan pagination
+	err = cr.db.Preload("User").Preload("News").Order("created_at DESC").Offset(offset).Limit(limit).Find(&comments).Error
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Konversi model ke entitas
@@ -95,7 +114,7 @@ func (cr *CommentRepository) GetAllComments() ([]entities.Comment, error) {
 		result = append(result, comment.ToEntities())
 	}
 
-	return result, nil
+	return result, int(total), nil
 }
 
 func (cr *CommentRepository) GetCommentByID(commentID string) (entities.Comment, error) {

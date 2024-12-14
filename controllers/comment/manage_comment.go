@@ -57,8 +57,6 @@ func (cc *CommentController) GetCommentsByUserID(c echo.Context) error {
 
 	// Ambil user_id dari parameter URL
 	userIDStr := c.Param("user_id")
-
-	// Konversi user_id dari string ke int
 	userID, err := strconv.Atoi(userIDStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
@@ -66,20 +64,38 @@ func (cc *CommentController) GetCommentsByUserID(c echo.Context) error {
 		})
 	}
 
-	// Ambil data komentar berdasarkan user_id dari service
-	comments, err := cc.commentService.GetCommentsByUserID(userID)
+	// Ambil query parameter page dan limit
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
+	if err != nil || limit < 1 {
+		limit = 10 // Default limit
+	}
+
+	// Ambil data komentar berdasarkan user_id dari service dengan pagination
+	comments, total, err := cc.commentService.GetCommentsByUserID(userID, page, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Failed to retrieve comments",
 		})
 	}
 
-	// Konversi response
+	// Hitung total halaman
+	totalPages := (total + limit - 1) / limit
+
+	// Konversi komentar ke response
 	commentResponses := response.FromEntityComments(comments)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message":  "Comments retrieved successfully",
-		"user_id":  userID,
-		"comments": commentResponses,
+		"message":    "Comments retrieved successfully",
+		"user_id":    userID,
+		"page":       page,
+		"limit":      limit,
+		"total":      total,
+		"totalPages": totalPages,
+		"comments":   commentResponses,
 	})
 }
