@@ -44,6 +44,12 @@ func (cc *CommentController) DeleteComments(c echo.Context) error {
 }
 
 func (cc *CommentController) GetCommentsByUserID(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
 	// Ambil user_id dari parameter URL
 	userIDStr := c.Param("user_id")
 
