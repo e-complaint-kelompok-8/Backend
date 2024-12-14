@@ -136,25 +136,41 @@ func (cc *ComplaintController) UpdateComplaintByAdmin(c echo.Context) error {
 	})
 }
 
-func (cc *ComplaintController) DeleteComplaintByAdmin(c echo.Context) error {
+func (cc *ComplaintController) DeleteComplaintsByAdmin(c echo.Context) error {
 	// Validasi role admin
 	role, err := middlewares.ExtractAdminRole(c)
 	if err != nil || role != "admin" {
 		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
 	}
 
-	// Ambil ID pengaduan dari parameter
-	complaintID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid complaint ID"})
+	var complaintIDs []int
+	if err := c.Bind(&complaintIDs); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Invalid request format",
+		})
 	}
 
-	// Hapus complaint melalui service
-	err = cc.complaintService.DeleteComplaintByAdmin(complaintID)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// Validasi input
+	if len(complaintIDs) == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Complaint IDs are required",
+		})
 	}
 
-	// Kirim respons
-	return c.JSON(http.StatusOK, map[string]string{"message": "Complaint deleted successfully"})
+	// Hapus complaints melalui service
+	err = cc.complaintService.DeleteComplaintsByAdmin(complaintIDs)
+	if err != nil {
+		if err.Error() == "some complaint IDs do not exist" {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"message": "Some complaint IDs do not exist",
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to delete complaints",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Complaints deleted successfully",
+	})
 }

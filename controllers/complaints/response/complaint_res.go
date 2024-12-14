@@ -95,6 +95,7 @@ type Feedback struct {
 	ID        int       `json:"id"`
 	Admin     Admin     `json:"admin"`
 	Content   string    `json:"content"`
+	Response  string    `json:"response"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -120,6 +121,7 @@ func ComplaintFromEntitiesWithPhoto(complaint entities.Complaint, photos []entit
 				Role:  feedback.Admin.Role,
 			},
 			Content:   feedback.Content,
+			Response:  feedback.Response,
 			CreatedAt: feedback.CreatedAt,
 		})
 	}
@@ -164,6 +166,7 @@ func ComplaintFromEntities(complaint entities.Complaint) CreateComplaintResponse
 				Role:  feedback.Admin.Role,
 			},
 			Content:   feedback.Content,
+			Response:  feedback.Response,
 			CreatedAt: feedback.CreatedAt,
 		})
 	}
@@ -217,6 +220,7 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 					Role:  feedback.Admin.Role,
 				},
 				Content:   feedback.Content,
+				Response:  feedback.Response,
 				CreatedAt: feedback.CreatedAt,
 			})
 		}
@@ -314,6 +318,7 @@ func ComplaintFromEntitiesWithAdmin(complaint entities.Complaint) CreateComplain
 				Role:  feedback.Admin.Role,
 			},
 			Content:   feedback.Content,
+			Response:  feedback.Response,
 			CreatedAt: feedback.CreatedAt,
 		})
 	}
@@ -371,6 +376,7 @@ func ComplaintFromEntitiesWithFeedback(complaint entities.Complaint) CreateCompl
 				Role:  feedback.Admin.Role,
 			},
 			Content:   feedback.Content,
+			Response:  feedback.Response,
 			CreatedAt: feedback.CreatedAt,
 		})
 	}

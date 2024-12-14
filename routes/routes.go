@@ -110,7 +110,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminComplaints.GET("/:id", rc.ComplaintController.GetComplaintDetailByAdmin)
 	eAdminComplaints.POST("/feedback", rc.FeedbackController.ProvideFeedback)
 	eAdminComplaints.PUT("/:id", rc.ComplaintController.UpdateComplaintByAdmin)
-	eAdminComplaints.DELETE("/:id", rc.ComplaintController.DeleteComplaintByAdmin)
+	eAdminComplaints.DELETE("/bulk-delete", rc.ComplaintController.DeleteComplaintsByAdmin)
 
 	// Rute Admin untuk Kelola news
 	eAdminNews := eAdminJwt.Group("/news")

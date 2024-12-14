@@ -24,7 +24,8 @@ type ComplaintRepoInterface interface {
 	AdminGetComplaintDetailByID(complaintID int) (entities.Complaint, error)
 	AdminGetComplaintByID(complaintID int) (entities.Complaint, error)
 	AdminUpdateComplaint(complaintID int, updateData entities.Complaint) error
-	DeleteComplaint(complaintID int) error
+	ValidateComplaintIDs(complaintIDs []int) ([]int, error)
+	DeleteComplaints(complaintIDs []int) error
 }
 
 type ComplaintRepo struct {
