@@ -3,6 +3,7 @@ package comment
 import (
 	"capstone/entities"
 	"capstone/repositories/comment"
+	"capstone/utils"
 	"errors"
 )
 
@@ -24,32 +25,32 @@ func NewCommentService(repo comment.CommentRepositoryInterface) *CommentService 
 
 func (cs *CommentService) AddComment(comment entities.Comment) (entities.Comment, error) {
 	if comment.NewsID == 0 {
-		return entities.Comment{}, errors.New("Berita tidak valid. Silakan pilih berita yang sesuai.")
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak valid. silakan pilih berita yang sesuai")))
 	}
 
 	if comment.Content == "" {
-		return entities.Comment{}, errors.New("Konten komentar tidak boleh kosong.")
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("konten komentar tidak boleh kosong")))
 	}
 
 	// Validasi berita
 	news, err := cs.commentRepo.GetNewsByID(comment.NewsID)
 	if err != nil {
-		return entities.Comment{}, errors.New("Berita tidak ditemukan.")
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
 	}
 
 	// Validasi kategori
 	exists, err := cs.commentRepo.CheckCategoryExists(news.CategoryID)
 	if err != nil {
-		return entities.Comment{}, errors.New("Terjadi kesalahan saat memeriksa kategori.")
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("terjadi kesalahan saat memeriksa kategori")))
 	}
 	if !exists {
-		return entities.Comment{}, errors.New("Kategori berita tidak ditemukan.")
+		return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("kategori berita tidak ditemukan")))
 	}
 
 	return cs.commentRepo.AddComment(comment)
 }
 
-func (cs CommentService) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
+func (cs *CommentService) GetCommentsByUserID(userID int) ([]entities.Comment, error) {
 	// Ambil data komentar berdasarkan user_id dari repository
 	comments, err := cs.commentRepo.GetCommentsByUserID(userID)
 	if err != nil {

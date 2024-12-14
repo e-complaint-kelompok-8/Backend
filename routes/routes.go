@@ -135,6 +135,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminComment.DELETE("", rc.CommentController.DeleteComments)
 	eAdminComment.GET("", rc.CommentController.GetAllComments)
 	eAdminComment.GET("/:id", rc.CommentController.GetCommentByID)
+	eAdminComment.GET("/user/:user_id", rc.CommentController.GetCommentsByUserID)
 
 	eAdminAI := eAdminJwt.Group("/ai-suggestions")
 	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)

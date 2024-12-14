@@ -1,8 +1,10 @@
 package comment
 
 import (
+	"capstone/controllers/comment/response"
 	"capstone/middlewares"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -38,5 +40,35 @@ func (cc *CommentController) DeleteComments(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Comments deleted successfully",
+	})
+}
+
+func (cc *CommentController) GetCommentsByUserID(c echo.Context) error {
+	// Ambil user_id dari parameter URL
+	userIDStr := c.Param("user_id")
+
+	// Konversi user_id dari string ke int
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid user ID format. It should be an integer.",
+		})
+	}
+
+	// Ambil data komentar berdasarkan user_id dari service
+	comments, err := cc.commentService.GetCommentsByUserID(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Failed to retrieve comments",
+		})
+	}
+
+	// Konversi response
+	commentResponses := response.FromEntityComments(comments)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":  "Comments retrieved successfully",
+		"user_id":  userID,
+		"comments": commentResponses,
 	})
 }
