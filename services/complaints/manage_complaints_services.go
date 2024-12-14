@@ -4,6 +4,7 @@ import (
 	"capstone/entities"
 	"capstone/utils"
 	"errors"
+	"fmt"
 )
 
 func (cs *ComplaintService) GetComplaintsByStatusAndCategory(status string, categoryID, page, limit int) ([]entities.Complaint, int64, error) {
@@ -67,22 +68,22 @@ func (cs *ComplaintService) UpdateComplaintByAdmin(complaintID int, updateData e
 	return nil
 }
 
-func (cs *ComplaintService) DeleteComplaintByAdmin(complaintID int) error {
-	// Periksa apakah complaint ada di database
-	complaint, err := cs.complaintRepo.GetComplaintByID(complaintID)
+func (cs *ComplaintService) DeleteComplaintsByAdmin(complaintIDs []int) error {
+	// Validasi complaint IDs
+	existingIDs, err := cs.complaintRepo.ValidateComplaintIDs(complaintIDs)
 	if err != nil {
-		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan tidak ditemukan")))
+		return err
 	}
 
-	// Validasi jika diperlukan (opsional)
-	if complaint.Status == "selesai" {
-		return errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan yang sudah selesai tidak dapat dihapus")))
+	// Jika ada ID yang tidak ditemukan, return error
+	if len(existingIDs) != len(complaintIDs) {
+		return fmt.Errorf("some complaint IDs do not exist")
 	}
 
-	// Hapus complaint di repository
-	err = cs.complaintRepo.DeleteComplaint(complaintID)
+	// Hapus complaints
+	err = cs.complaintRepo.DeleteComplaints(existingIDs)
 	if err != nil {
-		return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal menghapus keluhan")))
+		return err
 	}
 
 	return nil

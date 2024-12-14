@@ -3,6 +3,7 @@ package complaints
 import (
 	"capstone/entities"
 	"capstone/repositories/models"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +13,8 @@ func (cr *ComplaintRepo) AdminGetComplaintsByStatusAndCategory(status string, ca
 	var total int64
 
 	// Preload User, Category, dan Photos
-	query := cr.db.Preload("User").Preload("Category").Preload("Photos")
+	query := cr.db.Preload("User").Preload("Category").Preload("Photos").Preload("Feedbacks.Admin").
+		Preload("Feedbacks")
 
 	// Tambahkan kondisi pencarian status jika ada
 	if status != "" {
@@ -98,15 +100,30 @@ func (cr *ComplaintRepo) AdminUpdateComplaint(complaintID int, updateData entiti
 	return nil
 }
 
-func (cr *ComplaintRepo) DeleteComplaint(complaintID int) error {
-	// Hapus data foto terkait di tabel complaint_photos
-	if err := cr.db.Where("complaint_id = ?", complaintID).Delete(&models.ComplaintPhoto{}).Error; err != nil {
-		return err
+func (cr *ComplaintRepo) ValidateComplaintIDs(complaintIDs []int) ([]int, error) {
+	var existingIDs []int
+
+	// Query untuk mendapatkan complaint IDs yang valid di database
+	if err := cr.db.Model(&models.Complaint{}).Where("id IN ?", complaintIDs).Pluck("id", &existingIDs).Error; err != nil {
+		return nil, fmt.Errorf("failed to validate complaint IDs: %w", err)
 	}
 
-	// Hapus data complaint
-	if err := cr.db.Where("id = ?", complaintID).Delete(&models.Complaint{}).Error; err != nil {
-		return err
+	return existingIDs, nil
+}
+
+func (cr *ComplaintRepo) DeleteComplaints(complaintIDs []int) error {
+	// Hapus data terkait complaints
+	if err := cr.db.Where("complaint_id IN ?", complaintIDs).Delete(&models.ComplaintPhoto{}).Error; err != nil {
+		return fmt.Errorf("failed to delete complaint photos: %w", err)
+	}
+
+	if err := cr.db.Where("complaint_id IN ?", complaintIDs).Delete(&models.Feedback{}).Error; err != nil {
+		return fmt.Errorf("failed to delete feedbacks: %w", err)
+	}
+
+	// Hapus complaints
+	if err := cr.db.Where("id IN ?", complaintIDs).Delete(&models.Complaint{}).Error; err != nil {
+		return fmt.Errorf("failed to delete complaints: %w", err)
 	}
 
 	return nil
