@@ -211,9 +211,9 @@
 				
 				<option value="file77">capstone/services/manage_user/manage_user.go (100.0%)</option>
 				
-				<option value="file78">capstone/services/news/manage_news.go (0.0%)</option>
+				<option value="file78">capstone/services/news/manage_news.go (82.9%)</option>
 				
-				<option value="file79">capstone/services/news/view_news.go (0.0%)</option>
+				<option value="file79">capstone/services/news/view_news.go (100.0%)</option>
 				
 				<option value="file80">capstone/utils/strings_utils.go (50.0%)</option>
 				
@@ -7759,83 +7759,83 @@ import (
         "errors"
 )
 
-func (ns *NewsService) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetAllNewsWithComments(page, limit)
 }</span>
 
-func (ns *NewsService) GetNewsByIDWithComments(id string) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetNewsByIDWithComments(id string) (entities.News, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetNewsByIDWithComments(id)
 }</span>
 
-func (ns *NewsService) AddNews(news entities.News) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) AddNews(news entities.News) (entities.News, error) <span class="cov8" title="1">{
         // Validasi kategori
         isValid, err := ns.newsRepo.IsCategoryValid(news.CategoryID)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
-        <span class="cov0" title="0">if !isValid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !isValid </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak valid")))
         }</span>
 
-        <span class="cov0" title="0">if news.AdminID == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if news.AdminID == 0 </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("admin tidak ditemukan")))
         }</span>
 
         // Simpan berita baru
-        <span class="cov0" title="0">newsEntity, err := ns.newsRepo.CreateNews(news)
+        <span class="cov8" title="1">newsEntity, err := ns.newsRepo.CreateNews(news)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
 
-        <span class="cov0" title="0">return newsEntity, nil</span>
+        <span class="cov8" title="1">return newsEntity, nil</span>
 }
 
-func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) <span class="cov8" title="1">{
         // Validasi kategori
         isValid, err := ns.newsRepo.IsCategoryValid(updatedNews.CategoryID)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
-        <span class="cov0" title="0">if !isValid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !isValid </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak benar")))
         }</span>
 
         // Panggil repository untuk update berita
-        <span class="cov0" title="0">news, err := ns.newsRepo.UpdateNewsByID(id, updatedNews)
+        <span class="cov8" title="1">news, err := ns.newsRepo.UpdateNewsByID(id, updatedNews)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
 
-        <span class="cov0" title="0">return news, nil</span>
+        <span class="cov8" title="1">return news, nil</span>
 }
 
-func (ns *NewsService) DeleteMultipleNews(ids []int) error <span class="cov0" title="0">{
+func (ns *NewsService) DeleteMultipleNews(ids []int) error <span class="cov8" title="1">{
         // Validasi input
-        if len(ids) == 0 </span><span class="cov0" title="0">{
+        if len(ids) == 0 </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("tidak ada berita yang dipilih untuk dihapus")))
         }</span>
 
         // Validasi apakah ID berita ada di database
-        <span class="cov0" title="0">existingIDs, err := ns.newsRepo.ValidateNewsIDs(ids)
+        <span class="cov8" title="1">existingIDs, err := ns.newsRepo.ValidateNewsIDs(ids)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
         // Cek jika ada ID yang tidak ditemukan
-        <span class="cov0" title="0">if len(existingIDs) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(existingIDs) == 0 </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
         }</span>
-        <span class="cov0" title="0">if len(existingIDs) != len(ids) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(existingIDs) != len(ids) </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("beberapa ID berita tidak ditemukan")))
         }</span>
 
         // Hapus berita yang valid
-        <span class="cov0" title="0">err = ns.newsRepo.DeleteMultipleNews(existingIDs)
+        <span class="cov8" title="1">err = ns.newsRepo.DeleteMultipleNews(existingIDs)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
@@ -7860,15 +7860,15 @@ type NewsService struct {
         newsRepo news.NewsRepositoryInterface
 }
 
-func NewNewsService(repo news.NewsRepositoryInterface) *NewsService <span class="cov0" title="0">{
+func NewNewsService(repo news.NewsRepositoryInterface) *NewsService <span class="cov8" title="1">{
         return &amp;NewsService{newsRepo: repo}
 }</span>
 
-func (ns *NewsService) GetAllNews(page int, limit int) ([]entities.News, int64, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetAllNews(page int, limit int) ([]entities.News, int64, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetAllNews(page, limit)
 }</span>
 
-func (ns *NewsService) GetNewsByID(id string) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetNewsByID(id string) (entities.News, error) <span class="cov8" title="1">{
         // Panggil repository untuk mendapatkan detail berita berdasarkan ID
         return ns.newsRepo.GetNewsByID(id)
 }</span>
