@@ -209,7 +209,7 @@
 				
 				<option value="file76">capstone/services/feedbacks/user_feedback_services.go (0.0%)</option>
 				
-				<option value="file77">capstone/services/manage_user/manage_user.go (0.0%)</option>
+				<option value="file77">capstone/services/manage_user/manage_user.go (100.0%)</option>
 				
 				<option value="file78">capstone/services/news/manage_news.go (0.0%)</option>
 				
@@ -7725,29 +7725,29 @@ type UserService struct {
         userRepo manageuser.UserRepositoryInterface
 }
 
-func NewUserService(repo manageuser.UserRepositoryInterface) *UserService <span class="cov0" title="0">{
+func NewUserService(repo manageuser.UserRepositoryInterface) *UserService <span class="cov8" title="1">{
         return &amp;UserService{userRepo: repo}
 }</span>
 
-func (service *UserService) GetAllUsers(page, limit int) ([]entities.User, int, error) <span class="cov0" title="0">{
+func (service *UserService) GetAllUsers(page, limit int) ([]entities.User, int, error) <span class="cov8" title="1">{
         // Hitung offset
         offset := (page - 1) * limit
 
         // Ambil semua user dari repository dengan pagination
         users, total, err := service.userRepo.GetAllUsers(offset, limit)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, 0, err
         }</span>
-        <span class="cov0" title="0">return users, total, nil</span>
+        <span class="cov8" title="1">return users, total, nil</span>
 }
 
-func (service *UserService) GetUserDetail(userID int) (entities.User, error) <span class="cov0" title="0">{
+func (service *UserService) GetUserDetail(userID int) (entities.User, error) <span class="cov8" title="1">{
         // Ambil detail user dari repository
         user, err := service.userRepo.GetUserByID(userID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.User{}, err
         }</span>
-        <span class="cov0" title="0">return user, nil</span>
+        <span class="cov8" title="1">return user, nil</span>
 }
 </pre>
 		
