@@ -35,10 +35,6 @@ func (fs *FeedbackService) GetFeedbackByComplaint(complaintID int, userID int) (
 		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tidak berwenang untuk melihat tanggapan ini")))
 	}
 
-	if complaint.Status != "tanggapi" {
-		return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak tersedia untuk pengaduan ini")))
-	}
-
 	// Ambil feedback
 	feedback, err := fs.feedbackRepo.GetFeedbackByComplaintID(complaintID)
 	if err != nil {
