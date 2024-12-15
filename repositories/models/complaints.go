@@ -67,6 +67,7 @@ func (c Complaint) ToEntities() entities.Complaint {
 		Status:          c.Status,
 		Photos:          photos,
 		Feedbacks:       feedbacks,
+		Reason:          c.Reason,
 		CreatedAt:       c.CreatedAt,
 		UpdatedAt:       c.UpdatedAt,
 	}

@@ -27,7 +27,7 @@ func (jwtAdmin JwtAdmin) GenerateJWT(adminID int, role string) (string, error) {
 		AdminID: adminID,
 		Role:    role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)), // Token berlaku selama 24 jam
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)), // Token berlaku selama 24 jam
 		},
 	}
 

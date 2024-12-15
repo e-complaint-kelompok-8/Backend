@@ -15,6 +15,7 @@ type CreateComplaintResponse struct {
 	Status          string     `json:"status"`
 	Feedbacks       []Feedback `json:"feedback"`
 	Description     string     `json:"description" validate:"required"`
+	Reason          string     `json:"reason"`
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
 }
@@ -30,6 +31,7 @@ type CreateComplaintResponseWithPhoto struct {
 	Description     string           `json:"description" validate:"required"`
 	Photos          []ComplaintPhoto `json:"photos"`
 	Feedbacks       []Feedback       `json:"feedback"`
+	Reason          string           `json:"reason"`
 	CreatedAt       time.Time        `json:"created_at"`
 	UpdatedAt       time.Time        `json:"updated_at"`
 }
@@ -148,6 +150,7 @@ func ComplaintFromEntitiesWithPhoto(complaint entities.Complaint, photos []entit
 		Description:     complaint.Description,
 		Photos:          photoResponses,
 		Feedbacks:       feedbackResponses,
+		Reason:          complaint.Reason,
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}
@@ -192,6 +195,7 @@ func ComplaintFromEntities(complaint entities.Complaint) CreateComplaintResponse
 		Status:          complaint.Status,
 		Description:     complaint.Description,
 		Feedbacks:       feedbackResponses,
+		Reason:          complaint.Reason,
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}
@@ -254,6 +258,7 @@ func ComplaintsFromEntities(complaints []entities.Complaint) []CreateComplaintRe
 			Description:     complaint.Description,
 			Photos:          photoResponses,
 			Feedbacks:       feedbackResponses,
+			Reason:          complaint.Reason,
 			CreatedAt:       complaint.CreatedAt,
 			UpdatedAt:       complaint.UpdatedAt,
 		})

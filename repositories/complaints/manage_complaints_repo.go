@@ -121,6 +121,10 @@ func (cr *ComplaintRepo) DeleteComplaints(complaintIDs []int) error {
 		return fmt.Errorf("failed to delete feedbacks: %w", err)
 	}
 
+	if err := cr.db.Where("complaint_id IN ?", complaintIDs).Delete(&models.AISuggestion{}).Error; err != nil {
+		return fmt.Errorf("failed to delete AI Suggestion: %w", err)
+	}
+
 	// Hapus complaints
 	if err := cr.db.Where("id IN ?", complaintIDs).Delete(&models.Complaint{}).Error; err != nil {
 		return fmt.Errorf("failed to delete complaints: %w", err)
