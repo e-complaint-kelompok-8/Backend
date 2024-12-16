@@ -1,9 +1,15 @@
 package complaints
 
 import (
+	"encoding/csv"
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+	
 	"capstone/entities"
 	"capstone/repositories/models"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -128,6 +134,64 @@ func (cr *ComplaintRepo) DeleteComplaints(complaintIDs []int) error {
 	// Hapus complaints
 	if err := cr.db.Where("id IN ?", complaintIDs).Delete(&models.Complaint{}).Error; err != nil {
 		return fmt.Errorf("failed to delete complaints: %w", err)
+	}
+
+	return nil
+}
+
+func (cr *ComplaintRepo) ImportComplaintsFromCSV(filePath string) error {
+	// Buka file CSV
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	// Baca data dari CSV
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return fmt.Errorf("failed to read CSV: %w", err)
+	}
+
+	// Validasi bahwa file tidak kosong dan memiliki header
+	if len(records) < 2 {
+		return errors.New("CSV file is empty or does not contain any data")
+	}
+
+	// Header CSV harus mencocokkan field yang akan dimasukkan
+	header := records[0]
+	if len(header) != 6 { // Contoh jumlah kolom: ID, CategoryID, Title, Description, Status, CreatedAt
+		return errors.New("CSV header does not match the expected format")
+	}
+
+	// Parsing data keluhan
+	var complaints []models.Complaint
+	for _, record := range records[1:] {
+		// Parsing setiap kolom
+		categoryID, err := strconv.Atoi(record[1])
+		if err != nil {
+			return fmt.Errorf("invalid category ID: %w", err)
+		}
+
+		createdAt, err := time.Parse("2006-01-02", record[5]) // Format tanggal: YYYY-MM-DD
+		if err != nil {
+			return fmt.Errorf("invalid date format: %w", err)
+		}
+
+		// Tambahkan keluhan ke daftar
+		complaints = append(complaints, models.Complaint{
+			CategoryID:  categoryID,
+			Title:       record[2],
+			Description: record[3],
+			Status:      record[4],
+			CreatedAt:   createdAt,
+		})
+	}
+
+	// Simpan data ke database menggunakan Bulk Insert
+	if err := cr.db.Create(&complaints).Error; err != nil {
+		return fmt.Errorf("failed to insert complaints into database: %w", err)
 	}
 
 	return nil

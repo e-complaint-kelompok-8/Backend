@@ -26,6 +26,7 @@ type ComplaintRepoInterface interface {
 	AdminUpdateComplaint(complaintID int, updateData entities.Complaint) error
 	ValidateComplaintIDs(complaintIDs []int) ([]int, error)
 	DeleteComplaints(complaintIDs []int) error
+	ImportComplaintsFromCSV(filePath string) error
 }
 
 type ComplaintRepo struct {
