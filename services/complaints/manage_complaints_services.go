@@ -88,3 +88,12 @@ func (cs *ComplaintService) DeleteComplaintsByAdmin(complaintIDs []int) error {
 
 	return nil
 }
+
+func (cs *ComplaintService) ImportComplaintsFromCSV(filePath string) error {
+	err := cs.complaintRepo.ImportComplaintsFromCSV(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to import complaints: %w", err)
+	}
+
+	return nil
+}

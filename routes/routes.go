@@ -111,6 +111,7 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminComplaints.POST("/feedback", rc.FeedbackController.ProvideFeedback)
 	eAdminComplaints.PUT("/:id", rc.ComplaintController.UpdateComplaintByAdmin)
 	eAdminComplaints.DELETE("/bulk-delete", rc.ComplaintController.DeleteComplaintsByAdmin)
+	eAdminComplaints.POST("/import-csv", rc.ComplaintController.ImportComplaintsFromCSV)
 
 	// Rute Admin untuk Kelola news
 	eAdminNews := eAdminJwt.Group("/news")
