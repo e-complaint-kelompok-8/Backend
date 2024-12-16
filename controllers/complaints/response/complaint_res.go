@@ -2,7 +2,12 @@ package response
 
 import (
 	"capstone/entities"
+	"encoding/csv"
+	"strconv"
 	"time"
+	"fmt"
+	"os"
+	
 )
 
 type CreateComplaintResponse struct {
@@ -417,4 +422,55 @@ func ComplaintFromEntitiesWithFeedback(complaint entities.Complaint) CreateCompl
 		CreatedAt:       complaint.CreatedAt,
 		UpdatedAt:       complaint.UpdatedAt,
 	}
+}
+
+func ImportComplaintsFromCSV(filePath string) ([]CreateComplaintResponse, error) {
+	// Membuka file CSV
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("gagal membuka file CSV: %v", err)
+	}
+	defer file.Close()
+
+	// Membaca file CSV
+	reader := csv.NewReader(file)
+	// Membaca semua data dari CSV
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("gagal membaca file CSV: %v", err)
+	}
+
+	var complaints []CreateComplaintResponse
+
+	// Iterasi melalui setiap baris di CSV
+	for _, record := range records {
+		// Pemetaan data CSV ke dalam model CreateComplaintResponse
+		id, _ := strconv.Atoi(record[0]) // Mengasumsikan kolom pertama adalah ID
+		complaintNumber := record[1]     // Mengasumsikan kolom kedua adalah Nomor Keluhan
+		title := record[2]               // Mengasumsikan kolom ketiga adalah Judul
+		location := record[3]            // Mengasumsikan kolom keempat adalah Lokasi
+		status := record[4]              // Mengasumsikan kolom kelima adalah Status
+		description := record[5]         // Mengasumsikan kolom keenam adalah Deskripsi
+
+		// Mengonversi kolom waktu (jika dalam format yang benar)
+		createdAt, _ := time.Parse(time.RFC3339, record[6]) // Mengasumsikan kolom ketujuh adalah CreatedAt
+		updatedAt, _ := time.Parse(time.RFC3339, record[7]) // Mengasumsikan kolom kedelapan adalah UpdatedAt
+
+		// Membuat struktur keluhan
+		complaint := CreateComplaintResponse{
+			ID:              id,
+			ComplaintNumber: complaintNumber,
+			Title:           title,
+			Location:        location,
+			Status:          status,
+			Description:     description,
+			CreatedAt:       createdAt,
+			UpdatedAt:       updatedAt,
+		}
+
+		// Menambahkan keluhan ke dalam daftar
+		complaints = append(complaints, complaint)
+	}
+
+	return complaints, nil
 }

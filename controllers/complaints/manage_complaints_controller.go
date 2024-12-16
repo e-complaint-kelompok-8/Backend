@@ -4,8 +4,12 @@ import (
 	"capstone/controllers/complaints/request"
 	"capstone/controllers/complaints/response"
 	"capstone/middlewares"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -172,5 +176,74 @@ func (cc *ComplaintController) DeleteComplaintsByAdmin(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Complaints deleted successfully",
+	})
+}
+
+func (cc *ComplaintController) ImportComplaintsFromCSV(c echo.Context) error {
+	// Validasi role admin
+	role, err := middlewares.ExtractAdminRole(c)
+	if err != nil || role != "admin" {
+		return c.JSON(http.StatusForbidden, map[string]string{"message": "Access denied"})
+	}
+
+	// Ambil file dari form-data
+	file, err := c.FormFile("file")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Failed to retrieve file from request",
+		})
+	}
+
+	// Cek ekstensi file
+	if !strings.HasSuffix(file.Filename, ".csv") {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Only CSV files are allowed",
+		})
+	}
+
+	// Buka file untuk membaca
+	src, err := file.Open()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to open file",
+		})
+	}
+	defer src.Close()
+
+	// Pastikan direktori 'uploads/' ada
+	if err := os.MkdirAll("uploads", os.ModePerm); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to create directory for file storage",
+		})
+	}
+
+	// Simpan file sementara di server
+	filePath := fmt.Sprintf("uploads/%s", file.Filename)
+	dst, err := os.Create(filePath)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to save file",
+		})
+	}
+	defer dst.Close()
+
+	// Salin konten file ke file sementara
+	if _, err := io.Copy(dst, src); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to copy file content",
+		})
+	}
+
+	// Panggil service untuk memproses file CSV
+	err = cc.complaintService.ImportComplaintsFromCSV(filePath)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to import complaints from CSV",
+		})
+	}
+
+	// Kirim respon sukses
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Complaints imported successfully",
 	})
 }

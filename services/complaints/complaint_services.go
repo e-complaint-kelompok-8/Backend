@@ -23,6 +23,7 @@ type ComplaintServiceInterface interface {
 	GetComplaintByID(complaintID int) (entities.Complaint, error)
 	UpdateComplaintByAdmin(complaintID int, updateData entities.Complaint) error
 	DeleteComplaintsByAdmin(complaintIDs []int) error
+	ImportComplaintsFromCSV(filePath string) error
 }
 
 type ComplaintService struct {
