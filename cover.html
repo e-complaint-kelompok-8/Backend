@@ -195,25 +195,25 @@
 				
 				<option value="file69">capstone/services/category/category_service.go (0.0%)</option>
 				
-				<option value="file70">capstone/services/comment/manage_comment.go (0.0%)</option>
+				<option value="file70">capstone/services/comment/manage_comment.go (100.0%)</option>
 				
-				<option value="file71">capstone/services/comment/user_comment.go (0.0%)</option>
+				<option value="file71">capstone/services/comment/user_comment.go (96.4%)</option>
 				
 				<option value="file72">capstone/services/complaints/complaint_services.go (0.0%)</option>
 				
 				<option value="file73">capstone/services/complaints/manage_complaints_services.go (0.0%)</option>
 				
-				<option value="file74">capstone/services/customer_service/customer_service.go (0.0%)</option>
+				<option value="file74">capstone/services/customer_service/customer_service.go (100.0%)</option>
 				
-				<option value="file75">capstone/services/feedbacks/admin_feedback_services.go (0.0%)</option>
+				<option value="file75">capstone/services/feedbacks/admin_feedback_services.go (89.2%)</option>
 				
-				<option value="file76">capstone/services/feedbacks/user_feedback_services.go (0.0%)</option>
+				<option value="file76">capstone/services/feedbacks/user_feedback_services.go (100.0%)</option>
 				
-				<option value="file77">capstone/services/manage_user/manage_user.go (0.0%)</option>
+				<option value="file77">capstone/services/manage_user/manage_user.go (100.0%)</option>
 				
-				<option value="file78">capstone/services/news/manage_news.go (0.0%)</option>
+				<option value="file78">capstone/services/news/manage_news.go (82.9%)</option>
 				
-				<option value="file79">capstone/services/news/view_news.go (0.0%)</option>
+				<option value="file79">capstone/services/news/view_news.go (100.0%)</option>
 				
 				<option value="file80">capstone/utils/strings_utils.go (50.0%)</option>
 				
@@ -7047,38 +7047,38 @@ import (
         "fmt"
 )
 
-func (cs *CommentService) DeleteComments(commentIDs []int) error <span class="cov0" title="0">{
+func (cs *CommentService) DeleteComments(commentIDs []int) error <span class="cov8" title="1">{
         // Validasi comment IDs
         existingIDs, err := cs.commentRepo.ValidateCommentIDs(commentIDs)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
         // Jika ada ID yang tidak ditemukan, return error
-        <span class="cov0" title="0">if len(existingIDs) != len(commentIDs) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(existingIDs) != len(commentIDs) </span><span class="cov8" title="1">{
                 return fmt.Errorf("some comment IDs do not exist")
         }</span>
 
         // Hapus komentar
-        <span class="cov0" title="0">err = cs.commentRepo.DeleteComments(existingIDs)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err = cs.commentRepo.DeleteComments(existingIDs)
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
-func (cs *CommentService) GetCommentsByNewsID(newsID, page, limit int) ([]entities.Comment, int, error) <span class="cov0" title="0">{
+func (cs *CommentService) GetCommentsByNewsID(newsID, page, limit int) ([]entities.Comment, int, error) <span class="cov8" title="1">{
         // Hitung offset untuk pagination
         offset := (page - 1) * limit
 
         // Panggil repository untuk mendapatkan komentar berdasarkan news ID
         comments, total, err := cs.commentRepo.GetCommentsByNewsID(newsID, offset, limit)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, 0, err
         }</span>
 
-        <span class="cov0" title="0">return comments, total, nil</span>
+        <span class="cov8" title="1">return comments, total, nil</span>
 }
 </pre>
 		
@@ -7104,68 +7104,68 @@ type CommentService struct {
         commentRepo comment.CommentRepositoryInterface
 }
 
-func NewCommentService(repo comment.CommentRepositoryInterface) *CommentService <span class="cov0" title="0">{
+func NewCommentService(repo comment.CommentRepositoryInterface) *CommentService <span class="cov8" title="1">{
         return &amp;CommentService{commentRepo: repo}
 }</span>
 
-func (cs *CommentService) AddComment(comment entities.Comment) (entities.Comment, error) <span class="cov0" title="0">{
-        if comment.NewsID == 0 </span><span class="cov0" title="0">{
+func (cs *CommentService) AddComment(comment entities.Comment) (entities.Comment, error) <span class="cov8" title="1">{
+        if comment.NewsID == 0 </span><span class="cov8" title="1">{
                 return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak valid. silakan pilih berita yang sesuai")))
         }</span>
 
-        <span class="cov0" title="0">if comment.Content == "" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if comment.Content == "" </span><span class="cov8" title="1">{
                 return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("konten komentar tidak boleh kosong")))
         }</span>
 
         // Validasi berita
-        <span class="cov0" title="0">news, err := cs.commentRepo.GetNewsByID(comment.NewsID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">news, err := cs.commentRepo.GetNewsByID(comment.NewsID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
         }</span>
 
         // Validasi kategori
-        <span class="cov0" title="0">exists, err := cs.commentRepo.CheckCategoryExists(news.CategoryID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">exists, err := cs.commentRepo.CheckCategoryExists(news.CategoryID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("terjadi kesalahan saat memeriksa kategori")))
         }</span>
-        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !exists </span><span class="cov0" title="0">{
                 return entities.Comment{}, errors.New(utils.CapitalizeErrorMessage(errors.New("kategori berita tidak ditemukan")))
         }</span>
 
-        <span class="cov0" title="0">return cs.commentRepo.AddComment(comment)</span>
+        <span class="cov8" title="1">return cs.commentRepo.AddComment(comment)</span>
 }
 
-func (cs *CommentService) GetCommentsByUserID(userID, page, limit int) ([]entities.Comment, int, error) <span class="cov0" title="0">{
+func (cs *CommentService) GetCommentsByUserID(userID, page, limit int) ([]entities.Comment, int, error) <span class="cov8" title="1">{
         // Hitung offset
         offset := (page - 1) * limit
 
         // Ambil komentar dari repository dengan pagination
         comments, total, err := cs.commentRepo.GetCommentsByUserID(userID, offset, limit)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, 0, err
         }</span>
-        <span class="cov0" title="0">return comments, total, nil</span>
+        <span class="cov8" title="1">return comments, total, nil</span>
 }
 
-func (cs *CommentService) GetAllComments(page, limit int) ([]entities.Comment, int, error) <span class="cov0" title="0">{
+func (cs *CommentService) GetAllComments(page, limit int) ([]entities.Comment, int, error) <span class="cov8" title="1">{
         // Hitung offset
         offset := (page - 1) * limit
 
         // Ambil komentar dari repository dengan pagination
         comments, total, err := cs.commentRepo.GetAllComments(offset, limit)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, 0, err
         }</span>
-        <span class="cov0" title="0">return comments, total, nil</span>
+        <span class="cov8" title="1">return comments, total, nil</span>
 }
 
-func (cs *CommentService) GetCommentByID(commentID string) (entities.Comment, error) <span class="cov0" title="0">{
+func (cs *CommentService) GetCommentByID(commentID string) (entities.Comment, error) <span class="cov8" title="1">{
         // Ambil detail komentar dari repository
         comment, err := cs.commentRepo.GetCommentByID(commentID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Comment{}, err
         }</span>
-        <span class="cov0" title="0">return comment, nil</span>
+        <span class="cov8" title="1">return comment, nil</span>
 }
 </pre>
 		
@@ -7465,7 +7465,7 @@ import (
         "time"
 )
 
-func NewCustomerService(ai customerservice.AIResponseRepositoryInterface) *CustomerService <span class="cov0" title="0">{
+func NewCustomerService(ai customerservice.AIResponseRepositoryInterface) *CustomerService <span class="cov8" title="1">{
         return &amp;CustomerService{aiResponseRepo: ai}
 }</span>
 
@@ -7479,7 +7479,7 @@ type CustomerService struct {
         aiResponseRepo customerservice.AIResponseRepositoryInterface
 }
 
-func (service *CustomerService) SaveAIResponse(userID int, request string, response string) error <span class="cov0" title="0">{
+func (service *CustomerService) SaveAIResponse(userID int, request string, response string) error <span class="cov8" title="1">{
         aiResponse := entities.AIResponse{
                 UserID:    userID,
                 Request:   request,
@@ -7491,11 +7491,11 @@ func (service *CustomerService) SaveAIResponse(userID int, request string, respo
         return service.aiResponseRepo.SaveResponse(aiResponse)
 }</span>
 
-func (service *CustomerService) GetUserByID(userID int) (entities.User, error) <span class="cov0" title="0">{
+func (service *CustomerService) GetUserByID(userID int) (entities.User, error) <span class="cov8" title="1">{
         return service.aiResponseRepo.GetUserByID(userID)
 }</span>
 
-func (service *CustomerService) GetUserResponses(userID int, page int, limit int) ([]entities.AIResponse, int, error) <span class="cov0" title="0">{
+func (service *CustomerService) GetUserResponses(userID int, page int, limit int) ([]entities.AIResponse, int, error) <span class="cov8" title="1">{
         offset := (page - 1) * limit
         return service.aiResponseRepo.GetUserResponses(userID, offset, limit)
 }</span>
@@ -7510,36 +7510,36 @@ import (
         "time"
 )
 
-func (cs *FeedbackService) ProvideFeedback(adminID, complaintID int, content string) (entities.Feedback, error) <span class="cov0" title="0">{
+func (cs *FeedbackService) ProvideFeedback(adminID, complaintID int, content string) (entities.Feedback, error) <span class="cov8" title="1">{
         // Periksa apakah admin ID valid
         adminExists, err := cs.feedbackRepo.CheckAdminExists(adminID)
-        if err != nil || !adminExists </span><span class="cov0" title="0">{
+        if err != nil || !adminExists </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("admin tidak ditemukan")))
         }</span>
 
         // Periksa apakah complaint ID valid
-        <span class="cov0" title="0">complaint, err := cs.feedbackRepo.GetComplaintByID(complaintID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">complaint, err := cs.feedbackRepo.GetComplaintByID(complaintID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan tidak ditemukan")))
         }</span>
 
         // Periksa apakah complaint sudah memiliki feedback
-        <span class="cov0" title="0">hasFeedback, err := cs.feedbackRepo.ComplaintHasFeedback(complaintID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">hasFeedback, err := cs.feedbackRepo.ComplaintHasFeedback(complaintID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memeriksa feedback pengaduan")))
         }</span>
-        <span class="cov0" title="0">if hasFeedback </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if hasFeedback </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan sudah memiliki tanggapan")))
         }</span>
 
         // Pastikan user ID valid
-        <span class="cov0" title="0">userExists, err := cs.feedbackRepo.CheckUserExists(complaint.UserID)
-        if err != nil || !userExists </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">userExists, err := cs.feedbackRepo.CheckUserExists(complaint.UserID)
+        if err != nil || !userExists </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengguna tidak ditemukan")))
         }</span>
 
         // Buat feedback entity
-        <span class="cov0" title="0">feedback := entities.Feedback{
+        <span class="cov8" title="1">feedback := entities.Feedback{
                 AdminID:     adminID,
                 ComplaintID: complaintID,
                 UserID:      complaint.UserID,
@@ -7549,41 +7549,41 @@ func (cs *FeedbackService) ProvideFeedback(adminID, complaintID int, content str
 
         // Simpan feedback di repository
         err = cs.feedbackRepo.CreateFeedback(&amp;feedback)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, err
         }</span>
 
         // Perbarui status complaint menjadi "tanggapi"
-        <span class="cov0" title="0">err = cs.feedbackRepo.AdminUpdateComplaintStatus(complaintID, "tanggapi", adminID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err = cs.feedbackRepo.AdminUpdateComplaintStatus(complaintID, "tanggapi", adminID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memperbarui status pengaduan")))
         }</span>
 
         // Ambil feedback lengkap dengan relasi
-        <span class="cov0" title="0">feedbackModel, err := cs.feedbackRepo.GetFeedbackByComplaintID(complaintID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">feedbackModel, err := cs.feedbackRepo.GetFeedbackByComplaintID(complaintID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal mengambil masukan lengkap")))
         }</span>
 
         // Gabungkan feedback dan complaint yang diperbarui
-        <span class="cov0" title="0">feedback = feedbackModel
+        <span class="cov8" title="1">feedback = feedbackModel
 
         return feedback, nil</span>
 }
 
-func (cs *FeedbackService) UpdateFeedback(feedbackID int, content string) (entities.Feedback, error) <span class="cov0" title="0">{
+func (cs *FeedbackService) UpdateFeedback(feedbackID int, content string) (entities.Feedback, error) <span class="cov8" title="1">{
         // Periksa apakah feedback ID valid
         feedback, err := cs.feedbackRepo.GetFeedbackByID(feedbackID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak ditemukan")))
         }</span>
 
         // Perbarui konten
-        <span class="cov0" title="0">feedback.Content = content
+        <span class="cov8" title="1">feedback.Content = content
 
         // Simpan perubahan ke database
         err = cs.feedbackRepo.UpdateFeedback(feedback)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memperbarui tanggapan")))
         }</span>
 
@@ -7619,89 +7619,89 @@ type FeedbackService struct {
         feedbackRepo feedback.FeedbackRepositoryInterface
 }
 
-func NewFeedbackService(repo feedback.FeedbackRepositoryInterface) *FeedbackService <span class="cov0" title="0">{
+func NewFeedbackService(repo feedback.FeedbackRepositoryInterface) *FeedbackService <span class="cov8" title="1">{
         return &amp;FeedbackService{feedbackRepo: repo}
 }</span>
 
-func (fs *FeedbackService) GetFeedbackByComplaint(complaintID int, userID int) (entities.Feedback, error) <span class="cov0" title="0">{
+func (fs *FeedbackService) GetFeedbackByComplaint(complaintID int, userID int) (entities.Feedback, error) <span class="cov8" title="1">{
         // Validasi apakah complaint dimiliki oleh user dan statusnya 'tanggapi'
         complaint, err := fs.feedbackRepo.GetComplaintByID(complaintID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("pengaduan tidak ditemukan")))
         }</span>
 
-        <span class="cov0" title="0">if complaint.UserID != userID </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if complaint.UserID != userID </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tidak berwenang untuk melihat tanggapan ini")))
         }</span>
 
         // Ambil feedback
-        <span class="cov0" title="0">feedback, err := fs.feedbackRepo.GetFeedbackByComplaintID(complaintID)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">feedback, err := fs.feedbackRepo.GetFeedbackByComplaintID(complaintID)
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak ditemukan")))
         }</span>
 
-        <span class="cov0" title="0">return feedback, nil</span>
+        <span class="cov8" title="1">return feedback, nil</span>
 }
 
-func (fs *FeedbackService) GetFeedbacksByUser(userID int) ([]entities.Feedback, error) <span class="cov0" title="0">{
+func (fs *FeedbackService) GetFeedbacksByUser(userID int) ([]entities.Feedback, error) <span class="cov8" title="1">{
         // Ambil semua feedback dari repository
         feedbacks, err := fs.feedbackRepo.GetFeedbacksByUserID(userID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return feedbacks, nil</span>
+        <span class="cov8" title="1">return feedbacks, nil</span>
 }
 
-func (fs *FeedbackService) AddResponseToFeedback(feedbackID int, userID int, response string) error <span class="cov0" title="0">{
+func (fs *FeedbackService) AddResponseToFeedback(feedbackID int, userID int, response string) error <span class="cov8" title="1">{
         // Ambil feedback untuk validasi
         feedback, err := fs.feedbackRepo.GetFeedbackByID(feedbackID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak ditemukan")))
         }</span>
 
         // Pastikan feedback milik user
-        <span class="cov0" title="0">if feedback.UserID != userID </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if feedback.UserID != userID </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("anda tidak memiliki akses untuk memberikan balasan pada tanggapan ini")))
         }</span>
 
         // Pastikan feedback belum memiliki balasan
-        <span class="cov0" title="0">if feedback.Response != "" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if feedback.Response != "" </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan ini sudah memiliki balasan")))
         }</span>
 
         // Pastikan status complaint
-        <span class="cov0" title="0">if feedback.Complaint.Status != "tanggapi" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if feedback.Complaint.Status != "tanggapi" </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("tanggapan tidak dapat diberikan komentar")))
         }</span>
 
         // Tambahkan balasan
-        <span class="cov0" title="0">err = fs.feedbackRepo.UpdateFeedbackResponse(feedbackID, response)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err = fs.feedbackRepo.UpdateFeedbackResponse(feedbackID, response)
+        if err != nil </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memberikan balasan pada tanggapan")))
         }</span>
 
         // Perbarui status complaint menjadi "selesai"
-        <span class="cov0" title="0">err = fs.feedbackRepo.UpdateComplaintStatus(feedback.ComplaintID, "selesai")
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err = fs.feedbackRepo.UpdateComplaintStatus(feedback.ComplaintID, "selesai")
+        if err != nil </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("gagal memperbarui status pengaduan")))
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
-func (fs *FeedbackService) GetFeedbackByID(feedbackID int, userID int) (entities.Feedback, error) <span class="cov0" title="0">{
+func (fs *FeedbackService) GetFeedbackByID(feedbackID int, userID int) (entities.Feedback, error) <span class="cov8" title="1">{
         // Ambil feedback dari repository
         feedback, err := fs.feedbackRepo.GetFeedbackByID(feedbackID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("feedback tidak ditemukan")))
         }</span>
 
         // Pastikan feedback milik user
-        <span class="cov0" title="0">if feedback.UserID != userID </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if feedback.UserID != userID </span><span class="cov8" title="1">{
                 return entities.Feedback{}, errors.New(utils.CapitalizeErrorMessage(errors.New("anda tidak memiliki akses untuk melihat feedback ini")))
         }</span>
 
-        <span class="cov0" title="0">return feedback, nil</span>
+        <span class="cov8" title="1">return feedback, nil</span>
 }
 </pre>
 		
@@ -7721,29 +7721,29 @@ type UserService struct {
         userRepo manageuser.UserRepositoryInterface
 }
 
-func NewUserService(repo manageuser.UserRepositoryInterface) *UserService <span class="cov0" title="0">{
+func NewUserService(repo manageuser.UserRepositoryInterface) *UserService <span class="cov8" title="1">{
         return &amp;UserService{userRepo: repo}
 }</span>
 
-func (service *UserService) GetAllUsers(page, limit int) ([]entities.User, int, error) <span class="cov0" title="0">{
+func (service *UserService) GetAllUsers(page, limit int) ([]entities.User, int, error) <span class="cov8" title="1">{
         // Hitung offset
         offset := (page - 1) * limit
 
         // Ambil semua user dari repository dengan pagination
         users, total, err := service.userRepo.GetAllUsers(offset, limit)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, 0, err
         }</span>
-        <span class="cov0" title="0">return users, total, nil</span>
+        <span class="cov8" title="1">return users, total, nil</span>
 }
 
-func (service *UserService) GetUserDetail(userID int) (entities.User, error) <span class="cov0" title="0">{
+func (service *UserService) GetUserDetail(userID int) (entities.User, error) <span class="cov8" title="1">{
         // Ambil detail user dari repository
         user, err := service.userRepo.GetUserByID(userID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return entities.User{}, err
         }</span>
-        <span class="cov0" title="0">return user, nil</span>
+        <span class="cov8" title="1">return user, nil</span>
 }
 </pre>
 		
@@ -7755,83 +7755,83 @@ import (
         "errors"
 )
 
-func (ns *NewsService) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetAllNewsWithComments(page, limit int) ([]entities.News, int64, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetAllNewsWithComments(page, limit)
 }</span>
 
-func (ns *NewsService) GetNewsByIDWithComments(id string) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetNewsByIDWithComments(id string) (entities.News, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetNewsByIDWithComments(id)
 }</span>
 
-func (ns *NewsService) AddNews(news entities.News) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) AddNews(news entities.News) (entities.News, error) <span class="cov8" title="1">{
         // Validasi kategori
         isValid, err := ns.newsRepo.IsCategoryValid(news.CategoryID)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
-        <span class="cov0" title="0">if !isValid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !isValid </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak valid")))
         }</span>
 
-        <span class="cov0" title="0">if news.AdminID == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if news.AdminID == 0 </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("admin tidak ditemukan")))
         }</span>
 
         // Simpan berita baru
-        <span class="cov0" title="0">newsEntity, err := ns.newsRepo.CreateNews(news)
+        <span class="cov8" title="1">newsEntity, err := ns.newsRepo.CreateNews(news)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
 
-        <span class="cov0" title="0">return newsEntity, nil</span>
+        <span class="cov8" title="1">return newsEntity, nil</span>
 }
 
-func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) UpdateNewsByID(id string, updatedNews entities.News) (entities.News, error) <span class="cov8" title="1">{
         // Validasi kategori
         isValid, err := ns.newsRepo.IsCategoryValid(updatedNews.CategoryID)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
-        <span class="cov0" title="0">if !isValid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !isValid </span><span class="cov8" title="1">{
                 return entities.News{}, errors.New(utils.CapitalizeErrorMessage(errors.New("ID kategori tidak benar")))
         }</span>
 
         // Panggil repository untuk update berita
-        <span class="cov0" title="0">news, err := ns.newsRepo.UpdateNewsByID(id, updatedNews)
+        <span class="cov8" title="1">news, err := ns.newsRepo.UpdateNewsByID(id, updatedNews)
         if err != nil </span><span class="cov0" title="0">{
                 return entities.News{}, err
         }</span>
 
-        <span class="cov0" title="0">return news, nil</span>
+        <span class="cov8" title="1">return news, nil</span>
 }
 
-func (ns *NewsService) DeleteMultipleNews(ids []int) error <span class="cov0" title="0">{
+func (ns *NewsService) DeleteMultipleNews(ids []int) error <span class="cov8" title="1">{
         // Validasi input
-        if len(ids) == 0 </span><span class="cov0" title="0">{
+        if len(ids) == 0 </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("tidak ada berita yang dipilih untuk dihapus")))
         }</span>
 
         // Validasi apakah ID berita ada di database
-        <span class="cov0" title="0">existingIDs, err := ns.newsRepo.ValidateNewsIDs(ids)
+        <span class="cov8" title="1">existingIDs, err := ns.newsRepo.ValidateNewsIDs(ids)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
         // Cek jika ada ID yang tidak ditemukan
-        <span class="cov0" title="0">if len(existingIDs) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(existingIDs) == 0 </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("berita tidak ditemukan")))
         }</span>
-        <span class="cov0" title="0">if len(existingIDs) != len(ids) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(existingIDs) != len(ids) </span><span class="cov8" title="1">{
                 return errors.New(utils.CapitalizeErrorMessage(errors.New("beberapa ID berita tidak ditemukan")))
         }</span>
 
         // Hapus berita yang valid
-        <span class="cov0" title="0">err = ns.newsRepo.DeleteMultipleNews(existingIDs)
+        <span class="cov8" title="1">err = ns.newsRepo.DeleteMultipleNews(existingIDs)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
@@ -7856,15 +7856,15 @@ type NewsService struct {
         newsRepo news.NewsRepositoryInterface
 }
 
-func NewNewsService(repo news.NewsRepositoryInterface) *NewsService <span class="cov0" title="0">{
+func NewNewsService(repo news.NewsRepositoryInterface) *NewsService <span class="cov8" title="1">{
         return &amp;NewsService{newsRepo: repo}
 }</span>
 
-func (ns *NewsService) GetAllNews(page int, limit int) ([]entities.News, int64, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetAllNews(page int, limit int) ([]entities.News, int64, error) <span class="cov8" title="1">{
         return ns.newsRepo.GetAllNews(page, limit)
 }</span>
 
-func (ns *NewsService) GetNewsByID(id string) (entities.News, error) <span class="cov0" title="0">{
+func (ns *NewsService) GetNewsByID(id string) (entities.News, error) <span class="cov8" title="1">{
         // Panggil repository untuk mendapatkan detail berita berdasarkan ID
         return ns.newsRepo.GetNewsByID(id)
 }</span>
