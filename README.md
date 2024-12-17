@@ -49,8 +49,6 @@ Laporin-Backend/
 
 ---
 
----
-
 ## 🚀 Cara Menjalankan Proyek
 
 ### Prasyarat
@@ -70,6 +68,8 @@ Sebelum memulai, pastikan Anda sudah menginstal:
    ```bash
    git clone https://github.com/e-complaint-kelompok-8/Backend.git
    cd Backend
+
+---
 
 2. **Konfigurasi file .env: Buat file .env di root project dan tambahkan konfigurasi berikut sebagai contoh:**  
 
@@ -91,15 +91,21 @@ Sebelum memulai, pastikan Anda sudah menginstal:
    SMTP_PASSWORD="lspq gjjw zuui pkpv"
    SMTP_EMAIL="filipi.ketaren@gmail.com"
 
+---
+
 3. **Jalankan perintah berikut untuk menginstal dependency:**  
 
    ```bash
    go mod tidy
 
+---
+
 4. **Migrasikan database:**  
 
    ```bash
    go run main.go migrate
+
+---
 
 5. **Jalankan server:**  
 
@@ -108,12 +114,16 @@ Sebelum memulai, pastikan Anda sudah menginstal:
 
 **Aplikasi akan berjalan pada http://localhost:8080.**
 
+---
+
 ## 📜 Dokumentasi API
 
 **Gunakan Postman untuk melihat dokumentasi API. Setelah server berjalan, buka:**
 
 ```bash
 https://laporin-capstone-project.postman.co/workspace/My-Workspace~f88d9198-7196-4c52-8b2b-80bc41759c23/collection/38993574-7dd5fbee-cbea-40a2-9ade-5362d37769af
+
+---
 
 ## 🧪 Testing
 
