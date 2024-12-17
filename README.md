@@ -60,39 +60,19 @@ Sebelum memulai, pastikan Anda sudah menginstal:
    cd Backend
    ```
 
-2. **Konfigurasi file .env: Buat file .env di root project dan tambahkan konfigurasi berikut sebagai contoh:**  
-   ```
-   DATABASE_HOST="wishlistdb.c5c26iyuumlc.ap-southeast-2.rds.amazonaws.com"
-   DATABASE_PORT="3306"
-   DATABASE_USER="root"
-   DATABASE_PASSWORD="Mamatsuramat1518"
-   DATABASE_NAME="capstone"
-   JWT_SECRET_KEY="ilhan321"
-   APP_ENV="development"
-
-   DATABASE_HOST="localhost"
-   DATABASE_PORT="3306"
-   DATABASE_USER="root"
-   DATABASE_PASSWORD="Mamatsutiyem1518"
-   DATABASE_NAME="capstone"
-
-   SMTP_PASSWORD="lspq gjjw zuui pkpv"
-   SMTP_EMAIL="filipi.ketaren@gmail.com"
-   ```
-
-3. **Jalankan perintah berikut untuk menginstal dependency:**  
+2. **Jalankan perintah berikut untuk menginstal dependency:**  
 
    ```bash
    go mod tidy
    ```
 
-4. **Migrasikan database:**  
+3. **Migrasikan database:**  
 
    ```bash
    go run main.go migrate
    ```
 
-5. **Jalankan server:**  
+4. **Jalankan server:**  
 
    ```bash
    go run main.go
