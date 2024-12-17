@@ -2,8 +2,6 @@
 
 **Laporin Backend** adalah backend service yang dikembangkan menggunakan **Golang** untuk mendukung aplikasi **Laporin**, platform yang digunakan untuk membuat pengaduan terkait layanan publik.
 
----
-
 ## 📑 Fitur Utama
 
 - **Autentikasi dan Autorisasi**:  
@@ -17,8 +15,6 @@
 - **Testing**:  
   Unit testing untuk memastikan stabilitas aplikasi.
 
----
-
 ## 🛠️ Teknologi yang Digunakan
 
 - **Bahasa Pemrograman**: Golang  
@@ -30,11 +26,8 @@
 - **Tooling**:  
   - Postman untuk dokumentasi API  
 
----
-
 ## 📂 Struktur Proyek
-
-```plaintext
+```
 Laporin-Backend/
 ├── config/         # Konfigurasi aplikasi (database, JWT, dll.)
 ├── controllers/    # Logika bisnis dan handler untuk HTTP request
@@ -46,8 +39,7 @@ Laporin-Backend/
 ├── uploads/        # Fungsi penyimpan file csv 
 ├── utils/          # Fungsi pendukung
 └── main.go         # Entry point aplikasi
-
----
+```
 
 ## 🚀 Cara Menjalankan Proyek
 
@@ -59,8 +51,6 @@ Sebelum memulai, pastikan Anda sudah menginstal:
 - **Database**: MySQL  
 - **Git**: Untuk meng-clone repository  
 
----
-
 ### Langkah-Langkah
 
 1. **Clone repository ini**  
@@ -68,12 +58,10 @@ Sebelum memulai, pastikan Anda sudah menginstal:
    ```bash
    git clone https://github.com/e-complaint-kelompok-8/Backend.git
    cd Backend
-
----
+   ```
 
 2. **Konfigurasi file .env: Buat file .env di root project dan tambahkan konfigurasi berikut sebagai contoh:**  
-
-   ```bash
+   ```
    DATABASE_HOST="wishlistdb.c5c26iyuumlc.ap-southeast-2.rds.amazonaws.com"
    DATABASE_PORT="3306"
    DATABASE_USER="root"
@@ -90,40 +78,35 @@ Sebelum memulai, pastikan Anda sudah menginstal:
 
    SMTP_PASSWORD="lspq gjjw zuui pkpv"
    SMTP_EMAIL="filipi.ketaren@gmail.com"
-
----
+   ```
 
 3. **Jalankan perintah berikut untuk menginstal dependency:**  
 
    ```bash
    go mod tidy
-
----
+   ```
 
 4. **Migrasikan database:**  
 
    ```bash
    go run main.go migrate
-
----
+   ```
 
 5. **Jalankan server:**  
 
    ```bash
    go run main.go
+   ```
 
 **Aplikasi akan berjalan pada http://localhost:8080.**
-
----
 
 ## 📜 Dokumentasi API
 
 **Gunakan Postman untuk melihat dokumentasi API. Setelah server berjalan, buka:**
 
-```bash
+```
 https://laporin-capstone-project.postman.co/workspace/My-Workspace~f88d9198-7196-4c52-8b2b-80bc41759c23/collection/38993574-7dd5fbee-cbea-40a2-9ade-5362d37769af
-
----
+```
 
 ## 🧪 Testing
 
@@ -131,7 +114,8 @@ https://laporin-capstone-project.postman.co/workspace/My-Workspace~f88d9198-7196
 
 ```bash
 go test ./...
+```
 
 ---
 
-*Dikembangkan oleh Kelompok 8, Capstone Project Alterra Batch 7.*
+**Dikembangkan oleh Kelompok 8, Capstone Project Alterra Batch 7.**
