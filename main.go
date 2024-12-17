@@ -11,6 +11,7 @@ import (
 	"capstone/controllers/feedbacks"
 	manageuser "capstone/controllers/manage_user"
 	"capstone/controllers/news"
+	"capstone/controllers/notifications"
 	"capstone/middlewares"
 	adminaiRepositories "capstone/repositories/admin_ai"
 	AuthRepositories "capstone/repositories/auth"
@@ -21,6 +22,7 @@ import (
 	feedbackRepositories "capstone/repositories/feedbacks"
 	manageuserRepositories "capstone/repositories/manage_user"
 	newsRepositories "capstone/repositories/news"
+	notificationsRepositories "capstone/repositories/notifications"
 	"capstone/routes"
 	adminaiService "capstone/services/admin_ai"
 	AuthServices "capstone/services/auth"
@@ -31,6 +33,7 @@ import (
 	feedbackService "capstone/services/feedbacks"
 	manageUserService "capstone/services/manage_user"
 	newsService "capstone/services/news"
+	notificationsService "capstone/services/notifications"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -99,6 +102,10 @@ func main() {
 	adminAIService := adminaiService.NewCustomerService(adminAIRepo)
 	adminAIController := adminai.NewCustomerServiceController(adminAIService, complaintService, *serviceAdmin)
 
+	notificationsRepo := notificationsRepositories.NewNotificationRepository(db)
+	notificationsService := notificationsService.NewNotificationService(notificationsRepo)
+	notificationsController := notifications.NewNotificationController(notificationsService)
+
 	// Mendaftarkan routes
 	routeController := routes.RouteController{
 		AuthController:            *authController,
@@ -111,6 +118,7 @@ func main() {
 		AdminAISuggestion:         *adminAIController,
 		ManageUserController:      *manageUserController,
 		CategoryController:        *categoryController,
+		NotificationController:    *notificationsController,
 	}
 	routeController.RegisterRoutes(e)
 

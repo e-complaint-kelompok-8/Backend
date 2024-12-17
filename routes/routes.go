@@ -10,6 +10,7 @@ import (
 	feedback "capstone/controllers/feedbacks"
 	manageuser "capstone/controllers/manage_user"
 	"capstone/controllers/news"
+	"capstone/controllers/notifications"
 	"capstone/middlewares"
 	"os"
 
@@ -30,6 +31,7 @@ type RouteController struct {
 	ManageUserController      manageuser.ManageUserController
 	AdminAISuggestion         adminai.AdminAIController
 	CategoryController        category.CategoryController
+	NotificationController    notifications.NotificationController
 }
 
 // RegisterRoutes mengatur semua rute untuk aplikasi
@@ -151,4 +153,9 @@ func (rc RouteController) RegisterRoutes(e *echo.Echo) {
 	eAdminAI.POST("", rc.AdminAISuggestion.GetAISuggestion)
 	eAdminAI.POST("/:id/follow-up", rc.AdminAISuggestion.FollowUpAISuggestion)
 	eAdminAI.GET("", rc.AdminAISuggestion.GetAllAISuggestions)
+
+	// Rute Admin untuk kelola notifikasi
+	eAdminNotif := eAdminJwt.Group("/notifications")
+	eAdminNotif.POST("", rc.NotificationController.CreateNotification)
+	eAdminNotif.GET("/:id", rc.NotificationController.GetNotificationsByUserID)
 }
